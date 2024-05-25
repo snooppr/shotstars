@@ -1,6 +1,9 @@
 # shotstars
 A tool to track waning stars on Github.  
 
+> [!IMPORTANT]  
+>Github does not provide users with statistics on disappearing stars in the repository. "shotstars" is trying to resolve this issue and provide such information to the user.  
+
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux%20logo.png" />
 
 The purpose of the “shotstars” script is to find accounts from which they once gave stars to repositories,  
@@ -45,3 +48,8 @@ adding it to the database; randomly delete and add any lines to a file (OS GNU/L
 (OS Windows)  
 `C:\Users\{User}\AppData\Local\ShotStars\result\{repo}\new.txt`;  
 run a second scan of the same repository.  
+
+ ---
+
+## TL;DR  
+Github не предоставляет пользователям статистику по исчезающим звездам в репозитории. "shotstars" пытается решить этот вопрос и предоставить такую информацию пользователю.
