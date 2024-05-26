@@ -22,8 +22,18 @@ python shot_stars.py
 
  ---
 
+**"shotstars" supports simulation of results.**  
+To simulate the process, the user must scan the new repository once,   
+adding it to the database; randomly delete and add any lines to a file (OS GNU/Linux and Termux)  
+`/home/{user}/ShotStars/results/{repo}/new.txt`  
+(OS Windows)  
+`C:\Users\{User}\AppData\Local\ShotStars\result\{repo}\new.txt`;  
+run a second scan of the same repository.  
+
+ ---
+
 <details>
-<summary> 🔵 Screenshot gallery</summary>  
+<summary> 👈 Screenshot gallery </summary>  
 
 ### 1. shotstars for windows 7  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Win.png" />  
@@ -38,16 +48,7 @@ python shot_stars.py
 ### 3. shotstars for Termux html report  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html%20report.png" />  
 
- ---
-
 </details>
-
-"shotstars" supports simulation of results. To simulate the process, the user must scan the new repository once,   
-adding it to the database; randomly delete and add any lines to a file (OS GNU/Linux and Termux)  
-`/home/{user}/ShotStars/results/{repo}/new.txt`  
-(OS Windows)  
-`C:\Users\{User}\AppData\Local\ShotStars\result\{repo}\new.txt`;  
-run a second scan of the same repository.  
 
  ---
 
