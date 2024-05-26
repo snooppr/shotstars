@@ -82,7 +82,7 @@ def parsing(diff=False):
         pages = (stars // 100) + 1
     except Exception:
         console.print("\n[bold red]Внимание! Вероятно, превышен лимит API, блокировка будет снята предположительно:",
-              time.strftime('%Y-%m-%d_%H:%M', time.localtime(int(req.headers.get('X-RateLimit-Reset')) + 60)))
+                      time.strftime('%Y-%m-%d_%H:%M', time.localtime(int(req.headers.get('X-RateLimit-Reset')) + 60)))
         console.print(Panel.fit("Ограничения: ~лимит 30 запросов или 6000 звезд/час", title="Github API"))
         win_exit()
         sys.exit()
