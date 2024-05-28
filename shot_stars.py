@@ -25,10 +25,10 @@ console.print("""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___ 
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.1, автор: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.1, author: https://github.com/snooppr
 """)
 
-url_repo = input("Укажите url репозитория (Github): ")
+url_repo = input("Specify the repository url (Github): ")
 repo = url_repo.rsplit(sep='/', maxsplit=1)[-1]
 repo_api = '/'.join(url_repo.rsplit(sep='/', maxsplit=2)[-2:])
 
@@ -52,7 +52,7 @@ def win_exit():
 def dif_time():
     """Диапазон прошедшего времени: от последнего сканирования к текущему сканированию."""
     delta = datetime.datetime.today() - datetime.datetime.fromtimestamp(date_file_new)
-    return f"{delta.days}д. {(datetime.datetime.utcfromtimestamp(0) + delta).strftime('%Hч. %Mмин.')}"
+    return f"{delta.days}d. {(datetime.datetime.utcfromtimestamp(0) + delta).strftime('%Hh. %Mm.')}"
 
 
 def parsing(diff=False):
@@ -71,7 +71,7 @@ def parsing(diff=False):
         req = my_session.get(f'https://api.github.com/repos/{repo_api}', headers=head, timeout=6)
         r = req.json()
     except Exception:
-        console.print('[bold red]Ошибка сети![/bold red]')
+        console.print('[bold red]Network error![/bold red]')
         win_exit()
         sys.exit()
 
@@ -81,15 +81,15 @@ def parsing(diff=False):
         stars = int(r.get("stargazers_count"))
         pages = (stars // 100) + 1
     except Exception:
-        console.print("\n[bold red]Внимание! Вероятно, превышен лимит API, блокировка будет снята предположительно:",
+        console.print("\n[bold red]Attention! The API limit has probably been exceeded, the block will presumably be lifted:",
                       time.strftime('%Y-%m-%d_%H:%M', time.localtime(int(req.headers.get('X-RateLimit-Reset')) + 60)))
-        console.print(Panel.fit("Ограничения: ~лимит 30 запросов или 6000 звезд/час", title="Github API"))
+        console.print(Panel.fit("Limitations: ~limit 30 requests or 6000 stars/hour", title="Github API"))
         win_exit()
         sys.exit()
 
 # Вывод на печать звезд и описание проекта (если присутствует).
-    title_repo = "Описание репозитория отсутствует" if r.get('description') is None else r.get('description')
-    console.print(f"[green]\n{title_repo}\n[bold green]Github-рейтинг:[/bold green] {stars} звезд\n")
+    title_repo = "No repository description available" if r.get('description') is None else r.get('description')
+    console.print(f"[green]\n{title_repo}\n[bold green]Github-rating::[/bold green] {stars} stars\n")
 
 # Настройка визуализации прогресса.
     progress = Progress(TimeElapsedColumn(), SpinnerColumn(spinner_name='earth'),
@@ -111,7 +111,7 @@ def parsing(diff=False):
                 for num in r:
                     lst_new.append(num.get("login"))
             except Exception:
-                console.print('\n[bold red]Сбой!')
+                console.print('\n[bold red]Crash!!')
                 win_exit()
                 sys.exit()    
 
@@ -127,9 +127,9 @@ def parsing(diff=False):
         diff_lst_up = list(set(lst_new) - set(lst_old)) # прибавление звезд.
 
         if bool(diff_lst_dn) is False:
-            console.print("[bold black on white]убывание звезд не обнаружено")
+            console.print("[bold black on white]gone stars not detected")
         if bool(diff_lst_up) is False:
-            console.print("[bold black on white]ПРИБАВЛЕНИЕ звезд не обнаружено")
+            console.print("[bold black on white]ADDING stars not detected")
 
         if not any([bool(diff_lst_dn), bool(diff_lst_up)]):
             print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec.') # печать времени исполнения скрипта.
@@ -140,13 +140,13 @@ def parsing(diff=False):
             per_stars_up = round(len(diff_lst_up) * 100 / stars, 2) # расчет % соотношения прибавления звезд к общему рейтингу. 
 
 # Настройка таблиц для вывода на печать в CLI.
-            table_dn = Table(title=f"\n[yellow]Снятые звезды (-{per_stars_dn}%)\nза последние: {dif_time()}[/yellow]",
+            table_dn = Table(title=f"\n[yellow]Gone stars (-{per_stars_dn}%)\nin the last: {dif_time()}[/yellow]",
                              title_justify="center", header_style='yellow', style="yellow")
             table_dn.row_styles = ["none", "dim"]
             table_dn.add_column("N", justify="left", style="yellow", no_wrap=True)
             table_dn.add_column("gone stars", justify="left", style="yellow", no_wrap=True)
 
-            table_up = Table(title=f"\n[cyan]Добавленные звезды (+{per_stars_up}%)\nза последние: {dif_time()}[/cyan]",
+            table_up = Table(title=f"\n[cyan]New stars (+{per_stars_up}%)\nin the last: {dif_time()}[/cyan]",
                              title_justify="center", header_style='cyan', style="cyan")
             table_up.row_styles = ["none", "dim"]
             table_up.add_column("N", justify="left", style="cyan", no_wrap=True)
@@ -154,7 +154,7 @@ def parsing(diff=False):
 
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
             with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
-                file_html.write(f"<!DOCTYPE html>\n<html lang='ru'>\n\n<head>\n<title>💫({repo}) HTML-отчет</title>\n" + \
+                file_html.write(f"<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n<title>💫({repo}) HTML-reeport</title>\n" + \
                                 "<meta charset='utf-8'>\n<style>\n.textcols {white-space: nowrap}\n" + \
                                 ".textcols-item {white-space: normal; display: inline-block; width: 48%; " + \
                                 "vertical-align: top; background: #fff2e1}\n" + \
@@ -164,7 +164,7 @@ def parsing(diff=False):
                                 "transition: transform 0.15s}\n</style>\n</head>\n\n<body>\n" + \
                                 f"<h2 align='center' style='text-shadow: 0px 0px 13px #84d2ca' >{url_repo}</h2>\n" + \
                                 "<div class='textcols'>\n<div class='textcols-item'>\n" + \
-                                f"<h4 style='color:#CC3333'>💫 Снятые звезды (-{per_stars_dn}%):</h4>\n")
+                                f"<h4 style='color:#CC3333'>💫 Gone stars (-{per_stars_dn}%):</h4>\n")
 
                 if bool(diff_lst_dn):
                     file_html.write("<ol>")
@@ -175,7 +175,7 @@ def parsing(diff=False):
                     file_html.write("\n</ol>\n")
 
                 file_html.write(f"</div>\n\n<div class='textcols-item'>\n<h4 style='color:#32CD32'>" + \
-                                f"🌟 Добавленные звезды (+{per_stars_up}%):</h4>\n")
+                                f"🌟 New stars (+{per_stars_up}%):</h4>\n")
 
                 if bool(diff_lst_up):
                     file_html.write("<ol>")
@@ -185,18 +185,18 @@ def parsing(diff=False):
                                         f"href='https://github.com/{username}'>{username}</a></span></li>")
                     file_html.write("\n</ol>\n")
 
-                file_html.write("</div>\n</div>\n\n<br>\n<a " + \
-                                "href='https://codeby.net/threads/konkurs-avtorskix-statej-2024.83387/' target='blank'><img src=" + \
-                                "https://codeby.net/attachments/1200x675_konkurs_avtorov_montazhnaja_oblast_1_kopija_5-jpg.74724/ " + \
-                                "alt='Программа написана специально для конкурса Codeby (май 2024)' width='600' class='pic'></a>\n\n")
+                file_html.write("</div>\n</div>\n\n<br>\n<a href='" + \
+                                "https://github.com/snooppr/shotstars/tree/main' target='blank'><img src=" + \
+                                "https://raw.githubusercontent.com/snooppr/shotstars/main/images/stars.jpg " + \
+                                "alt='The program was written for an article competition' width='600' class='pic'></a>\n\n")
                 file_html.write("<span style='color:gray; text-shadow: 0px 0px 20px #333333'>" + \
-                                "<small><small>╭📅 Изменения за прошедшие " + \
+                                "<small><small>╭📅 Changes over the past " + \
                                 f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
                                 "</small></small></span>\n\n<p style='color: gray'><small><small>" + \
-                                "ПО разработано на конкурс от «codeby.net»<br>©Автор <a href='https://github.com/snooppr' " + \
+                                "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
                                 "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
                                 "alt='' height='30' width='30'/>🪙</a><a href='https://yoomoney.ru/to/4100111364257544' " + \
-                                "target='blank' title='Прога оказалась полезной? Поддержи финансово разработчика.'>donate" + \
+                                "target='blank' title='Was the program useful? Support the developer financially.'>donate" + \
                                 "</a></small></small></p>\n\n</body>\n</html>")
 
             if bool(diff_lst_dn):
@@ -216,23 +216,23 @@ def parsing(diff=False):
 if __name__ == '__main__':
     try:
         if len(url_repo) == 0:
-            console.print("[bold red]'enter' -> выход")
+            console.print("[bold red]'enter' -> exit")
         elif len(url_repo) < 18 or 'github.com' not in url_repo:
-            console.print("[bold red]Предоставлена некорректная ссылка на репозиторий")
+            console.print("[bold red]Incorrect repository link provided")
             shutil.rmtree(path, ignore_errors=True)
             win_exit()
         elif os.path.exists(f"{path}/new.txt"):
             date_file_new = os.path.getmtime(f"{path}/new.txt")
             date = time.strftime('%Y-%m-%d_%H:%M', time.localtime(date_file_new))
-            console.print(f"\nПоследняя проверка репозитория '{repo}' выполнялась ->  {date}")
+            console.print(f"\nRepository '{repo}' was last checked ->  {date}")
             a = shutil.copy(f"{path}/new.txt", f"{path}/old.txt")
             parsing(diff=True)
         else:
-            console.print(f"\n[bold green]В БД для отслеживания добавлен новый репозиторий: '{repo}'.\n" + \
-                          "При последующем/повторном сканировании репозитория 'ShotStars' будет пытаться вычислять звезды.")
+            console.print(f"\n[bold green]A new repository has been added to the tracking database: '{repo}'.\n" + \
+                          "On subsequent/re-scanning of the repository, 'ShotStars' will attempt to calculate stars.")
             parsing()
     except KeyboardInterrupt:
-        console.print(f"\n[bold red]Прерывание [italic][/bold red]")
+        console.print(f"\n[bold red]Interrupt [italic][/bold red]")
         if Windows:
             os.kill(os.getpid(), signal.SIGBREAK)
         if Linux:
