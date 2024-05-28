@@ -17,16 +17,18 @@ pip install requests rich
 python shot_stars.py
 ```
 
-**Ready-made builds are provided for OS GNU/Linux & Windows & Termux (Python is not required)**  
+**Ready-made "shotstars" builds are provided for OS GNU/Linux & Windows & Termux (Python is not required)**  
 ⬇️[Download shotstars](https://github.com/snooppr/shotstars/releases "download a ready-made assembly for Windows; GNU/Linux or Termux")  
 
  ---
 
 **"shotstars" supports simulation of results.**  
+A documented software hack - or side function designed to test the script on dead/stable repositories without star movement.  
 To simulate the process, the user must scan the new repository once,   
-adding it to the database; randomly delete and add any lines to a file (OS GNU/Linux and Termux)  
+adding it to the database; randomly delete and add any lines to a file  
+(OS GNU/Linux and Termux):    
 `/home/{user}/ShotStars/results/{repo}/new.txt`  
-(OS Windows)  
+(OS Windows):  
 `C:\Users\{User}\AppData\Local\ShotStars\result\{repo}\new.txt`;  
 run a second scan of the same repository.  
 
