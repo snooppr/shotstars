@@ -44,15 +44,15 @@ There are restrictions from Github 【6000 stars/hour from one IP address】, re
 <details>
 <summary> 👈 Screenshot gallery </summary>  
 
-### 1. shotstars for windows 7  
+### 1. Shotstars for Windows 7  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Win.png" />  
 
 
-### 2. shotstars for GNU/Linux  
+### 2. Shotstars for GNU/Linux  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Linux.gif" />  
 
 
-### 3. shotstars for Termux html report  
+### 3. Shotstars for Android/Termux html-report  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html%20report.png" />  
 
 </details>
