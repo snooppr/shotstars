@@ -3,7 +3,7 @@
 ********
 **v0.2**
 ********
-— You can install the Shotstars package using pip.
+— You can install the Shotstars package using pip ($ pip install shotstars).
 
 — The script's operation has been accelerated several times due to task parallelization.
 
@@ -22,10 +22,12 @@
   importantly, a count of duplicate "usernames" that have repeatedly added or removed stars in the
   monitored repository is kept.
 
-— A new metric has been added to CLI/HTML reports: "project creation date"; "repository rating and
-  project description" (if present) have also been added to the html-report.
+— Added a new metric: the real date of creation of the project (sometimes the date of creation of 
+  the project can be faked using commits, deceiving users, Shotstars cannot be deceived).
+  The html report also added: rating; the real date of creation of the project and description of 
+  the project (if present).
   
-— Added random "User-Agent" for requests.
+— Added random "User-Agent" for http requests.
 
 — In case of using old version of Python3.7 on OS Android/Termux or due to limitations of 
   new versions of OS Android fast processes are replaced by safe slow threads.
