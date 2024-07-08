@@ -1,0 +1,430 @@
+#! /usr/bin/env python3
+# Copyright (c) 2024 <snoopproject@protonmail.com>
+
+import datetime
+import os
+import random
+import requests
+import shutil
+import signal
+import sys
+import time
+import webbrowser
+
+from collections import Counter
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed, TimeoutError
+from multiprocessing import active_children
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+
+
+console = Console()
+image = os.path.join(os.path.dirname(__file__), 'stars.jpg')
+Android_lame_workhorse = False
+Android = True if hasattr(sys, 'getandroidapilevel') else False
+Windows = True if sys.platform == 'win32' else False
+Linux = True if Android is False and Windows is False else False
+
+
+console.print("""[yellow]
+ ____  _           _     ____  _                 
+/ ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___ 
+\___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
+ ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.2, author: https://github.com/snooppr
+""")
+
+try:
+    url_repo = input("Enter url (Repository On Github): ")
+except KeyboardInterrupt:
+    console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
+    sys.exit()
+repo = url_repo.rsplit(sep='/', maxsplit=1)[-1]
+repo_api = '/'.join(url_repo.rsplit(sep='/', maxsplit=2)[-2:])
+
+time_start = time.perf_counter()
+
+# Создание каталогов для репозиториев.
+if Windows:
+    path = os.environ['LOCALAPPDATA'] + f"\\ShotStars\\results\\{repo}"
+else:
+    path = os.environ['HOME'] + f"/ShotStars/results/{repo}"
+os.makedirs(path, exist_ok=True)
+
+# Функции...
+def main_cli():
+    try:
+        if len(url_repo) == 0:
+            console.print("[bold red]'enter' -> exit")
+            win_exit()
+        elif len(url_repo) < 18 or 'github.com' not in url_repo:
+            console.print("[bold red]Incorrect repository link provided")
+            shutil.rmtree(path, ignore_errors=True)
+            win_exit()
+        elif os.path.exists(f"{path}/new.txt"):
+            global date_file_new, date
+            date_file_new = os.path.getmtime(f"{path}/new.txt")
+            date = time.strftime('%Y-%m-%d_%H:%M', time.localtime(date_file_new))
+            console.print(f"\nRepository '{repo}' was last checked ->  {date}")
+            a = shutil.copy(f"{path}/new.txt", f"{path}/old.txt")
+            if os.path.isfile(f"{path}/all_gone_stars.html") is False:
+                html_mark(all_stars=f"{path}/all_gone_stars.html")
+            if os.path.isfile(f"{path}/all_new_stars.html") is False:
+                html_mark(all_stars=f"{path}/all_new_stars.html")
+            if os.path.isfile(f"{path}/stars.jpg") is False:
+                shutil.copy(image, f"{path}/stars.jpg")
+                if Linux: # снятие исполняемого бита для shotstars_cli.bin build версии.
+                    os.chmod(f"{path}/stars.jpg", 0o644)
+            parsing(diff=True)
+        else:
+            console.print(f"\n<[bold magenta]EN[/bold magenta]>[bold green] A new repository has been added to the tracking " + \
+                          f"database: '[/bold green][cyan]{repo}[/cyan][bold green]'.\nOn subsequent/re-scanning of the " + \
+                          f"repository, 'ShotStars' will attempt to calculate stars.[/bold green]" + \
+                          f"\n<[bold magenta]RU[/bold magenta]>[bold green] В БД для отслеживания добавлен новый репозиторий: " + \
+                          f"'[/bold green][cyan]{repo}[/cyan][bold green]'.\nПри последующем/повторном сканировании репозитория " + \
+                          f"'ShotStars' будет пытаться вычислять звезды.[/bold green]", highlight=False)
+            parsing()
+    except KeyboardInterrupt:
+        console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
+        if Windows:
+            os.kill(os.getpid(), signal.SIGBREAK)
+        elif Android_lame_workhorse:
+            os.kill(os.getpid(), signal.SIGKILL)
+        else:
+            for child in active_children():
+                child.terminate()
+                time.sleep(0.06)  
+
+
+def win_exit():
+    """
+    Удержание окна консоли скомпилированной версии 'shotstars.exe' для OS Windows.
+    Сначала цветной 'print', потом чистый 'input', иначе прогресс в некоторых случаях может перекрывать сообщение.
+    """
+    if Windows:
+        console.print("\nplease key <ENTER> --> exit")
+        input("")
+        sys.exit()
+    else:
+        sys.exit()
+
+
+def dif_time():
+    """Диапазон прошедшего времени: от последнего сканирования к текущему сканированию."""
+    delta = datetime.datetime.today() - datetime.datetime.fromtimestamp(date_file_new)
+    return f"{delta.days}d. {(datetime.datetime.utcfromtimestamp(0) + delta).strftime('%Hh. %Mm.')}"
+
+
+def limited(req, proc=False):
+    """Расчет времени снятия лимита Github-API."""
+    headers_time = int(req.headers.get('X-RateLimit-Reset')) + 60
+    minut = datetime.datetime.fromtimestamp(headers_time) - datetime.datetime.today()
+    minut = int(minut.seconds / 60)
+    console.print("\n[bold red]Attention! The API limit has probably been exceeded, the block will presumably be lifted:",
+                    time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
+    console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API"))
+
+    if Windows:
+        win_exit()
+
+    if proc:
+        for child in active_children():
+            child.terminate()
+            time.sleep(0.06)  
+
+    win_exit() # если Android/bug перешел с процессов на потоки или Linux лишь 1 процесс: репо не найден.
+
+
+def timeout():
+    date = datetime.datetime.today()
+    return f"{date.hour}h:{date.minute}m"
+
+
+def html_mark(all_stars):
+    with open(all_stars, "w", encoding="utf-8") as f_g_his:
+        f_g_his.write("""<!DOCTYPE html>\n<html lang='en'>\n\n
+<head>
+<title> HTML-history</title>
+<meta charset='utf-8'>
+<style>
+.color1 {
+ color: #9345a1;
+}
+.color2 {
+ color: #6148e0;
+}
+.shad{display: inline-block}
+.shad:hover{text-shadow: 0px 0px 14px #6495ED; transform: scale(1.1); transition: transform 0.15s}
+</style>
+</head>
+<body style="background-color: #c0c0c0">
+
+<h2 align='center'>_________Total Stars/Date_________</h2>\n""")
+
+
+def html_rec(file_html, diff_lst, table):
+    file_html.write("<ol>")
+
+    for N, username in enumerate(diff_lst, 1):
+        table.add_row(f"{N}.", f'https://github.com/{username}')
+        file_html.write(f"\n<li><span class='shad'><a target='_blank' " + \
+                        f"href='https://github.com/{username}'>{username}</a></span></li>")
+    file_html.write("\n</ol>")
+    return table
+
+
+def gener_his_html(diff_lst_dn, html_name, title, stars):
+    """Создание html-страниц всей истории сканирований на предмет убывания/прибавления звезд/статистики."""
+    with open(html_name, "r", encoding="utf-8") as fr_gone_html:
+        f_str = fr_gone_html.read()
+        f_lst = f_str.splitlines()
+# Суммарный расчет метрик строки заголовка.
+        if ' :: ' in f_str:
+            date_days_old = f_str.split(sep=":: <span class='color2'>", maxsplit=1)[1].split("_")[0]
+            date_all_delta = (datetime.datetime.today() - datetime.datetime.strptime(date_days_old, "%Y-%m-%d")).days
+        else:
+            date_all_delta = "1 scan"
+
+        all_gone_stars = len(diff_lst_dn)
+
+        for line in f_lst:
+            if 'users__' in line:
+                dig_tag = line.split(sep='users__', maxsplit=1)[1]
+                all_gone_stars += int("".join(dig for dig in list(dig_tag) if dig.isdigit()))
+
+        per_dn_all = round(all_gone_stars * 100 / stars, 2)
+
+        SN = "+" if "new" in html_name else "-"
+        S = "🌟" if "new" in html_name else "💫"
+        title_gone_stars = title + f"{all_gone_stars} stars ({SN}{per_dn_all}%)␥{date_all_delta} days_________{S}</h2>"
+
+        for i in f_lst:
+            if "_________Total" in i:
+                index_title = f_lst.index(i)
+                f_lst[index_title] = title_gone_stars
+            if "</body></html>" in i:
+                index_markup = f_lst.index(i)
+                f_lst[index_markup] = ''
+            if "<h3>Duplicate_Users" in i:
+                index_dup = f_lst.index(i)
+                f_lst[index_dup] = ''
+# Расчет дубликатов пользователей.
+    user_his = [user.rsplit("</a></span></li>")[0].rsplit(">", 1)[1] for user in f_lst if "</a></span></li>" in user]
+    user_his.extend(diff_lst_dn)
+    dup_lst = Counter([i for i in user_his if user_his.count(i) > 1])
+
+    cnt = []
+    for k, v in sorted(dup_lst.items(), key=lambda x: x[1], reverse=True):
+        cnt.append(f"(<a href='https://github.com/{k}'>{k}</a> ⇔ <i>{v}</i>)")
+    str_dup = "<p style='color: #f55700'><h4>None</h4></p>" if bool(cnt) is False else f"<p style='color: #cb2a00'>{'; '.join(cnt)}</p>"
+
+
+    NG = "New" if "new" in html_name else "Gone"
+    with open(html_name, "w", encoding="utf-8") as fw_gone_html:
+        fw_gone_html.write('\n'.join(f_lst))
+        fw_gone_html.write(f"\n📅 <i>Date Range Of {NG} Stars</i> <b>【<span class='color1'>{dif_time()}</span></b> " + \
+                            f":: <span class='color2'>{date} — {time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
+                            f"</span><b>】</b> users__<b>{len(diff_lst_dn)}</b>\n<ol>")
+        for username in diff_lst_dn:
+            fw_gone_html.write(f"\n<li><span class='shad'><a target='_blank' " + \
+                                f"href='https://github.com/{username}'>{username}</a></span></li>")
+
+        fw_gone_html.write(f"\n</ol>\n<h3>Duplicate_Users:</h3>{str_dup}")
+        fw_gone_html.write("\n</body></html>")
+
+
+def parsing(diff=False):
+    """
+    Так как сетевые запросы многократно обращаются к одному хосту, то активирована поддержка сессии для поддержания 
+    постоянного TCP-соединения (увеличение производительности). В случае неудачного подключения или сбоя HTTPAdapter
+    реализует автоматически повторные попытки подключения. Сетевые запросы к API идут параллельно, получение
+    результатов по мере поступления, а не по порядку.
+    """
+    my_session = requests.Session()
+    repeat = requests.adapters.HTTPAdapter(pool_connections=70, pool_maxsize=60, max_retries=4)
+    my_session.mount('https://', repeat)
+
+    head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
+    try:
+        req = my_session.get(f'https://api.github.com/repos/{repo_api}', headers=head, timeout=6)
+        r = req.json()
+    except Exception:
+        console.print('[bold red]Network error![/bold red]')
+        win_exit()
+
+# Расчет кол-ва страниц для итераций.
+# В случае сбоя проверка заголовка 'X-RateLimit-Reset' от сервера на предмет расчета времени до снятия ограничений. 
+    try:
+        if r.get('status') or (r.get('message') and "Not Found" in r.get('message')):
+            raise ValueError("")
+        stars = int(r.get("stargazers_count"))
+        pages = (stars // 100) + 1
+    except ValueError as err:
+        console.print(f"\n[bold red]Check the entered[/bold red] [red]url[/red][bold red], " + \
+                      f"it seems that such a repository does not exist:\n<[/bold red] [yellow]{url_repo}[/yellow] " + \
+                      f"[bold red]>.[/bold red]", highlight=False)
+        shutil.rmtree(path, ignore_errors=True)
+        win_exit()
+    except Exception:
+        limited(req)
+
+# Вывод на печать кол-ва звезд, дату создания проекта и описание (если присутствует).
+    try:
+        created_at = "N/O" if r.get('created_at') is None else r.get('created_at').split("T")[0]
+        title_repo = "No repository description available" if r.get('description') is None else r.get('description')
+        console.print(f"\n[cyan]Github-rating::[/cyan] {stars} stars" + \
+                      f"\n[cyan]Date-of-creation::[/cyan] {created_at}" + \
+                      f"\n[cyan]Repository-description::[/cyan] {title_repo}\n", highlight=False)
+    except Exception:
+        console.print('[red]Check Github api (buggy).\nReport issue to developer: "https://github.com/snooppr/shotstars/issues"')
+        win_exit()
+
+    if pages > 60:
+        console.print("\n[bold red][!] Shotstars does not process repositories with stars > 6K+[/bold red]")
+        shutil.rmtree(path, ignore_errors=True)
+        win_exit()
+
+# Обход и сохранение всех user's, которые ставили/снимали звезды репозиторию.
+    if Windows:
+        tread_max = pages if pages <= (os.cpu_count() * 3) else (os.cpu_count() * 3 if os.cpu_count() <= 36 else 36)
+        executor = ThreadPoolExecutor(max_workers=tread_max)
+    elif Linux:
+        proc_max = pages if pages <= 20 else 20
+        executor = ProcessPoolExecutor(max_workers=proc_max)
+    elif Android:
+        try:
+            executor = ProcessPoolExecutor(max_workers=os.cpu_count() * 2)
+        except Exception:
+            global Android_lame_workhorse
+            Android_lame_workhorse = True
+            executor = ThreadPoolExecutor(max_workers=8)
+
+    spinner = 'earth' if diff else 'material'
+    lst_new, futures = [], []
+    with console.status("[cyan]Working", spinner=spinner):
+        for page in range(1, pages+1):
+            futures.append(executor.submit(my_session.get, headers=head, timeout=6,
+                                           url=f'https://api.github.com/repos/{repo_api}/stargazers?per_page=100&page={page}'))
+        try:
+            for future in as_completed(futures):
+                data = future.result(timeout=12)
+                data = data.json()
+                for num in data:
+                    lst_new.append(num.get("login"))
+        except Exception:
+            limited(req, proc=True)
+
+        try:
+            executor.shutdown()
+        except Exception:
+            pass
+
+    with open(f"{path}/new.txt", "w", encoding="utf-8") as f_w:
+        print(*lst_new, file=f_w, sep="\n")
+
+# Сравнение списков пользователей после временных сканирований для обнаружения в них изменений.
+    if diff:
+        with open(f"{path}/old.txt", "r") as f_r:
+            lst_old = f_r.read().split()
+
+        diff_lst_dn = list(set(lst_old) - set(lst_new)) # убывание звезд.
+        diff_lst_up = list(set(lst_new) - set(lst_old)) # прибавление звезд.
+
+        if bool(diff_lst_dn) is False:
+            console.print("[bold black on white]GONE stars not detected")
+        if bool(diff_lst_up) is False:
+            console.print("[bold black on white]NEW stars not detected")
+
+        if not any([bool(diff_lst_dn), bool(diff_lst_up)]):
+            print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout()) # печать времени исполнения скрипта.
+            win_exit()
+        elif bool(diff_lst_dn) or bool(diff_lst_up):
+            per_stars_dn = round(len(diff_lst_dn) * 100 / stars, 2) # расчет % соотношения потерь звезд к общему рейтингу. 
+            per_stars_up = round(len(diff_lst_up) * 100 / stars, 2) # расчет % соотношения прибавления звезд к общему рейтингу. 
+
+# Настройка таблиц для вывода на печать в CLI.
+            table_dn = Table(title=f"\n[yellow]Gone stars (-{per_stars_dn}%)\nin the last: {dif_time()}[/yellow]",
+                             title_justify="center", header_style='yellow', style="yellow", show_lines=True)
+            table_dn.row_styles = ["none", "dim"]
+            table_dn.add_column("N", justify="left", style="yellow", no_wrap=True)
+            table_dn.add_column("GONE STARS", justify="left", style="yellow", no_wrap=False)
+
+            table_up = Table(title=f"\n[cyan]New stars (+{per_stars_up}%)\nin the last: {dif_time()}[/cyan]",
+                             title_justify="center", header_style='cyan', style="cyan", show_lines=True)
+            table_up.row_styles = ["none", "dim"]
+            table_up.add_column("N", justify="left", style="cyan", no_wrap=True)
+            table_up.add_column("NEW STARS", justify="left", style="cyan", no_wrap=False)
+
+# Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
+            file_image = f"file://{path}/stars.jpg".replace("\\", "/") if Windows else f"file://{path}/stars.jpg"
+            with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
+                file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-reeport</title>\n" + \
+                                "<meta charset='utf-8'>\n<style>\n" + \
+                                f"body {{background-image: url('{file_image}'); background-size: cover;\n" + \
+"""background-repeat: no-repeat}
+.but{display:inline-block; cursor: pointer; font-size:20px; text-decoration:none; padding:10px 20px; color:#2a21db; background:#bec0cc; border-radius:19px; border:2px solid #354251}
+.but:hover{background:#354251; color:#ffffff; border:2px solid #354251; transition: all 0.2s ease;}.textcols {white-space: nowrap}
+.textcols-item {white-space: normal; display: inline-block; width: 47.7%; vertical-align: top; background: #595c61; opacity: 0.9;}
+.textcols .textcols-item:first-child {margin-right: 4.3%}
+.donate{white-space: normal; display: inline-block; background: #595c61; opacity: 0.8}
+.pic {float: right}
+.shad{display: inline-block}
+.shad:hover{text-shadow: 0px 0px 14px #6495ED; transform: scale(1.1);
+transition: transform 0.15s}
+</style>
+</head>\n\n<body link="#6cccfb">\n""")
+                file_html.write(f"<h2 align='center' style='text-shadow: 0px 0px 13px #84d2ca' >{url_repo}</h2>\n" + \
+                                "<div class='textcols'>\n<div class='textcols-item'>\n" + \
+                                f"<h4 style='color:#32CD32'>🌟 New stars (+{per_stars_up}%):</h4>\n")
+
+                if bool(diff_lst_up):
+                    table_up = html_rec(file_html, diff_lst_up, table_up)
+
+                file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
+                                "title='open all history adding stars'>open all history</a>\n" + \
+                                "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
+                                f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
+
+                if bool(diff_lst_dn):
+                    table_dn = html_rec(file_html, diff_lst_dn, table_dn)
+
+                file_html.write(f"\n<a class='but' href='file://{path}/all_gone_stars.html' " + \
+                                "title='open all history gone stars'>open all history</a>\n" + \
+                                "</div>\n</div>\n\n<br>\n<span class='donate' " + \
+                                "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
+                                f"<small><small>\nGithub-rating:: {stars} stars<br>\nDate-of-creation:: {created_at}<br>\n" + \
+                                f"Repository-description:: {title_repo}</small></small></span><br>\n" + \
+                                "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
+                                "<small><small>╭📅 Changes over the past " + \
+                                f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
+                                "</small></small></span>\n\n<p style='color: white'><small>" + \
+                                "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
+                                "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
+                                "alt='' height='40' width='40'></a></small></p>\n<p class='donate'>\n" + \
+                                "<a href='https://pay.cloudtips.ru/p/e4f3e65f' target='blank' title='Was the program useful? " + \
+                                "Support the developer financially.'>💳 DONATE</a></p>\n\n</body>\n</html>")
+
+# Сохранение/txt-отчета по убывающим звездам на длинной дистанции. Отчеты в CLI-таблицах.
+            if bool(diff_lst_dn):
+                gener_his_html(diff_lst_dn, html_name=f"{path}/all_gone_stars.html", stars=stars,
+                               title = f"<h2 align='center'>💫_________Total Gone Stars/Date ⇢ ")
+                console.print(table_dn)
+
+            if bool(diff_lst_up):
+                gener_his_html(diff_lst_up, html_name=f"{path}/all_new_stars.html", stars=stars,
+                               title = f"<h2 align='center'>🌟_________Total New Stars/Date ↝ ")
+                console.print(table_up)
+
+            try:
+                webbrowser.open(f"file://{path}/report.html")
+            except Exception:
+                console.print("[bold red]It is impossible to open the web browser due to problems with the operating system.")
+
+    print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout())
+
+    win_exit()
+
+# Arbeiten.
+if __name__ == '__main__':
+    main_cli()

@@ -4,7 +4,7 @@ A tool to track waning stars on Github.
 > [!IMPORTANT]  
 >Github does not provide users with statistics on disappearing stars in the repository. "Shotstars" is trying to resolve this issue and provide such information to the user.  
 
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux%20logo.png" />
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />
 
 The purpose of the “Shotstars” script is to find accounts from which they once gave stars to repositories,  
 but then they were removed and provide such an analysis in a human-readable form (it doesn’t matter,  
@@ -15,8 +15,8 @@ The secondary function of the software is to monitor the thrown stars also at a 
 
 ## ⌨️ Native Installation  
 ```
-pip install requests rich
-python shot_stars.py
+$ pip install shotstars
+$ shotstars_cli
 ```
 
 **Ready-made "Shotstars" builds are provided for OS GNU/Linux & Windows & Termux (Python is not required)**  
@@ -48,16 +48,24 @@ There are restrictions from Github 【6000 stars/hour from one IP address】, re
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Win.png" />  
 
 
-### 2. Shotstars for GNU/Linux  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Linux.gif" />  
+### 2 Shotstars HTML-report  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html-report.png" />  
 
 
-### 3. Shotstars for Android/Termux html-report  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html%20report.png" />  
+### 3 Shotstars for Android/Termux  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux.png" />  
+
+
+### 4 Shotstars Limit Github/API  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Limit.png" />  
 
 </details>
 
  ---
 
 ## 🇷🇺 TL;DR  
-Github не предоставляет пользователям статистику по исчезающим звездам в репозитории. "Shotstars" пытается решить этот вопрос и предоставить такую информацию пользователю. Существуют ограничения со стороны Github 【**6000 звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать. 
+Github не предоставляет пользователям статистику по исчезающим звездам в репозитории.
+"Shotstars" пытается решить этот вопрос и предоставить такую информацию пользователю.
+Утилита также отслеживает прибавление звезд, аккумулирует результаты/статистику и мониторит дублирующую активность username's.
+Существуют ограничения со стороны Github 【**6000 звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.
+Парсить можно, как свои, так и сторонние репозитории (регистрация/авторизация/токены не требуются).  
