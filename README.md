@@ -41,14 +41,14 @@ run a second scan of the same repository.
 ## ⛔️ Github restrictions  
 There are restrictions from Github 【6000 stars/hour from one IP address】, repositories with more than 6K stars do not physically make sense to scan.  
 In Shotstars v0.3+ you can bypass the restrictions and scan repositories up to 500K stars/hour.  
-Steps:  
-1) Register for an account on Github (if you don’t already have one);  
-2) Open your profile -> developer settings -> personal acces tokens -> generate new token.  
-3) Insert the resulting token (string) into in the field instead of None  
-GNU/Linux & Android/Termux:  
+Steps::  
+1) register for an account on Github (if you don’t already have one);  
+2) open your profile -> developer settings -> personal acces tokens -> generate new token;  
+3) insert the resulting token (string) into in the field instead of None  
+GNU/Linux & Android/Termux::  
 `/home/{user}/ShotStars/results/config.ini`  
-OS Windows:  
-`C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`  
+OS Windows::  
+`C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`.  
 
 The Github token belongs to the user, is stored locally and is not transferred or downloaded anywhere.  
 You can parse both your own and third-party repositories (by default, registration/authorization/token are not required).  
@@ -84,13 +84,13 @@ Github не предоставляет пользователям статист
 Существуют ограничения со стороны Github 【**6000 звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.  
 В Shotstars v0.3+ ограничения можно обойти и сканировать репозитории до 500K звезд/час.  
 Шаги:  
-1) Зарегайте аккаунт на Github (если у вас его еще нет);  
-2) Откройте профиль -> developer settings -> personal acces tokens -> generate new token.  
-3) Полученный токен (строку) вставьте в поле заместо None  
-OS GNU/Linux & Android/Termux:  
+1) зарегистрируйте аккаунт на Github (если у вас его еще нет);  
+2) откройте профиль -> developer settings -> personal acces tokens -> generate new token;  
+3) полученный токен (строку) вставьте в поле заместо None в файл  
+OS GNU/Linux & Android/Termux::  
 `/home/{user}/ShotStars/results/config.ini`  
-OS Windows:  
-`C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`  
+OS Windows::  
+`C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`.  
 
 Github-токен принадлежит пользователю, хранится локально и никуда не передается и не скачивается.  
-Парсить можно, как свои, так и сторонние репозитории (по умолчанию регистрация/авторизация/токен не требуются).  
+Парсить можно, как свои, так и сторонние репозитории *(по умолчанию регистрация/авторизация/токен не требуются)*.  
