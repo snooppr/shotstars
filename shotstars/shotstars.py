@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 # Copyright (c) 2024 <snoopproject@protonmail.com>
 
+import configparser
 import datetime
 import os
 import random
@@ -20,6 +21,7 @@ from rich.table import Table
 
 
 console = Console()
+config = configparser.ConfigParser()
 image = os.path.join(os.path.dirname(__file__), 'stars.jpg')
 Android_lame_workhorse = False
 Android = True if hasattr(sys, 'getandroidapilevel') else False
@@ -32,7 +34,7 @@ console.print("""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___ 
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.2, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.3, author: https://github.com/snooppr
 """)
 
 try:
@@ -52,6 +54,14 @@ else:
     path = os.environ['HOME'] + f"/ShotStars/results/{repo}"
 os.makedirs(path, exist_ok=True)
 
+# Github-token проверка.
+if not os.path.isfile(f"{path.replace(repo, '')}/config.ini"):
+    config.add_section('Shotstars')
+    config.set('Shotstars', 'token', 'None')
+    with open(f"{path.replace(repo, '')}/config.ini", 'w') as config_file:
+        config.write(config_file)
+
+
 # Функции...
 def main_cli():
     try:
@@ -60,13 +70,15 @@ def main_cli():
             win_exit()
         elif len(url_repo) < 18 or 'github.com' not in url_repo:
             console.print("[bold red]Incorrect repository link provided")
-            shutil.rmtree(path, ignore_errors=True)
+            if not os.path.isfile(f"{path}/new.txt"):
+                shutil.rmtree(path, ignore_errors=True)
             win_exit()
         elif os.path.exists(f"{path}/new.txt"):
             global date_file_new, date
             date_file_new = os.path.getmtime(f"{path}/new.txt")
             date = time.strftime('%Y-%m-%d_%H:%M', time.localtime(date_file_new))
-            console.print(f"\nRepository '{repo}' was last checked ->  {date}")
+            d = datetime.datetime.today() - datetime.datetime.fromtimestamp(date_file_new)
+            console.print(f"\nRepository '{repo}' was last checked ->  {date} :: ({d.days}d.)")
             a = shutil.copy(f"{path}/new.txt", f"{path}/old.txt")
             if os.path.isfile(f"{path}/all_gone_stars.html") is False:
                 html_mark(all_stars=f"{path}/all_gone_stars.html")
@@ -116,14 +128,27 @@ def dif_time():
     return f"{delta.days}d. {(datetime.datetime.utcfromtimestamp(0) + delta).strftime('%Hh. %Mm.')}"
 
 
-def limited(req, proc=False):
+def finish(token):
+    """Финишное время и наличие/отсутствие токена"""
+    print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout())
+
+    if token == "None":
+        print("Github token not provided.")
+    elif token != "None":
+        print("Github-token is used!")
+
+
+def limited(req, token, proc=False):
     """Расчет времени снятия лимита Github-API."""
     headers_time = int(req.headers.get('X-RateLimit-Reset')) + 60
     minut = datetime.datetime.fromtimestamp(headers_time) - datetime.datetime.today()
     minut = int(minut.seconds / 60)
     console.print("\n[bold red]Attention! The API limit has probably been exceeded, the block will presumably be lifted:",
                     time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
-    console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API"))
+    if token == "None":
+        console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API"))
+    else:
+        console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="Github API/Token"))
 
     if Windows:
         win_exit()
@@ -245,7 +270,13 @@ def parsing(diff=False):
     repeat = requests.adapters.HTTPAdapter(pool_connections=70, pool_maxsize=60, max_retries=4)
     my_session.mount('https://', repeat)
 
-    head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
+    config.read(f"{path.replace(repo, '')}/config.ini")
+    token = config.get('Shotstars', 'token')
+    if token != "None":
+        head = {'User-Agent': f'Shotstars v0.3', 'Authorization': f'Bearer {token}'}
+    elif token == "None":
+        head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
+
     try:
         req = my_session.get(f'https://api.github.com/repos/{repo_api}', headers=head, timeout=6)
         r = req.json()
@@ -264,10 +295,11 @@ def parsing(diff=False):
         console.print(f"\n[bold red]Check the entered[/bold red] [red]url[/red][bold red], " + \
                       f"it seems that such a repository does not exist:\n<[/bold red] [yellow]{url_repo}[/yellow] " + \
                       f"[bold red]>.[/bold red]", highlight=False)
-        shutil.rmtree(path, ignore_errors=True)
+        if not os.path.isfile(f"{path}/new.txt"):
+            shutil.rmtree(path, ignore_errors=True)
         win_exit()
     except Exception:
-        limited(req)
+        limited(req, token)
 
 # Вывод на печать кол-ва звезд, дату создания проекта и описание (если присутствует).
     try:
@@ -280,8 +312,14 @@ def parsing(diff=False):
         console.print('[red]Check Github api (buggy).\nReport issue to developer: "https://github.com/snooppr/shotstars/issues"')
         win_exit()
 
-    if pages > 60:
-        console.print("\n[bold red][!] Shotstars does not process repositories with stars > 6K+[/bold red]")
+    if token == "None" and pages > 60:
+        console.print("\n[bold yellow][!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
+                      "by default.\nUsing a free github token, the limits are significantly increased (500K+ stars/hour or " + \
+                      "max scanned repository with 40K stars).[/bold yellow]")
+        shutil.rmtree(path, ignore_errors=True)
+        win_exit()
+    elif token != "None" and pages > 400:
+        console.print("\n[bold yellow][!] Using a github token, the maximum crawlable repository on Shotstars is limited to 40K stars.[/bold yellow]")
         shutil.rmtree(path, ignore_errors=True)
         win_exit()
 
@@ -301,19 +339,23 @@ def parsing(diff=False):
             executor = ThreadPoolExecutor(max_workers=8)
 
     spinner = 'earth' if diff else 'material'
-    lst_new, futures = [], []
+    lst_new, futures = [], {}
     with console.status("[cyan]Working", spinner=spinner):
         for page in range(1, pages+1):
-            futures.append(executor.submit(my_session.get, headers=head, timeout=6,
-                                           url=f'https://api.github.com/repos/{repo_api}/stargazers?per_page=100&page={page}'))
+            futures[executor.submit(my_session.get, headers=head, timeout=6,
+                                           url=f'https://api.github.com/repos/{repo_api}/stargazers?per_page=100&page={page}')] = None
         try:
             for future in as_completed(futures):
                 data = future.result(timeout=12)
                 data = data.json()
-                for num in data:
-                    lst_new.append(num.get("login"))
+                try:
+                    for num in data:
+                        lst_new.append(num.get("login"))
+                except Exception:
+                    continue
+                futures.pop(future, None)
         except Exception:
-            limited(req, proc=True)
+            limited(req, token, proc=True)
 
         try:
             executor.shutdown()
@@ -337,7 +379,7 @@ def parsing(diff=False):
             console.print("[bold black on white]NEW stars not detected")
 
         if not any([bool(diff_lst_dn), bool(diff_lst_up)]):
-            print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout()) # печать времени исполнения скрипта.
+            finish(token)
             win_exit()
         elif bool(diff_lst_dn) or bool(diff_lst_up):
             per_stars_dn = round(len(diff_lst_dn) * 100 / stars, 2) # расчет % соотношения потерь звезд к общему рейтингу. 
@@ -421,8 +463,7 @@ transition: transform 0.15s}
             except Exception:
                 console.print("[bold red]It is impossible to open the web browser due to problems with the operating system.")
 
-    print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout())
-
+    finish(token)
     win_exit()
 
 # Arbeiten.

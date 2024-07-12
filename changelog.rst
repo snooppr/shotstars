@@ -3,6 +3,7 @@
 ********
 **v0.2**
 ********
+
 — You can install the Shotstars package using pip ($ pip install shotstars).
 
 — The script's operation has been accelerated several times due to task parallelization.
