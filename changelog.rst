@@ -6,8 +6,9 @@
 
 — The elapsed time in days is added to the date of the last repository scan.
 
-— Added a check to the check for an invalid url/repository, the purpose of which is not to delete
-  the repository if the name of a valid and invalid project intersect.
+— A check has been added to the check for an invalid url/repository, 
+  the purpose of which is not to delete the results of scanning the old repository if the name 
+  of a valid and invalid project intersect.
 
 — Added the ability to bypass restrictions on scanning a repository with more than 6K+ stars
   (requires obtaining a free github-token).

@@ -117,9 +117,8 @@ def win_exit():
     if Windows:
         console.print("\nplease key <ENTER> --> exit")
         input("")
-        sys.exit()
-    else:
-        sys.exit()
+
+    sys.exit()
 
 
 def dif_time():
@@ -162,6 +161,7 @@ def limited(req, token, proc=False):
 
 
 def timeout():
+    """Местное время когда ПО отработало, если получен лимит, удобно в т.ч. и от него вести отсчет снятия ограничений."""
     date = datetime.datetime.today()
     return f"{date.hour}h:{date.minute}m"
 
@@ -343,7 +343,7 @@ def parsing(diff=False):
     with console.status("[cyan]Working", spinner=spinner):
         for page in range(1, pages+1):
             futures[executor.submit(my_session.get, headers=head, timeout=6,
-                                           url=f'https://api.github.com/repos/{repo_api}/stargazers?per_page=100&page={page}')] = None
+                                    url=f'https://api.github.com/repos/{repo_api}/stargazers?per_page=100&page={page}')] = None
         try:
             for future in as_completed(futures):
                 data = future.result(timeout=12)
