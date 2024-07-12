@@ -86,7 +86,7 @@ Github не предоставляет пользователям статист
 Шаги:  
 1) Зарегайте аккаунт на Github (если у вас его еще нет);  
 2) Откройте профиль -> developer settings -> personal acces tokens -> generate new token.  
-3) Полученный токен (строку) вставьте в в поле заместо None  
+3) Полученный токен (строку) вставьте в поле заместо None  
 OS GNU/Linux & Android/Termux:  
 `/home/{user}/ShotStars/results/config.ini`  
 OS Windows:  
