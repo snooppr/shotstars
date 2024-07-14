@@ -30,8 +30,8 @@ Linux = True if Android is False and Windows is False else False
 
 
 console.print("""[yellow]
- ____  _           _     ____  _                 
-/ ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___ 
+ ____  _           _     ____  _
+/ ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
 |____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.3, author: https://github.com/snooppr
@@ -106,7 +106,7 @@ def main_cli():
         else:
             for child in active_children():
                 child.terminate()
-                time.sleep(0.06)  
+                time.sleep(0.06)
 
 
 def win_exit():
@@ -149,15 +149,12 @@ def limited(req, token, proc=False):
     else:
         console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="Github API/Token"))
 
-    if Windows:
-        win_exit()
-
-    if proc:
+    if proc and not Windows:
         for child in active_children():
             child.terminate()
-            time.sleep(0.06)  
+            time.sleep(0.06)
 
-    win_exit() # если Android/bug перешел с процессов на потоки или Linux лишь 1 процесс: репо не найден.
+    win_exit()
 
 
 def timeout():
@@ -261,7 +258,7 @@ def gener_his_html(diff_lst_dn, html_name, title, stars):
 
 def parsing(diff=False):
     """
-    Так как сетевые запросы многократно обращаются к одному хосту, то активирована поддержка сессии для поддержания 
+    Так как сетевые запросы многократно обращаются к одному хосту, то активирована поддержка сессии для поддержания
     постоянного TCP-соединения (увеличение производительности). В случае неудачного подключения или сбоя HTTPAdapter
     реализует автоматически повторные попытки подключения. Сетевые запросы к API идут параллельно, получение
     результатов по мере поступления, а не по порядку.
@@ -285,7 +282,7 @@ def parsing(diff=False):
         win_exit()
 
 # Расчет кол-ва страниц для итераций.
-# В случае сбоя проверка заголовка 'X-RateLimit-Reset' от сервера на предмет расчета времени до снятия ограничений. 
+# В случае сбоя проверка заголовка 'X-RateLimit-Reset' от сервера на предмет расчета времени до снятия ограничений.
     try:
         if r.get('status') or (r.get('message') and "Not Found" in r.get('message')):
             raise ValueError("")
@@ -382,8 +379,8 @@ def parsing(diff=False):
             finish(token)
             win_exit()
         elif bool(diff_lst_dn) or bool(diff_lst_up):
-            per_stars_dn = round(len(diff_lst_dn) * 100 / stars, 2) # расчет % соотношения потерь звезд к общему рейтингу. 
-            per_stars_up = round(len(diff_lst_up) * 100 / stars, 2) # расчет % соотношения прибавления звезд к общему рейтингу. 
+            per_stars_dn = round(len(diff_lst_dn) * 100 / stars, 2) # расчет % соотношения потерь звезд к общему рейтингу.
+            per_stars_up = round(len(diff_lst_up) * 100 / stars, 2) # расчет % соотношения прибавления звезд к общему рейтингу.
 
 # Настройка таблиц для вывода на печать в CLI.
             table_dn = Table(title=f"\n[yellow]Gone stars (-{per_stars_dn}%)\nin the last: {dif_time()}[/yellow]",
