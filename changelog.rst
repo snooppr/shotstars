@@ -1,6 +1,19 @@
 ## Shotstars
 
 ********
+**v0.4**
+********
+
+— Fixed a bug added in v0.3, when encountering a limit without using a token, Shotstars displayed
+  incorrect results for stars, and could not stop the software in time.
+  
+— Typos/spelling corrected.
+
+— Added a notification about the lack of token usage in the limit alert if the github token
+  is not used.
+=================================================================================================
+
+********
 **v0.3**
 ********
 

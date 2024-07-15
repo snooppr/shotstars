@@ -34,7 +34,7 @@ console.print("""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.3, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.4, author: https://github.com/snooppr
 """)
 
 try:
@@ -78,7 +78,7 @@ def main_cli():
             date_file_new = os.path.getmtime(f"{path}/new.txt")
             date = time.strftime('%Y-%m-%d_%H:%M', time.localtime(date_file_new))
             d = datetime.datetime.today() - datetime.datetime.fromtimestamp(date_file_new)
-            console.print(f"\nRepository '{repo}' was last checked ->  {date} :: ({d.days}d.)")
+            console.print(f"\nRepository '{repo}' was last checked ->  {date} :: ({d.days} days)")
             a = shutil.copy(f"{path}/new.txt", f"{path}/old.txt")
             if os.path.isfile(f"{path}/all_gone_stars.html") is False:
                 html_mark(all_stars=f"{path}/all_gone_stars.html")
@@ -128,7 +128,7 @@ def dif_time():
 
 
 def finish(token):
-    """Финишное время и наличие/отсутствие токена"""
+    """Финишное время и наличие/отсутствие токена."""
     print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout())
 
     if token == "None":
@@ -145,9 +145,9 @@ def limited(req, token, proc=False):
     console.print("\n[bold red]Attention! The API limit has probably been exceeded, the block will presumably be lifted:",
                     time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
     if token == "None":
-        console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API"))
+        console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API/No Token"))
     else:
-        console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="Github API/Token"))
+        console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="Github API/Token Used"))
 
     if proc and not Windows:
         for child in active_children():
@@ -345,11 +345,8 @@ def parsing(diff=False):
             for future in as_completed(futures):
                 data = future.result(timeout=12)
                 data = data.json()
-                try:
-                    for num in data:
-                        lst_new.append(num.get("login"))
-                except Exception:
-                    continue
+                for num in data:
+                    lst_new.append(num.get("login"))
                 futures.pop(future, None)
         except Exception:
             limited(req, token, proc=True)
@@ -398,7 +395,7 @@ def parsing(diff=False):
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
             file_image = f"file://{path}/stars.jpg".replace("\\", "/") if Windows else f"file://{path}/stars.jpg"
             with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
-                file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-reeport</title>\n" + \
+                file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
                                 "<meta charset='utf-8'>\n<style>\n" + \
                                 f"body {{background-image: url('{file_image}'); background-size: cover;\n" + \
 """background-repeat: no-repeat}
