@@ -43,7 +43,7 @@ There are restrictions from Github 【6000 stars/hour from one IP address】, re
 In Shotstars v0.3+ you can bypass the restrictions and scan repositories up to 500K stars/hour.  
 Steps::  
 1) register for an account on Github (if you don’t already have one);  
-2) open your profile -> developer settings -> personal acces tokens -> generate new token;  
+2) open your profile -> settings -> developer settings -> personal acces tokens -> generate new token;  
 3) insert the resulting token (string) into in the field instead of None  
 GNU/Linux & Android/Termux::  
 `/home/{user}/ShotStars/results/config.ini`  
@@ -85,7 +85,7 @@ Github не предоставляет пользователям статист
 В Shotstars v0.3+ ограничения можно обойти и сканировать репозитории до 500K звезд/час.  
 Шаги:  
 1) зарегистрируйте аккаунт на Github (если у вас его еще нет);  
-2) откройте профиль -> developer settings -> personal acces tokens -> generate new token;  
+2) откройте профиль -> settings -> developer settings -> personal acces tokens -> generate new token;  
 3) полученный токен (строку) вставьте в поле заместо None в файл  
 OS GNU/Linux & Android/Termux::  
 `/home/{user}/ShotStars/results/config.ini`  
