@@ -39,8 +39,8 @@ run a second scan of the same repository.
  ---
 
 ## ⛔️ Github restrictions  
-There are restrictions from Github 【6K stars/hour from one IP address】, repositories with more than 6K stars do not physically make sense to scan.  
-In Shotstars v0.3+ you can [bypass the restrictions](https://github.com/snooppr/shotstars/issues/3) and scan repositories up to 500K stars/hour.  
+There are restrictions from Github 【**6K stars/hour** from one IP address】, repositories with more than 6K stars do not physically make sense to scan.  
+In Shotstars **v0.3+** you can [bypass the restrictions](https://github.com/snooppr/shotstars/issues/3) and scan repositories up to **500K stars/hour**.  
 Steps:  
 1) register for an account on Github (if you don’t already have one);  
 2) open your profile -> settings -> developer settings -> personal acces tokens -> generate new token;  
@@ -82,7 +82,7 @@ Github не предоставляет пользователям статист
 "Shotstars" пытается решить этот вопрос и предоставить такую информацию пользователю.
 Утилита также отслеживает прибавление звезд, аккумулирует результаты/статистику и мониторит дублирующую активность username's.
 Существуют ограничения со стороны Github 【**6K звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.  
-В Shotstars v0.3+ [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до 500K звезд/час.  
+В Shotstars **v0.3+** [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до **500K звезд/час**.  
 Шаги:  
 1) зарегистрируйте аккаунт на Github (если у вас его еще нет);  
 2) откройте профиль -> settings -> developer settings -> personal acces tokens -> generate new token;  
