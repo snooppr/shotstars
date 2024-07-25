@@ -57,7 +57,7 @@ You can parse both your own and third-party repositories (by default, registrati
 
 ## 💾 Scan history  
 In Shotstars **v0.5+** the scan history is available, now you no longer need to enter or copy/paste the URL each time,
-specify the keyword 'his/history' instead of the repository url and select the previously scanned repository by number.
+specify the keyword `his/history` instead of the repository url and select the previously scanned repository by number.
 
  ---
 
@@ -106,4 +106,4 @@ Github-токен принадлежит пользователю, хранит�
 Парсить можно, как свои, так и сторонние репозитории *(по умолчанию регистрация/авторизация/токен не требуются)*.  
 
 В Shotstars **v0.5+** доступна история сканирований, не нужно теперь каждый раз вводить или копи/пастить url,
-укажите вместо url репозитория ключевое слово 'his/history' и выберите цифрой ранее сканируемый репозиторий.
+укажите вместо url репозитория ключевое слово `his/history` и выберите цифрой ранее сканируемый репозиторий.
