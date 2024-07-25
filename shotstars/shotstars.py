@@ -3,6 +3,7 @@
 
 import configparser
 import datetime
+import json
 import os
 import random
 import requests
@@ -34,37 +35,29 @@ console.print("""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.4, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.5, author: https://github.com/snooppr
 """)
-
-try:
-    url_repo = input("Enter url (Repository On Github): ")
-except KeyboardInterrupt:
-    console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
-    sys.exit()
-repo = url_repo.rsplit(sep='/', maxsplit=1)[-1]
-repo_api = '/'.join(url_repo.rsplit(sep='/', maxsplit=2)[-2:])
-
-time_start = time.perf_counter()
-
-# Создание каталогов для репозиториев.
-if Windows:
-    path = os.environ['LOCALAPPDATA'] + f"\\ShotStars\\results\\{repo}"
-else:
-    path = os.environ['HOME'] + f"/ShotStars/results/{repo}"
-os.makedirs(path, exist_ok=True)
-
-# Github-token проверка.
-if not os.path.isfile(f"{path.replace(repo, '')}/config.ini"):
-    config.add_section('Shotstars')
-    config.set('Shotstars', 'token', 'None')
-    with open(f"{path.replace(repo, '')}/config.ini", 'w') as config_file:
-        config.write(config_file)
 
 
 # Функции...
 def main_cli():
+    global url_repo, repo, repo_api, path
     try:
+        console.print("Enter [bold green]url[/bold green] (Repository On Github) or '[bold green]history[/bold green]': ",
+                      highlight=False, end="")
+        url_repo = input("")
+    except KeyboardInterrupt:
+        console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
+        sys.exit()
+    repo = url_repo.rsplit(sep='/', maxsplit=1)[-1]
+    repo_api = '/'.join(url_repo.rsplit(sep='/', maxsplit=2)[-2:])
+    path = path_repo()
+
+    try:
+        if url_repo == "history" or url_repo == "his":
+            shutil.rmtree(path, ignore_errors=True)
+            url_repo, repo, repo_api = his(check_file=True, history=True)
+            path = path_repo()
         if len(url_repo) == 0:
             console.print("[bold red]'enter' -> exit")
             win_exit()
@@ -88,6 +81,8 @@ def main_cli():
                 shutil.copy(image, f"{path}/stars.jpg")
                 if Linux: # снятие исполняемого бита для shotstars_cli.bin build версии.
                     os.chmod(f"{path}/stars.jpg", 0o644)
+            his()
+            check_token()
             parsing(diff=True)
         else:
             console.print(f"\n<[bold magenta]EN[/bold magenta]>[bold green] A new repository has been added to the tracking " + \
@@ -96,6 +91,8 @@ def main_cli():
                           f"\n<[bold magenta]RU[/bold magenta]>[bold green] В БД для отслеживания добавлен новый репозиторий: " + \
                           f"'[/bold green][cyan]{repo}[/cyan][bold green]'.\nПри последующем/повторном сканировании репозитория " + \
                           f"'ShotStars' будет пытаться вычислять звезды.[/bold green]", highlight=False)
+            his()
+            check_token()
             parsing()
     except KeyboardInterrupt:
         console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
@@ -109,9 +106,68 @@ def main_cli():
                 time.sleep(0.06)
 
 
+def his(check_file=False, history=False):
+    """История сканирований."""
+    if not os.path.isfile(f"{path.replace(repo, '')}/history.json"):
+        with open(f"{path.replace(repo, '')}/history.json", 'w') as not_his_w:
+            json.dump({}, not_his_w)
+        if check_file:
+            console.print("[bold yellow]\nHistory is empty.[/bold yellow]")
+            win_exit()
+
+    if history:
+        table_his = Table(title=f"\n[bold blue]SCAN HISTORY[/bold blue]",
+                          title_justify="center", header_style='bold green', style="bold green", show_lines=True)
+        table_his.add_column("SELECT", justify="left", style="bold blue", no_wrap=True)
+        table_his.add_column("URL", justify="left", style="bold magenta", no_wrap=True)
+        table_his.add_column("DATE", justify="center", style="green", no_wrap=True)
+        with open(f"{path.replace(repo, '')}/history.json", 'r') as his_file:
+            his_dict = json.load(his_file)
+
+            dict_urls = {}
+            for num, (url, his_date) in enumerate(his_dict.items(), 1):
+                his_date = datetime.datetime.fromtimestamp(his_date).strftime('%Y-%m-%d')
+                table_his.add_row(str(num), f'https://github.com/{url}', his_date)
+                dict_urls[str(num)] = {f'https://github.com/{url}': his_date}
+        console.print(table_his)
+
+        console.print("Select url ([bold blue]digit[/bold blue]): ", highlight=False, end="")
+        select_his_url = input("")
+
+        try:
+            url_repo_glob = list(dict_urls[select_his_url].keys())[0]
+        except KeyError:
+            console.print("\n[bold red]not chosen[/bold red]")
+            win_exit()
+        repo_glob = url_repo_glob.rsplit(sep='/', maxsplit=1)[-1]
+        repo_api_glob = '/'.join(url_repo_glob.rsplit(sep='/', maxsplit=2)[-2:])
+
+        return url_repo_glob, repo_glob, repo_api_glob
+
+
+def path_repo():
+    """Создание каталогов для репозиториев."""
+    if Windows:
+        path = os.environ['LOCALAPPDATA'] + f"\\ShotStars\\results\\{repo}"
+    else:
+        path = os.environ['HOME'] + f"/ShotStars/results/{repo}"
+    os.makedirs(path, exist_ok=True)
+
+    return path
+
+
+def check_token():
+    """Github-token проверка."""
+    if not os.path.isfile(f"{path.replace(repo, '')}/config.ini"):
+        config.add_section('Shotstars')
+        config.set('Shotstars', 'token', 'None')
+        with open(f"{path.replace(repo, '')}/config.ini", 'w') as config_file:
+            config.write(config_file)
+
+
 def win_exit():
     """
-    Удержание окна консоли скомпилированной версии 'shotstars.exe' для OS Windows.
+    Удержание окна консоли скомпилированной версии 'shotstars_cli.exe' для OS Windows.
     Сначала цветной 'print', потом чистый 'input', иначе прогресс в некоторых случаях может перекрывать сообщение.
     """
     if Windows:
@@ -128,13 +184,20 @@ def dif_time():
 
 
 def finish(token):
-    """Финишное время и наличие/отсутствие токена."""
+    """Финишное время, проверка наличие/отсутствие токена и заполнение истории сканирований."""
     print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout())
 
     if token == "None":
         print("Github token not provided.")
     elif token != "None":
         print("Github-token is used!")
+
+    with open(f"{path.replace(repo, '')}/history.json", "r") as his_r:
+        his_file = json.load(his_r)
+        his_file.update({repo_api: int(time.time())})
+        his_file = dict(sorted(his_file.items(), key=lambda x: x[1], reverse=True))
+    with open(f"{path.replace(repo, '')}/history.json", "w") as his_w:
+        json.dump(his_file, his_w, indent=0)
 
 
 def limited(req, token, proc=False):
@@ -246,11 +309,11 @@ def gener_his_html(diff_lst_dn, html_name, title, stars):
     with open(html_name, "w", encoding="utf-8") as fw_gone_html:
         fw_gone_html.write('\n'.join(f_lst))
         fw_gone_html.write(f"\n📅 <i>Date Range Of {NG} Stars</i> <b>【<span class='color1'>{dif_time()}</span></b> " + \
-                            f":: <span class='color2'>{date} — {time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
-                            f"</span><b>】</b> users__<b>{len(diff_lst_dn)}</b>\n<ol>")
+                           f":: <span class='color2'>{date} — {time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
+                           f"</span><b>】</b> users__<b>{len(diff_lst_dn)}</b>\n<ol>")
         for username in diff_lst_dn:
             fw_gone_html.write(f"\n<li><span class='shad'><a target='_blank' " + \
-                                f"href='https://github.com/{username}'>{username}</a></span></li>")
+                               f"href='https://github.com/{username}'>{username}</a></span></li>")
 
         fw_gone_html.write(f"\n</ol>\n<h3>Duplicate_Users:</h3>{str_dup}")
         fw_gone_html.write("\n</body></html>")
@@ -263,6 +326,9 @@ def parsing(diff=False):
     реализует автоматически повторные попытки подключения. Сетевые запросы к API идут параллельно, получение
     результатов по мере поступления, а не по порядку.
     """
+    global time_start
+    time_start = time.perf_counter()
+
     my_session = requests.Session()
     repeat = requests.adapters.HTTPAdapter(pool_connections=70, pool_maxsize=60, max_retries=4)
     my_session.mount('https://', repeat)

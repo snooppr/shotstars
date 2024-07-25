@@ -1,6 +1,15 @@
 ## Shotstars
 
 ********
+**v0.5**
+********
+
+— Added scan history and selection from it by url - numbers. History is sorted from the beginning
+  of the table i.e. the most frequently scanned repositories are at the very top, very convenient.
+  To call history, instead of url, enter the keyword 'his/history' (issues/5).
+=================================================================================================
+
+********
 **v0.4**
 ********
 
