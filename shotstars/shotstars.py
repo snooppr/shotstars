@@ -119,7 +119,7 @@ def his(check_file=False, history=False):
         table_his = Table(title=f"\n[bold blue]SCAN HISTORY[/bold blue]",
                           title_justify="center", header_style='bold green', style="bold green", show_lines=True)
         table_his.add_column("SELECT", justify="left", style="bold blue", no_wrap=False)
-        table_his.add_column("URL", justify="left", style="bold magenta", no_wrap=False)
+        table_his.add_column("URL", justify="left", style="bold magenta", overflow="fold", no_wrap=False)
         table_his.add_column("DATE", justify="center", style="green", no_wrap=False)
         with open(f"{path.replace(repo, '')}/history.json", 'r') as his_file:
             his_dict = json.load(his_file)
