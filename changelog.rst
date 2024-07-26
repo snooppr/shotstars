@@ -75,6 +75,7 @@
 ********
 **v0.1**
 ********
+
 — Collected ready-made “shotstars” assemblies for OS GNU/Linux; OS Windows; OS Android (Termux),
   i.e. no libs or Python required.
 

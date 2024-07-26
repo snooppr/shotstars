@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-# Copyright (c) 2024 <snoopproject@protonmail.com>
+# Copyright (c) 2024 Snooppr <snoopproject@protonmail.com>
 
 import configparser
 import datetime
