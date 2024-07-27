@@ -40,7 +40,7 @@ run a second scan of the same repository.
 
 ## ⛔️ Github restrictions  
 There are restrictions from Github 【**6K stars/hour** from one IP address】, repositories with more than 6K stars do not physically make sense to scan.  
-In Shotstars **v0.4+** you can [bypass the restrictions](https://github.com/snooppr/shotstars/issues/3) and scan repositories up to **500K stars/hour**.  
+In Shotstars with Github token  you can [bypass the restrictions](https://github.com/snooppr/shotstars/issues/3) and scan repositories up to **500K stars/hour**.  
 Steps:  
 1) register for an account on Github (if you don’t already have one);  
 2) open your profile -> settings -> developer settings -> personal acces tokens -> generate new token;  
@@ -56,7 +56,7 @@ You can parse both your own and third-party repositories (by default, registrati
  ---
 
 ## 💾 Scan history  
-In Shotstars **v0.5+** the scan history is available, now you no longer need to enter or copy/paste the URL each time,
+In Shotstars the scan history is available, now you no longer need to enter or copy/paste the URL each time,
 specify the keyword `his/history` instead of the repository url and select the previously scanned repository by number.
 
  ---
@@ -92,7 +92,7 @@ Github не предоставляет пользователям статист
 "Shotstars" пытается решить этот вопрос и предоставить такую информацию пользователю.
 Утилита также отслеживает прибавление звезд, аккумулирует результаты/статистику и мониторит дублирующую активность username's.
 Существуют ограничения со стороны Github 【**6K звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.  
-В Shotstars **v0.4+** [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до **500K звезд/час**.  
+В Shotstars с Github-токеном [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до **500K звезд/час**.  
 Шаги:  
 1) зарегистрируйте аккаунт на Github (если у вас его еще нет);  
 2) откройте профиль -> settings -> developer settings -> personal acces tokens -> generate new token;  
@@ -105,5 +105,5 @@ OS Windows::
 Github-токен принадлежит пользователю, хранится локально и никуда не передается и не скачивается.  
 Парсить можно, как свои, так и сторонние репозитории *(по умолчанию регистрация/авторизация/токен не требуются)*.  
 
-В Shotstars **v0.5+** доступна история сканирований, не нужно теперь каждый раз вводить или копи/пастить url,
+В Shotstars доступна история сканирований, не нужно теперь каждый раз вводить или копи/пастить url,
 укажите вместо url репозитория ключевое слово `his/history` и выберите цифрой ранее сканируемый репозиторий.
