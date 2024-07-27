@@ -6,7 +6,7 @@ A tool to track waning stars on Github.
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />
 
-The purpose of the “Shotstars” script is to find accounts from which they once gave stars to repositories,  
+The purpose of the “Shotstars” tool is to find accounts from which they once gave stars to repositories,  
 but then they were removed and provide such an analysis in a human-readable form (it doesn’t matter,  
 you can scan both your own and other people’s projects), as a result, try to do what it doesn’t do Github by default.  
 The secondary function of the software is to monitor the thrown stars also at a selected period of time.  
