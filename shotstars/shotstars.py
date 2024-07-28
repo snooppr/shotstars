@@ -35,7 +35,7 @@ console.print("""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.5, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v0.5a, author: https://github.com/snooppr
 """)
 
 
@@ -119,7 +119,7 @@ def his(check_file=False, history=False):
         table_his = Table(title=f"\n[bold blue]SCAN HISTORY[/bold blue]",
                           title_justify="center", header_style='bold green', style="bold green", show_lines=True)
         table_his.add_column("SELECT", justify="left", style="bold blue", no_wrap=False)
-        table_his.add_column("URL", justify="left", style="bold magenta", overflow="fold", no_wrap=False)
+        table_his.add_column("URL", justify="left", style="magenta", overflow="fold", no_wrap=False)
         table_his.add_column("DATE", justify="center", style="green", no_wrap=False)
         with open(f"{path.replace(repo, '')}/history.json", 'r') as his_file:
             his_dict = json.load(his_file)
@@ -127,8 +127,11 @@ def his(check_file=False, history=False):
             dict_urls = {}
             for num, (url, his_date) in enumerate(his_dict.items(), 1):
                 his_date = datetime.datetime.fromtimestamp(his_date).strftime('%Y-%m-%d')
-                table_his.add_row(str(num), f'https://github.com/{url}', his_date)
+                color_repo = url[:url.rfind(url.rsplit(sep='/', maxsplit=1)[-1])] + \
+                             f"[bold magenta]{url.rsplit(sep='/', maxsplit=1)[-1]}[/bold magenta]"
+                table_his.add_row(str(num), f'https://github.com/{color_repo}', his_date)
                 dict_urls[str(num)] = {f'https://github.com/{url}': his_date}
+
         console.print(table_his)
 
         console.print("Select url ([bold blue]digit[/bold blue]): ", highlight=False, end="")
@@ -137,7 +140,7 @@ def his(check_file=False, history=False):
         try:
             url_repo_glob = list(dict_urls[select_his_url].keys())[0]
         except KeyError:
-            console.print("\n[bold red]not chosen[/bold red]")
+            console.print("[bold red]not chosen[/bold red]")
             win_exit()
         repo_glob = url_repo_glob.rsplit(sep='/', maxsplit=1)[-1]
         repo_api_glob = '/'.join(url_repo_glob.rsplit(sep='/', maxsplit=2)[-2:])
