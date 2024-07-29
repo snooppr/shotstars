@@ -209,7 +209,7 @@ def limited(req, token, proc=False):
     minut = datetime.datetime.fromtimestamp(headers_time) - datetime.datetime.today()
     minut = int(minut.seconds / 60)
     console.print("\n[bold red]Attention! The API limit has probably been exceeded, the block will presumably be lifted:",
-                    time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
+                  time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
     if token == "None":
         console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API/No Token"))
     else:
@@ -229,6 +229,7 @@ def timeout():
     return f"{date.hour}h:{date.minute}m"
 
 
+# Функции генерации HTML-кода.
 def html_mark(all_stars):
     with open(all_stars, "w", encoding="utf-8") as f_g_his:
         f_g_his.write("""<!DOCTYPE html>\n<html lang='en'>\n\n
@@ -380,12 +381,13 @@ def parsing(diff=False):
 
     if token == "None" and pages > 60:
         console.print("\n[bold yellow][!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
-                      "by default.\nUsing a free github token, the limits are significantly increased (500K+ stars/hour or " + \
+                      "by default.\nUsing a free github token, the limits are significantly increased\n(500K+ stars/hour or " + \
                       "max scanned repository with 40K stars).[/bold yellow]")
         shutil.rmtree(path, ignore_errors=True)
         win_exit()
     elif token != "None" and pages > 400:
-        console.print("\n[bold yellow][!] Using a github token, the maximum crawlable repository on Shotstars is limited to 40K stars.[/bold yellow]")
+        console.print("\n[bold yellow][!] Using a github token, the maximum crawlable repository on Shotstars " + \
+                      "is limited to 40K stars.[/bold yellow]")
         shutil.rmtree(path, ignore_errors=True)
         win_exit()
 
