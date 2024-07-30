@@ -1,6 +1,17 @@
 ## Shotstars
 
 ********
+**v1.0**
+********
+
+— The contents of the history table on compressed small-sized terminals, such as Android/Termux, 
+  are now not cut off, but are wrapped to a new line.
+
+— From the table of scan history, the names of repositories are highlighted from the most rules,
+  convenient for quick reading.
+=================================================================================================
+
+********
 **v0.5**
 ********
 
