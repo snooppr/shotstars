@@ -1,5 +1,5 @@
 # 💫 Shotstars
-A unique and over fab tool to track waning stars on Github.  
+A unique and over fab tool to track stars on Github.  
 
 > [!IMPORTANT]  
 >Github does not provide users with statistics on disappearing stars in the repository. "Shotstars" is trying to resolve this issue and provide such information to the user.  
