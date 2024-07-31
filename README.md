@@ -1,5 +1,5 @@
 # 💫 Shotstars
-A tool to track waning stars on Github.  
+A unique and over fab tool to track waning stars on Github.  
 
 > [!IMPORTANT]  
 >Github does not provide users with statistics on disappearing stars in the repository. "Shotstars" is trying to resolve this issue and provide such information to the user.  
@@ -61,32 +61,6 @@ specify the keyword `his/history` instead of the repository url and select the p
 
  ---
 
-<details>
-<summary> 👈👈 Screenshot gallery </summary>  
-
-### 1. Shotstars for Windows 7  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Win.png" />  
-
-
-### 2 Shotstars HTML-report  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html-report.png" />  
-
-
-### 3 Shotstars for Android/Termux  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux.png" />  
-
-
-### 4 Shotstars Limit Github/API  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Limit.png" />  
-
-
-### 5 Shotstars Scan History
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/scan_history.png" />  
-
-</details>
-
- ---
-
 ## 🇷🇺 TL;DR  
 Github не предоставляет пользователям статистику по исчезающим звездам в репозитории.
 "Shotstars" пытается решить этот вопрос и предоставить такую информацию пользователю.
@@ -107,3 +81,26 @@ Github-токен принадлежит пользователю, хранит�
 
 В Shotstars доступна история сканирований, не нужно теперь каждый раз вводить или копи/пастить url,
 укажите вместо url репозитория ключевое слово `his/history` и выберите цифрой ранее сканируемый репозиторий.
+
+ ---
+
+## 🔻 Screenshot gallery  
+
+*1. Shotstars for Windows 7*  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Win.png" />  
+
+
+*2 Shotstars HTML-report*  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html-report.png" />  
+
+
+*3 Shotstars for Android/Termux*  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux.png" />  
+
+
+*4 Shotstars Limit Github/API*  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Limit.png" />  
+
+
+*5 Shotstars Scan History*
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/scan_history.png" />  
