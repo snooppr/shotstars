@@ -14,7 +14,7 @@ The secondary function of the software is to monitor the thrown stars also at a 
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://www.pepy.tech/projects/shotstars?versions=1.0&versions=0.5&versions=0.2)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://www.pepy.tech/projects/shotstars?versions=1.1)  
 
 ```
 $ pip install shotstars
