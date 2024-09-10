@@ -509,7 +509,7 @@ transition: transform 0.15s}
                                 "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
                                 "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
                                 "alt='' height='40' width='40'></a></small></p>\n<p class='donate'>\n" + \
-                                "<a href='https://pay.cloudtips.ru/p/e4f3e65f' target='blank' title='Was the program useful? " + \
+                                "<a href='https://yoomoney.ru/to/4100111364257544' target='blank' title='Was the program useful? " + \
                                 "Support the developer financially.'>💳 DONATE</a></p>\n\n</body>\n</html>")
 
 # Сохранение/txt-отчета по убывающим звездам на длинной дистанции. Отчеты в CLI-таблицах.
