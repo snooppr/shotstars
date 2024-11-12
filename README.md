@@ -7,9 +7,8 @@ A unique and over fab tool to track stars on Github.
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />  
 
 Shotstars allows you to monitor any repository from the outside.  
-For example, can a network user say: how many stars have been added or subtracted from some interesting GitHub repository  
-in a month? *(IT hosting does not provide information on the decrease in stars, even to the owner of its own projects)*.  
-Shotstars will take care of and calculate specifically those GitHub users who have deleted or added stars to any project,  
+For example, can a network user say: how many stars have been added or subtracted from some interesting GitHub repository in a month? *(IT hosting does not provide information on the decrease in stars, even to the owner of its own projects)*.  
+Shotstars will take care of and calculate specifically those GitHub users who have deleted or added stars to any project, 
 or even completely left the platform.  
 
 **Claimed functions:**  
