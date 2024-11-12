@@ -370,9 +370,11 @@ def parsing(diff=False):
 
 # Вывод на печать кол-ва звезд, дату создания проекта и описание (если присутствует).
     try:
+        size_repo = round(r.get('size') / 1024, 2)
         created_at = "N/O" if r.get('created_at') is None else r.get('created_at').split("T")[0]
         title_repo = "No repository description available" if r.get('description') is None else r.get('description')
-        console.print(f"\n[cyan]Github-rating::[/cyan] {stars} stars" + \
+        console.print(f"\n[cyan]Size::[/cyan] ~ {size_repo} Mb" + \
+                      f"\n[cyan]Github-rating::[/cyan] {stars} stars" + \
                       f"\n[cyan]Date-of-creation::[/cyan] {created_at}" + \
                       f"\n[cyan]Repository-description::[/cyan] {title_repo}\n", highlight=False)
     except Exception:
@@ -500,7 +502,8 @@ transition: transform 0.15s}
                                 "title='open all history gone stars'>open all history</a>\n" + \
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                                f"<small><small>\nGithub-rating:: {stars} stars<br>\nDate-of-creation:: {created_at}<br>\n" + \
+                                f"<small><small>\nSize:: ~ {size_repo} Mb\n<br>" + \
+                                f"Github-rating:: {stars} stars<br>\nDate-of-creation:: {created_at}<br>\n" + \
                                 f"Repository-description:: {title_repo}</small></small></span><br>\n" + \
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \

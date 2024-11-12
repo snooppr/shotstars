@@ -2,14 +2,26 @@
 A unique and over fab tool to track stars on Github.  
 
 > [!IMPORTANT]  
->Github does not provide users with statistics on disappearing stars in the repository. "Shotstars" is trying to resolve this issue and provide such information to the user.  
+>Shotstars can do things that Github doesn't do by default.  
 
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />  
 
-The purpose of the “Shotstars” tool is to find accounts from which they once gave stars to repositories,  
-but then they were removed and provide such an analysis in a human-readable form (it doesn’t matter,  
-you can scan both your own and other people’s projects), as a result, try to do what it doesn’t do Github by default.  
-The secondary function of the software is to monitor the thrown stars also at a selected period of time.  
+Shotstars allows you to monitor any repository from the outside.  
+For example, can a network user say: how many stars have been added or subtracted from some interesting GitHub repository  
+in a month? *(IT hosting does not provide information on the decrease in stars, even to the owner of its own projects)*.  
+Shotstars will take care of and calculate specifically those GitHub users who have deleted or added stars to any project,  
+or even completely left the platform.  
+
+**Claimed functions:**  
+- [X] Shotstars scans repositories for stars added and removed with statistics for a selected time period.  
+- [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects, but Shotstars will not fool them, the utility will display real numbers)*.  
+- [X] Shotstats will show ~ the size of any public repository.  
+- [X] Shotstars will also provide a short description of the repository.  
+- [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
+- [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls)*.  
+- [X] Shotstars can simulate results, documented hack: a function designed to check the utility's operation *(to make sure)* on dead/stable repositories without moving stars.  
+- [X] Shotstars is created for people and works out of the box, OS support: Windows7+, GNU/Linux, Android *(the user [does not need](https://github.com/snooppr/shotstars/releases): technical skills; registration/authorization on Github and even the presence of Python)*.  
+- [X] Shotstars processes tasks with jet speed and for free *(Open Source, donations are welcome)*.  
 
  ---
 
@@ -62,9 +74,20 @@ specify the keyword `his/history` instead of the repository url and select the p
  ---
 
 ## 🇷🇺 TL;DR  
-Github не предоставляет пользователям статистику по исчезающим звездам в репозитории.
-"Shotstars" пытается решить этот вопрос и предоставить такую информацию пользователю.
-Утилита также отслеживает прибавление звезд, аккумулирует результаты/статистику и мониторит дублирующую активность username's.
+Shotstars позволяет следить со стороны <u>за любым</u> репозиторием.  
+Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится и вычислит конкретно тех github-пользователей, кто удалил или накинул звезды любому проекту, а то и вовсе удалился с платформы.
+
+**Заявленные функции:**  
+- [X] Shotstars проверяет репозитории на предмет прибавления и убавления звезд со статистикой за выбранный период времени.  
+- [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
+- [X] Shotstats покажет ~ размер любого публичного репозитория.  
+- [X] Shotstars также предоставит краткое описание репозитория.  
+- [X] Shotstars предлагает историю сканирований с выбором ранее учтенных проектов для быстрой проверки.
+- [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's)*.  
+- [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд.  
+- [X] Shotstars создан для людей и работает из коробки, поддержка OS: Windows7+, GNU/Linux, Android *(от пользователя [не требуются](https://github.com/snooppr/shotstars/releases): владения техническими навыками; регистрация/авторизация на Github и даже наличие Python)*.  
+- [X] Shotstars отрабатывает задачи с реактивной скоростью и задаром *(Open Source, донаты приветствуются)*.  
+
 Существуют ограничения со стороны Github 【**6K звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.  
 В Shotstars с Github-токеном [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до **500K звезд/час**.  
 Шаги:  
