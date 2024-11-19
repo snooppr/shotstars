@@ -20,7 +20,7 @@ or even completely left the platform.
 - [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls)*.  
 - [X] Shotstars can simulate results, documented hack: a function designed to check the utility's operation *(to make sure)* on dead/stable repositories without moving stars.  
 - [X] Shotstars is created for people and works out of the box, OS support: Windows7+, GNU/Linux, Android *(the user [does not need](https://github.com/snooppr/shotstars/releases): technical skills; registration/authorization on Github and even the presence of Python)*.  
-- [X] Shotstars processes tasks with jet speed and for free *(Open Source, donations are welcome)*.  
+- [X] Shotstars processes tasks with jet speed and for free *(cross-platform open source software, donations are welcome)*.  
 
  ---
 
@@ -85,7 +85,7 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's)*.  
 - [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд.  
 - [X] Shotstars создан для людей и работает из коробки, поддержка OS: Windows7+, GNU/Linux, Android *(от пользователя [не требуются](https://github.com/snooppr/shotstars/releases): владения техническими навыками; регистрация/авторизация на Github и даже наличие Python)*.  
-- [X] Shotstars отрабатывает задачи с реактивной скоростью и задаром *(Open Source, донаты приветствуются)*.  
+- [X] Shotstars отрабатывает задачи с реактивной скоростью и задаром *(open source, кроссплатформенность, донаты приветствуются)*.  
 
 Существуют ограничения со стороны Github 【**6K звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.  
 В Shotstars с Github-токеном [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до **500K звезд/час**.  
