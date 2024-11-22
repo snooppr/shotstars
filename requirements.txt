@@ -1,3 +1,3 @@
-requests>=2.31.0
-rich<=13.7.1
-urllib3>=1.26.18
+requests
+rich
+urllib3
