@@ -25,7 +25,7 @@ or even completely left the platform.
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://www.pepy.tech/projects/shotstars?versions=1.1)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?versions=1.1%2C1.2&timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table)  
 
 ```
 $ pip install shotstars
