@@ -35,7 +35,7 @@ console.print("""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.2, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.3, author: https://github.com/snooppr
 """)
 
 
@@ -340,7 +340,7 @@ def parsing(diff=False):
     config.read(f"{path.replace(repo, '')}/config.ini")
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v0.3', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v1.3', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -370,12 +370,18 @@ def parsing(diff=False):
 
 # Вывод на печать кол-ва звезд, дату создания проекта и описание (если присутствует).
     try:
-        size_repo = round(r.get('size') / 1024, 2)
+        size_repo = "N/O" if r.get('size') is None else round(r.get('size') / 1024, 2)
         created_at = "N/O" if r.get('created_at') is None else r.get('created_at').split("T")[0]
+        push = "N/O" if r.get('pushed_at') is None else r.get('pushed_at')
+        try:
+            push_ = datetime.datetime.strptime(push, "%Y-%m-%dT%H:%M:%SZ").strftime('%Y-%m-%d__%H:%M') + "_UTC"
+        except Exception:
+            push_ = "BAD!"
         title_repo = "No repository description available" if r.get('description') is None else r.get('description')
         console.print(f"\n[cyan]Size::[/cyan] ~ {size_repo} Mb" + \
                       f"\n[cyan]Github-rating::[/cyan] {stars} stars" + \
                       f"\n[cyan]Date-of-creation::[/cyan] {created_at}" + \
+                      f"\n[cyan]Date-update (including hidden update)::[/cyan] {push_}" + \
                       f"\n[cyan]Repository-description::[/cyan] {title_repo}\n", highlight=False)
     except Exception:
         console.print('[red]Check Github api (buggy).\nReport issue to developer: "https://github.com/snooppr/shotstars/issues"')
@@ -502,9 +508,10 @@ transition: transform 0.15s}
                                 "title='open all history gone stars'>open all history</a>\n" + \
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                                f"<small><small>\nSize:: ~ {size_repo} Mb\n<br>" + \
-                                f"Github-rating:: {stars} stars<br>\nDate-of-creation:: {created_at}<br>\n" + \
-                                f"Repository-description:: {title_repo}</small></small></span><br>\n" + \
+                                f"<small><small>\n💾 Size:: ~ {size_repo} Mb\n<br>" + \
+                                f"✨ Github-rating:: {stars} stars<br>\n⏳ Date-of-creation:: {created_at}<br>\n" + \
+                                f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
+                                f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \
                                 f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \

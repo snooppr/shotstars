@@ -1,3 +1,2 @@
 requests
 rich
-urllib3
