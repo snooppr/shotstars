@@ -13,7 +13,7 @@ or even completely left the platform.
 
 **Claimed functions:**  
 - [X] Shotstars scans repositories for stars added and removed with statistics for a selected time period.  
-- [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects, but Shotstars will not fool them, the utility will display real numbers)*.  
+- [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects commits, but Shotstars will not fool them, the utility will display real numbers)*.  
 - [X] Shotstats will show ~ the size of any public repository.  
 - [X] Shotstars will also provide a short description of the repository.  
 - [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
@@ -78,7 +78,7 @@ Shotstars позволяет следить со стороны <u>за любы
 
 **Заявленные функции:**  
 - [X] Shotstars проверяет репозитории на предмет прибавления и убавления звезд со статистикой за выбранный период времени.  
-- [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
+- [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов и коммитов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
 - [X] Shotstats покажет ~ размер любого публичного репозитория.  
 - [X] Shotstars также предоставит краткое описание репозитория.  
 - [X] Shotstars предлагает историю сканирований с выбором ранее учтенных проектов для быстрой проверки.
@@ -129,9 +129,14 @@ Github-токен принадлежит пользователю, хранит�
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux.png" />  
 
 
-*4 Shotstars Limit Github/API*  
+*4 Shotstars Limit Github/API (If you don't use the free token)*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Limit.png" />  
 
 
 *5 Shotstars Scan History*
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/scan_history.png" />  
+
+
+*6 Shotstars Discovers Hidden Developer Activity*
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update.png" />  
+Shotstars is amazing, it sees everything. Github says that the repository hasn't been committed for a month, but the commits were made secretly (rewriting and manipulating commit dates, this is a question for the repository developer: why do they do this).  
