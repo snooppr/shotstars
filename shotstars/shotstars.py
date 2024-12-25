@@ -35,7 +35,7 @@ console.print("""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.3, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.4, author: https://github.com/snooppr
 """)
 
 
@@ -181,9 +181,12 @@ def win_exit():
 
 
 def dif_time():
-    """Диапазон прошедшего времени: от последнего сканирования к текущему сканированию."""
+    """
+    Диапазон прошедшего времени: от последнего сканирования к текущему сканированию.
+    Замена устаревшей функции в Python3.12+: "utcfromtimestamp".
+    """
     delta = datetime.datetime.today() - datetime.datetime.fromtimestamp(date_file_new)
-    return f"{delta.days}d. {(datetime.datetime.utcfromtimestamp(0) + delta).strftime('%Hh. %Mm.')}"
+    return f"{delta.days}d. {(datetime.datetime.fromtimestamp(0, tz=datetime.timezone.utc) + delta).strftime('%Hh. %Mm.')}"
 
 
 def finish(token):
@@ -340,7 +343,7 @@ def parsing(diff=False):
     config.read(f"{path.replace(repo, '')}/config.ini")
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v1.3', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v1.4', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
