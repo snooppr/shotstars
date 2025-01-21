@@ -19,6 +19,7 @@ or even completely left the platform.
 - [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
 - [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls)*.  
 - [X] Shotstars can simulate results, documented hack: a function designed to check the utility's operation *(to make sure)* on dead/stable repositories without moving stars.  
+- [X] Shotstars calculates to the minute and displays the time when the github rescan restriction is lifted *(if token is not used)*.  
 - [X] Shotstars is created for people and works out of the box, OS support: Windows7+, GNU/Linux, Android *(the user [does not need](https://github.com/snooppr/shotstars/releases): technical skills; registration/authorization on Github and even the presence of Python)*.  
 - [X] Shotstars processes tasks with jet speed and for free *(cross-platform open source software, donations are welcome)*.  
 
@@ -83,7 +84,8 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstars также предоставит краткое описание репозитория.  
 - [X] Shotstars предлагает историю сканирований с выбором ранее учтенных проектов для быстрой проверки.
 - [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's)*.  
-- [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд.  
+- [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд. 
+- [X] Shotstars рассчитывает с точностью до минуты и отображает время снятия github-ограничения на повторные сканирования *(если не используется token)*.  
 - [X] Shotstars создан для людей и работает из коробки, поддержка OS: Windows7+, GNU/Linux, Android *(от пользователя [не требуются](https://github.com/snooppr/shotstars/releases): владения техническими навыками; регистрация/авторизация на Github и даже наличие Python)*.  
 - [X] Shotstars отрабатывает задачи с реактивной скоростью и задаром *(open source, кроссплатформенность, донаты приветствуются)*.  
 
