@@ -1,5 +1,5 @@
 # 💫 𝕊𝕙𝕠𝕥𝕤𝕥𝕒𝕣𝕤
-▄︻デ+══━一🔥 · ·· A unique and over fab tool to track stars on Github.  
+︻デt══━一🔥 · ·· *A unique and over fab tool to track stars on Github*.  
 
 > [!IMPORTANT]  
 > 𝕊𝕙𝕠𝕥𝕤𝕥𝕒𝕣𝕤 𝕔𝕒𝕟 𝕕𝕠 𝕥𝕙𝕚𝕟𝕘𝕤 𝕥𝕙𝕒𝕥 𝔾𝕚𝕥𝕙𝕦𝕓 𝕕𝕠𝕖𝕤𝕟'𝕥 𝕕𝕠 𝕓𝕪 𝕕𝕖𝕗𝕒𝕦𝕝𝕥.
