@@ -1,8 +1,10 @@
-# 💫 Shotstars
-A unique and over fab tool to track stars on Github.  
+# 💫 𝕊𝕙𝕠𝕥𝕤𝕥𝕒𝕣𝕤
+▄︻デ+══━一🔥 · ·· A unique and over fab tool to track stars on Github.  
 
 > [!IMPORTANT]  
->Shotstars can do things that Github doesn't do by default.  
+> 𝕊𝕙𝕠𝕥𝕤𝕥𝕒𝕣𝕤 𝕔𝕒𝕟 𝕕𝕠 𝕥𝕙𝕚𝕟𝕘𝕤 𝕥𝕙𝕒𝕥 𝔾𝕚𝕥𝕙𝕦𝕓 𝕕𝕠𝕖𝕤𝕟'𝕥 𝕕𝕠 𝕓𝕪 𝕕𝕖𝕗𝕒𝕦𝕝𝕥.
+>
+> 𝕊𝕦𝕡𝕡𝕠𝕣𝕥𝕖𝕕 𝕆𝕊: 𝔾ℕ𝕌/𝕃𝕚𝕟𝕦𝕩; 𝕎𝕚𝕟𝕕𝕠𝕨𝕤 𝟟+; 𝔸𝕟𝕕𝕣𝕠𝕚𝕕/𝕋𝕖𝕣𝕞𝕦𝕩.  
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />  
 
