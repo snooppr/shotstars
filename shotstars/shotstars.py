@@ -135,11 +135,12 @@ def his(check_file=False, history=False):
             win_exit()
 
     if history:
+        padding = 0 if Android else (0, 1)
         table_his = Table(title=f"\n[bold blue]SCAN HISTORY[/bold blue]",
-                          title_justify="center", header_style='bold green', style="bold green", show_lines=True)
+                          title_justify="center", header_style='bold green', style="bold green", padding=padding, show_lines=True)
         table_his.add_column("N", justify="left", style="bold blue", no_wrap=False)
         table_his.add_column("URL", justify="left", style="magenta", overflow="fold", no_wrap=False)
-        table_his.add_column("STARS", justify="center", style="bold yellow", overflow="fold", no_wrap=False)
+        table_his.add_column("STARS", justify="left", style="bold yellow", overflow="fold", no_wrap=False)
         table_his.add_column("DATE", justify="center", style="green", no_wrap=False)
         with open(f"{path.replace(repo, '')}history.json", 'r') as his_file:
             his_dict = json.load(his_file)
