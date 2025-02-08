@@ -30,12 +30,12 @@ Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
 
 
-console.print("""[yellow]
+console.print(r"""[yellow]
  ____  _           _     ____  _
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
- ___) | | | | (_) | |_   ___) | || (_| | |  \__ \\
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.4, author: https://github.com/snooppr
+ ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.5, author: https://github.com/snooppr
 """)
 
 
@@ -106,10 +106,29 @@ def main_cli():
                 time.sleep(0.06)
 
 
+def backup_table():
+    "Бэкап истории таблицы сканирований, в случае перехода но обновленную версию Shotstars v1.5."
+
+    console.print(f"\nShotstars [cyan]v1.5[/cyan] has an updated format for the '[cyan]scan table history[/cyan]': " + \
+                    f"a '[cyan]stars[/cyan]' column has been added. [bold red]table history will be cleared[/bold red], " + \
+                    f"but a backup will be made. You can find the history backup here:\n'" + \
+                    f"[cyan]{path.replace(f'results/{repo}', '')}backup_history.txt[/cyan]'.", highlight=False)
+
+    with open(f"{path.replace(repo, '')}history.json", "r") as history_urls:
+        file = json.load(history_urls)
+        url_table_lst = [f"https://github.com/{k}" for k in file]
+    with open(f"{path.replace(f'results/{repo}', '')}backup_history.txt", "w", encoding="utf-8") as backup_history_url:
+        backup_history_url.write("Saved urls (backup) that were previously in the Shotstars history table.\n\n")
+        backup_history_url.write('\n'.join(url_table_lst))
+
+    os.remove(f"{path.replace(repo, '')}history.json")
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+
 def his(check_file=False, history=False):
     """История сканирований."""
-    if not os.path.isfile(f"{path.replace(repo, '')}/history.json"):
-        with open(f"{path.replace(repo, '')}/history.json", 'w') as not_his_w:
+    if not os.path.isfile(f"{path.replace(repo, '')}history.json"):
+        with open(f"{path.replace(repo, '')}history.json", 'w') as not_his_w:
             json.dump({}, not_his_w)
         if check_file:
             console.print("[bold yellow]\nHistory is empty.[/bold yellow]")
@@ -118,18 +137,24 @@ def his(check_file=False, history=False):
     if history:
         table_his = Table(title=f"\n[bold blue]SCAN HISTORY[/bold blue]",
                           title_justify="center", header_style='bold green', style="bold green", show_lines=True)
-        table_his.add_column("SELECT", justify="left", style="bold blue", no_wrap=False)
+        table_his.add_column("N", justify="left", style="bold blue", no_wrap=False)
         table_his.add_column("URL", justify="left", style="magenta", overflow="fold", no_wrap=False)
+        table_his.add_column("STARS", justify="center", style="bold yellow", overflow="fold", no_wrap=False)
         table_his.add_column("DATE", justify="center", style="green", no_wrap=False)
-        with open(f"{path.replace(repo, '')}/history.json", 'r') as his_file:
+        with open(f"{path.replace(repo, '')}history.json", 'r') as his_file:
             his_dict = json.load(his_file)
 
             dict_urls = {}
             for num, (url, his_date) in enumerate(his_dict.items(), 1):
-                his_date = datetime.datetime.fromtimestamp(his_date).strftime('%Y-%m-%d')
+                try: #In Shotstars version 1.5 the table format has been changed.
+                    stars = str(his_date[1])
+                except Exception:
+                    backup_table()
+
+                his_date = datetime.datetime.fromtimestamp(his_date[0]).strftime('%Y-%m-%d')
                 color_repo = url[:url.rfind(url.rsplit(sep='/', maxsplit=1)[-1])] + \
                              f"[bold magenta]{url.rsplit(sep='/', maxsplit=1)[-1]}[/bold magenta]"
-                table_his.add_row(str(num), f'https://github.com/{color_repo}', his_date)
+                table_his.add_row(str(num), f'https://github.com/{color_repo}', stars, his_date)
                 dict_urls[str(num)] = {f'https://github.com/{url}': his_date}
 
         console.print(table_his)
@@ -161,10 +186,10 @@ def path_repo():
 
 def check_token():
     """Github-token проверка."""
-    if not os.path.isfile(f"{path.replace(repo, '')}/config.ini"):
+    if not os.path.isfile(f"{path.replace(repo, '')}config.ini"):
         config.add_section('Shotstars')
         config.set('Shotstars', 'token', 'None')
-        with open(f"{path.replace(repo, '')}/config.ini", 'w') as config_file:
+        with open(f"{path.replace(repo, '')}config.ini", 'w') as config_file:
             config.write(config_file)
 
 
@@ -189,7 +214,7 @@ def dif_time():
     return f"{delta.days}d. {(datetime.datetime.fromtimestamp(0, tz=datetime.timezone.utc) + delta).strftime('%Hh. %Mm.')}"
 
 
-def finish(token):
+def finish(token, stars=None):
     """Финишное время, проверка наличие/отсутствие токена и заполнение истории сканирований."""
     print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout())
 
@@ -198,12 +223,15 @@ def finish(token):
     elif token != "None":
         print("Github-token is used!")
 
-    with open(f"{path.replace(repo, '')}/history.json", "r") as his_r:
+    with open(f"{path.replace(repo, '')}history.json", "r") as his_r:
         his_file = json.load(his_r)
-        his_file.update({repo_api: int(time.time())})
-        his_file = dict(sorted(his_file.items(), key=lambda x: x[1], reverse=True))
-    with open(f"{path.replace(repo, '')}/history.json", "w") as his_w:
-        json.dump(his_file, his_w, indent=0)
+        try:
+            his_file.update({repo_api: [int(time.time()), stars]})
+            his_file = dict(sorted(his_file.items(), key=lambda x: x[1][0], reverse=True))
+        except Exception:
+            backup_table()
+    with open(f"{path.replace(repo, '')}history.json", "w") as his_w:
+        json.dump(his_file, his_w, indent=1)
 
 
 def limited(req, token, proc=False):
@@ -340,7 +368,7 @@ def parsing(diff=False):
     repeat = requests.adapters.HTTPAdapter(pool_connections=70, pool_maxsize=60, max_retries=4)
     my_session.mount('https://', repeat)
 
-    config.read(f"{path.replace(repo, '')}/config.ini")
+    config.read(f"{path.replace(repo, '')}config.ini")
     token = config.get('Shotstars', 'token')
     if token != "None":
         head = {'User-Agent': f'Shotstars v1.4', 'Authorization': f'Bearer {token}'}
@@ -455,7 +483,7 @@ def parsing(diff=False):
             console.print("[bold black on white]NEW stars not detected")
 
         if not any([bool(diff_lst_dn), bool(diff_lst_up)]):
-            finish(token)
+            finish(token, stars)
             win_exit()
         elif bool(diff_lst_dn) or bool(diff_lst_up):
             per_stars_dn = round(len(diff_lst_dn) * 100 / stars, 2) # расчет % соотношения потерь звезд к общему рейтингу.
@@ -541,7 +569,7 @@ transition: transform 0.15s}
             except Exception:
                 console.print("[bold red]It is impossible to open the web browser due to problems with the operating system.")
 
-    finish(token)
+    finish(token, stars)
     win_exit()
 
 # Arbeiten.
