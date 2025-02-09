@@ -35,7 +35,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.6, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.7, author: https://github.com/snooppr
 """)
 
 
@@ -109,15 +109,20 @@ def main_cli():
 def backup_table():
     "Бэкап истории таблицы сканирований, в случае перехода но обновленную версию Shotstars v1.5."
 
-    console.print(f"\nShotstars [cyan]v1.5[/cyan] has an updated format for the '[cyan]scan table history[/cyan]': " + \
-                    f"a '[cyan]stars[/cyan]' column has been added. [bold red]table history will be cleared[/bold red], " + \
-                    f"but a backup will be made. You can find the history backup here:\n'" + \
-                    f"[cyan]{path.replace(f'results/{repo}', '')}backup_history.txt[/cyan]'.", highlight=False)
+    if Windows:
+        info = f"{path.replace('results' + chr(92) + repo, '')}backup_history.txt"
+    else:
+        info = f"{path.replace(f'results/{repo}', '')}backup_history.txt"
+
+    console.print(f"\nShotstars [cyan]v1.7[/cyan] has an updated format for the '[cyan]scan table history[/cyan]': " + \
+                  f"a '[cyan]stars[/cyan]' column has been added. [bold red]table history will be cleared[/bold red], " + \
+                  f"but a backup will be made. You can find the history backup here:\n'" + \
+                  f"[cyan]{info}[/cyan]'.", highlight=False)
 
     with open(f"{path.replace(repo, '')}history.json", "r") as history_urls:
         file = json.load(history_urls)
         url_table_lst = [f"https://github.com/{k}" for k in file]
-    with open(f"{path.replace(f'results/{repo}', '')}backup_history.txt", "w", encoding="utf-8") as backup_history_url:
+    with open(info, "w", encoding="utf-8") as backup_history_url:
         backup_history_url.write("Saved urls (backup) that were previously in the Shotstars history table.\n\n")
         backup_history_url.write('\n'.join(url_table_lst))
 
@@ -150,6 +155,7 @@ def his(check_file=False, history=False):
                 try: #In Shotstars version 1.5 the table format has been changed.
                     stars = str(his_date[1])
                 except Exception:
+                    his_file.close()
                     backup_table()
 
                 his_date = datetime.datetime.fromtimestamp(his_date[0]).strftime('%Y-%m-%d')
@@ -230,6 +236,7 @@ def finish(token, stars=None):
             his_file.update({repo_api: [int(time.time()), stars]})
             his_file = dict(sorted(his_file.items(), key=lambda x: x[1][0], reverse=True))
         except Exception:
+            his_r.close()
             backup_table()
     with open(f"{path.replace(repo, '')}history.json", "w") as his_w:
         json.dump(his_file, his_w, indent=1)
