@@ -144,7 +144,3 @@ Github-токен принадлежит пользователю, хранит�
 *6 Shotstars Discovers Hidden Developer Activity*
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update.png" />  
 Shotstars is amazing, it sees everything. Github says that the repository hasn't been committed for a month, but the commits were made secretly (rewriting and manipulating commit dates, this is a question for the repository developer: why do they do this).  
-
-Another example:
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update2.jpg" />  
-Sad and famous "pymorphy2" project. The repository has allegedly not been updated for 5 years, the developer does not respond to questions/problems/PR (keeps silent). But Shotstars has recorded recent, hidden activity in the repository...  
