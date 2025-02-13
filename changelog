@@ -1,5 +1,31 @@
 ## Shotstars
 
+*************
+**v1.2-v1.8**
+*************
+
+— Added support for python 3.14.
+
+— Library versions (dependencies) are weakened.
+
+— Changed the format of the "scan history" table: added a "stars" column. Backup of user git/url
+was made and a notification to the user was added.
+
+— Added, the "scan history" table is displayed differently, on Desktop it is normal, on Android
+it is compact (due to the small size of the terminal on gadgets).
+
+— Added parameters to CLI and HTML reports: repository size and date of last repo update.
+Added smileys to HTML reports.
+
+— Removed previous versions in PyPi, multiplied due to the fact that even minor edits required
+increasing the version of the utility (PyPi requirements).
+
+— Shotstars versions have been compiled for Windows, GNU/Linux, Android/Termux_arm/aarch,
+which do not require Python and dependencies, i.e. work out of the box.
+
+— Added support (experimental) for OS macOS.
+=================================================================================================
+
 ********
 **v1.1**
 ********

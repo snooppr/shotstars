@@ -4,7 +4,7 @@
 > [!IMPORTANT]  
 > 𝕊𝕙𝕠𝕥𝕤𝕥𝕒𝕣𝕤 𝕔𝕒𝕟 𝕕𝕠 𝕥𝕙𝕚𝕟𝕘𝕤 𝕥𝕙𝕒𝕥 𝔾𝕚𝕥𝕙𝕦𝕓 𝕕𝕠𝕖𝕤𝕟'𝕥 𝕕𝕠 𝕓𝕪 𝕕𝕖𝕗𝕒𝕦𝕝𝕥.
 >
-> 𝕊𝕦𝕡𝕡𝕠𝕣𝕥𝕖𝕕 𝕆𝕊: 𝔾ℕ𝕌/𝕃𝕚𝕟𝕦𝕩; 𝕎𝕚𝕟𝕕𝕠𝕨𝕤 𝟟+; 𝔸𝕟𝕕𝕣𝕠𝕚𝕕/𝕋𝕖𝕣𝕞𝕦𝕩.  
+> 𝕊𝕦𝕡𝕡𝕠𝕣𝕥𝕖𝕕 𝕆𝕊: 𝔾ℕ𝕌/𝕃𝕚𝕟𝕦𝕩; 𝕎𝕚𝕟𝕕𝕠𝕨𝕤 𝟟+; 𝔸𝕟𝕕𝕣𝕠𝕚𝕕/𝕋𝕖𝕣𝕞𝕦𝕩; 𝕞𝕒𝕔𝕆𝕊 (𝕚𝕟𝕥𝕖𝕣𝕞𝕚𝕥𝕥𝕖𝕟𝕥𝕝𝕪).  
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />  
 
@@ -28,7 +28,11 @@ or even completely left the platform.
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?versions=1.1%2C1.2%2C1.3%2C1.4%2C1.7&timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?versions=1.1%2C1.2%2C1.3%2C1.4%2C1.7&timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table)
+![Static Badge](https://img.shields.io/badge/latest%20v1.8-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+
+
+
 
 ```
 $ pip install shotstars

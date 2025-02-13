@@ -15,7 +15,7 @@ import webbrowser
 
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed, TimeoutError
-from multiprocessing import active_children
+from multiprocessing import active_children, set_start_method
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -35,7 +35,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.7, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.8, author: https://github.com/snooppr
 """)
 
 
@@ -107,7 +107,7 @@ def main_cli():
 
 
 def backup_table():
-    "Бэкап истории таблицы сканирований, в случае перехода но обновленную версию Shotstars v1.5."
+    "Бэкап истории таблицы сканирований, в случае перехода на обновленную версию Shotstars v1.7+."
 
     if Windows:
         info = f"{path.replace('results' + chr(92) + repo, '')}backup_history.txt"
@@ -152,7 +152,7 @@ def his(check_file=False, history=False):
 
             dict_urls = {}
             for num, (url, his_date) in enumerate(his_dict.items(), 1):
-                try: #In Shotstars version 1.5 the table format has been changed.
+                try: #In Shotstars version 1.7 the table format has been changed.
                     stars = str(his_date[1])
                 except Exception:
                     his_file.close()
@@ -582,4 +582,6 @@ transition: transform 0.15s}
 
 # Arbeiten.
 if __name__ == '__main__':
+    if not Windows:
+        set_start_method('fork')
     main_cli()
