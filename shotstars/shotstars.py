@@ -35,7 +35,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.0, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.1, author: https://github.com/snooppr
 """)
 
 
@@ -439,6 +439,8 @@ def parsing(diff=False):
         win_exit()
 
 # Обход и сохранение всех user's, которые ставили/снимали звезды репозиторию.
+    if not Windows:
+        set_start_method('fork')
     if Windows:
         tread_max = pages if pages <= (os.cpu_count() * 3) else (os.cpu_count() * 3 if os.cpu_count() <= 36 else 36)
         executor = ThreadPoolExecutor(max_workers=tread_max)
@@ -582,6 +584,4 @@ transition: transform 0.15s}
 
 # Arbeiten.
 if __name__ == '__main__':
-    if not Windows:
-        set_start_method('fork')
     main_cli()
