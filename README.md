@@ -28,7 +28,7 @@ or even completely left the platform.
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?versions=1.1%2C1.2%2C1.3%2C1.4%2C1.7&timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table)
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?versions=1.8&timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table)
 ![Static Badge](https://img.shields.io/badge/latest%20v1.8-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
