@@ -35,7 +35,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v1.8, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.0, author: https://github.com/snooppr
 """)
 
 
@@ -107,14 +107,14 @@ def main_cli():
 
 
 def backup_table():
-    "Бэкап истории таблицы сканирований, в случае перехода на обновленную версию Shotstars v1.7+."
+    "Бэкап истории таблицы сканирований, в случае перехода на обновленную версию Shotstars v2.0+."
 
     if Windows:
         info = f"{path.replace('results' + chr(92) + repo, '')}backup_history.txt"
     else:
         info = f"{path.replace(f'results/{repo}', '')}backup_history.txt"
 
-    console.print(f"\nShotstars [cyan]v1.7[/cyan] has an updated format for the '[cyan]scan table history[/cyan]': " + \
+    console.print(f"\nShotstars [cyan]v2.0[/cyan] has an updated format for the '[cyan]scan table history[/cyan]': " + \
                   f"a '[cyan]stars[/cyan]' column has been added. [bold red]table history will be cleared[/bold red], " + \
                   f"but a backup will be made. You can find the history backup here:\n'" + \
                   f"[cyan]{info}[/cyan]'.", highlight=False)
@@ -152,7 +152,7 @@ def his(check_file=False, history=False):
 
             dict_urls = {}
             for num, (url, his_date) in enumerate(his_dict.items(), 1):
-                try: #In Shotstars version 1.7 the table format has been changed.
+                try: #In Shotstars version 2.0 the table format has been changed.
                     stars = str(his_date[1])
                 except Exception:
                     his_file.close()
