@@ -1,6 +1,16 @@
 ## Shotstars
 
 *************
+**v2.2**
+*************
+
+— Parallel requests have been unified for all OS, threads are used everywhere instead of 
+processes (main reason: instability of processes on different versions of macOS).
+  
+— Added a notification linking to the Readme on how to get a free token to bypass the limit.
+=================================================================================================
+
+*************
 **v1.1-v2.1**
 *************
 

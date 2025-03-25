@@ -14,8 +14,7 @@ import time
 import webbrowser
 
 from collections import Counter
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed, TimeoutError
-from multiprocessing import active_children, set_start_method
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -24,7 +23,6 @@ from rich.table import Table
 console = Console()
 config = configparser.ConfigParser()
 image = os.path.join(os.path.dirname(__file__), 'stars.jpg')
-Android_lame_workhorse = False
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
@@ -35,7 +33,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.1, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.2, author: https://github.com/snooppr
 """)
 
 
@@ -98,42 +96,34 @@ def main_cli():
         console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
         if Windows:
             os.kill(os.getpid(), signal.SIGBREAK)
-        elif Android_lame_workhorse:
-            os.kill(os.getpid(), signal.SIGKILL)
         else:
-            for child in active_children():
-                child.terminate()
-                time.sleep(0.06)
+            os.kill(os.getpid(), signal.SIGKILL)
 
 
 def backup_table():
     "Бэкап истории таблицы сканирований, в случае перехода на обновленную версию Shotstars v2.0+."
-
-    if Windows:
-        info = f"{path.replace('results' + chr(92) + repo, '')}backup_history.txt"
-    else:
-        info = f"{path.replace(f'results/{repo}', '')}backup_history.txt"
+    info = os.path.join(os.path.dirname(path), "backup_history.txt")
 
     console.print(f"\nShotstars [cyan]v2.0[/cyan] has an updated format for the '[cyan]scan table history[/cyan]': " + \
                   f"a '[cyan]stars[/cyan]' column has been added. [bold red]table history will be cleared[/bold red], " + \
                   f"but a backup will be made. You can find the history backup here:\n'" + \
                   f"[cyan]{info}[/cyan]'.", highlight=False)
 
-    with open(f"{path.replace(repo, '')}history.json", "r") as history_urls:
+    with open(os.path.join(os.path.dirname(path), "history.json"), "r") as history_urls:
         file = json.load(history_urls)
         url_table_lst = [f"https://github.com/{k}" for k in file]
     with open(info, "w", encoding="utf-8") as backup_history_url:
         backup_history_url.write("Saved urls (backup) that were previously in the Shotstars history table.\n\n")
         backup_history_url.write('\n'.join(url_table_lst))
 
-    os.remove(f"{path.replace(repo, '')}history.json")
+    os.remove(os.path.join(os.path.dirname(path), "history.json"))
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
 def his(check_file=False, history=False):
     """История сканирований."""
-    if not os.path.isfile(f"{path.replace(repo, '')}history.json"):
-        with open(f"{path.replace(repo, '')}history.json", 'w') as not_his_w:
+    if not os.path.isfile(os.path.join(os.path.dirname(path), "history.json")):
+        with open(os.path.join(os.path.dirname(path), "history.json"), 'w') as not_his_w:
             json.dump({}, not_his_w)
         if check_file:
             console.print("[bold yellow]\nHistory is empty.[/bold yellow]")
@@ -147,7 +137,7 @@ def his(check_file=False, history=False):
         table_his.add_column("URL", justify="left", style="magenta", overflow="fold", no_wrap=False)
         table_his.add_column("STARS", justify="left", style="bold yellow", overflow="fold", no_wrap=False)
         table_his.add_column("DATE", justify="center", style="green", no_wrap=False)
-        with open(f"{path.replace(repo, '')}history.json", 'r') as his_file:
+        with open(os.path.join(os.path.dirname(path), "history.json"), 'r') as his_file:
             his_dict = json.load(his_file)
 
             dict_urls = {}
@@ -182,10 +172,7 @@ def his(check_file=False, history=False):
 
 def path_repo():
     """Создание каталогов для репозиториев."""
-    if Windows:
-        path = os.environ['LOCALAPPDATA'] + f"\\ShotStars\\results\\{repo}"
-    else:
-        path = os.environ['HOME'] + f"/ShotStars/results/{repo}"
+    path = os.path.join(os.environ["LOCALAPPDATA" if Windows else "HOME"], 'ShotStars', 'results', repo)
     os.makedirs(path, exist_ok=True)
 
     return path
@@ -193,10 +180,10 @@ def path_repo():
 
 def check_token():
     """Github-token проверка."""
-    if not os.path.isfile(f"{path.replace(repo, '')}config.ini"):
+    if not os.path.isfile(os.path.join(os.path.dirname(path), "config.ini")):
         config.add_section('Shotstars')
         config.set('Shotstars', 'token', 'None')
-        with open(f"{path.replace(repo, '')}config.ini", 'w') as config_file:
+        with open(os.path.join(os.path.dirname(path), "config.ini"), 'w') as config_file:
             config.write(config_file)
 
 
@@ -206,7 +193,7 @@ def win_exit():
     Сначала цветной 'print', потом чистый 'input', иначе прогресс в некоторых случаях может перекрывать сообщение.
     """
     if Windows:
-        console.print("\nplease key <ENTER> --> exit")
+        console.print("\npress key <ENTER> --> exit")
         input("")
 
     sys.exit()
@@ -230,7 +217,7 @@ def finish(token, stars=None):
     elif token != "None":
         print("Github-token is used!")
 
-    with open(f"{path.replace(repo, '')}history.json", "r") as his_r:
+    with open(os.path.join(os.path.dirname(path), "history.json"), "r") as his_r:
         his_file = json.load(his_r)
         try:
             his_file.update({repo_api: [int(time.time()), stars]})
@@ -238,11 +225,11 @@ def finish(token, stars=None):
         except Exception:
             his_r.close()
             backup_table()
-    with open(f"{path.replace(repo, '')}history.json", "w") as his_w:
+    with open(os.path.join(os.path.dirname(path), "history.json"), "w") as his_w:
         json.dump(his_file, his_w, indent=1)
 
 
-def limited(req, token, proc=False):
+def limited(req, token):
     """Расчет времени снятия лимита Github-API."""
     headers_time = int(req.headers.get('X-RateLimit-Reset')) + 60
     minut = datetime.datetime.fromtimestamp(headers_time) - datetime.datetime.today()
@@ -253,11 +240,6 @@ def limited(req, token, proc=False):
         console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API/No Token"))
     else:
         console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="Github API/Token Used"))
-
-    if proc and not Windows:
-        for child in active_children():
-            child.terminate()
-            time.sleep(0.06)
 
     win_exit()
 
@@ -376,7 +358,7 @@ def parsing(diff=False):
     repeat = requests.adapters.HTTPAdapter(pool_connections=70, pool_maxsize=60, max_retries=4)
     my_session.mount('https://', repeat)
 
-    config.read(f"{path.replace(repo, '')}config.ini")
+    config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
         head = {'User-Agent': f'Shotstars v1.4', 'Authorization': f'Bearer {token}'}
@@ -429,7 +411,8 @@ def parsing(diff=False):
     if token == "None" and pages > 60:
         console.print("\n[bold yellow][!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
                       "by default.\nUsing a free github token, the limits are significantly increased\n(500K+ stars/hour or " + \
-                      "max scanned repository with 40K stars).[/bold yellow]")
+                      "max scanned repository with 40K stars). " + \
+                      "\n\nView Readme: https://github.com/snooppr/shotstars#%EF%B8%8F-github-restrictions[/bold yellow]")
         shutil.rmtree(path, ignore_errors=True)
         win_exit()
     elif token != "None" and pages > 400:
@@ -439,21 +422,11 @@ def parsing(diff=False):
         win_exit()
 
 # Обход и сохранение всех user's, которые ставили/снимали звезды репозиторию.
-    if not Windows:
-        set_start_method('fork')
-    if Windows:
-        tread_max = pages if pages <= (os.cpu_count() * 3) else (os.cpu_count() * 3 if os.cpu_count() <= 36 else 36)
-        executor = ThreadPoolExecutor(max_workers=tread_max)
-    elif Linux:
-        proc_max = pages if pages <= 20 else 20
-        executor = ProcessPoolExecutor(max_workers=proc_max)
-    elif Android:
-        try:
-            executor = ProcessPoolExecutor(max_workers=os.cpu_count() * 2)
-        except Exception:
-            global Android_lame_workhorse
-            Android_lame_workhorse = True
-            executor = ThreadPoolExecutor(max_workers=8)
+    if Android:
+        thread_max = pages if pages <= os.cpu_count() * 2 else 14
+    else:
+        thread_max = pages if pages <= 18 else 18
+    executor = ThreadPoolExecutor(max_workers=thread_max)
 
     spinner = 'earth' if diff else 'material'
     lst_new, futures = [], {}
@@ -469,7 +442,7 @@ def parsing(diff=False):
                     lst_new.append(num.get("login"))
                 futures.pop(future, None)
         except Exception:
-            limited(req, token, proc=True)
+            limited(req, token)
 
         try:
             executor.shutdown()
@@ -513,7 +486,8 @@ def parsing(diff=False):
             table_up.add_column("NEW STARS", justify="left", style="cyan", no_wrap=False)
 
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
-            file_image = f"file://{path}/stars.jpg".replace("\\", "/") if Windows else f"file://{path}/stars.jpg"
+            file_image = f"file://{os.path.join(path, 'stars.jpg')}"
+            print(file_image)
             with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
                 file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
                                 "<meta charset='utf-8'>\n<style>\n" + \
