@@ -33,7 +33,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.2, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.3, author: https://github.com/snooppr
 """)
 
 
@@ -487,7 +487,6 @@ def parsing(diff=False):
 
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
             file_image = f"file://{os.path.join(path, 'stars.jpg')}"
-            print(file_image)
             with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
                 file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
                                 "<meta charset='utf-8'>\n<style>\n" + \
