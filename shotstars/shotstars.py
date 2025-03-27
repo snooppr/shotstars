@@ -13,7 +13,7 @@ import sys
 import time
 import webbrowser
 
-from collections import Counter
+from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 from rich.console import Console
 from rich.panel import Panel
@@ -33,7 +33,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.3, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.4, author: https://github.com/snooppr
 """)
 
 
@@ -98,6 +98,78 @@ def main_cli():
             os.kill(os.getpid(), signal.SIGBREAK)
         else:
             os.kill(os.getpid(), signal.SIGKILL)
+
+
+def cross_user_detect(base_dir, filename="new.txt"):
+    """
+    Последовательно читаем файлы с указанным именем из ВСЕХ подкаталогов,
+    находим минимум 2-х перекрестных user-ов, встречающихся более чем в одном файле.
+    Использует os.scandir для эффективности поиска каталогов.
+
+    Аргументы:
+        base_dir (str): Базовый каталог, содержащий подкаталоги для поиска.
+        filename (str): Имя файла для чтения в каждом подкаталоге.
+    Результат:
+        Словарь, где ключи — username, а значения — кортежи
+              с именами каталогов/репозиториев, где найдено слово.
+              Пример: {"snooppr": ("snooppr", "snoop", "shotstars")}
+    """
+    user_repos = defaultdict(set)
+    subdirectories_repos = []
+    try:
+        with os.scandir(base_dir) as directory:
+            for dir_ in directory:
+                if dir_.is_dir():
+                    subdirectories_repos.append(dir_.name)
+    except Exception as e:
+        console.print(f"[bold red]ERR, no access?: {base_dir}:: {e}[/bold red]")
+        return {}
+
+    if not subdirectories_repos:
+        console.print(f"[bold red]Shotstars DB not found[/bold red]")
+        return {}
+
+    for sub_repo in sorted(subdirectories_repos):
+        file_path = os.path.join(base_dir, sub_repo, filename)
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                for user in f.read().splitlines():
+                    user = user.strip()
+                    if user:
+                        user_repos[user].add(sub_repo)
+        except FileNotFoundError:
+            console.print(f"[bold red]File '{filename}' not found in directory '{sub_repo}'[/bold red]")
+        except Exception as e:
+            console.print(f"[bold red]Error reading file {file_path}: {e}[/bold red]")
+
+    # Фильтруем user/repo до 2-х и боле резуьтатов (ключи: user, значения: кортежи-repo)
+    common_users = {}
+    for k, v in user_repos.items():
+        if len(v) > 1:
+            common_users[k] = tuple(sorted(list(v)))
+
+    if common_users:
+        print("\n")
+        console.rule(f"[bold blue]cross-users ({len(common_users)})[/bold blue]")
+
+        padding = 0 if Android else (0, 1)
+        table_his = Table(title=f"\n[bold red]CROSS USERS (in CLI = max 20 users, in HTML = full users)[/bold red]",
+                          title_justify="center", header_style='bold red', style="bold red", padding=padding, show_lines=True)
+        table_his.add_column("N", justify="left", style="bold green", no_wrap=False)
+        table_his.add_column("Q/S", justify="left", style="red", no_wrap=False)
+        table_his.add_column("Github username", justify="left", style="bold blue", overflow="fold", no_wrap=False)
+        table_his.add_column("Github repositories", justify="left", style="bold yellow", overflow="fold", no_wrap=False)
+
+        sorted_items = sorted(common_users.items(), key=lambda item: (-len(item[1]), item[0]))
+        for N, (username, repository) in enumerate(sorted_items[:20], 1):
+            table_his.add_row(str(N), str(len(repository)), f'https://github.com/{username}', ", ".join(repository))
+        console.print(table_his)
+
+        with open(os.path.join(os.path.dirname(path), "crossusers.txt"), "w", encoding="utf-8") as f:
+            f.write(f"CROSS-USERS = {len(common_users)}\n\n")
+            for username, repository in sorted_items:
+                print(f"https://github.com/{username} ({len(repository)}):\n  ", '\n   '.join(repository), '\n', file=f)
 
 
 def backup_table():
@@ -361,7 +433,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v1.4', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v2.4', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -466,6 +538,7 @@ def parsing(diff=False):
             console.print("[bold black on white]NEW stars not detected")
 
         if not any([bool(diff_lst_dn), bool(diff_lst_up)]):
+            common_users_found = cross_user_detect(os.path.join(os.path.dirname(path)), "new.txt" )
             finish(token, stars)
             win_exit()
         elif bool(diff_lst_dn) or bool(diff_lst_up):
@@ -486,12 +559,12 @@ def parsing(diff=False):
             table_up.add_column("NEW STARS", justify="left", style="cyan", no_wrap=False)
 
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
-            file_image = f"file://{os.path.join(path, 'stars.jpg')}"
+            file_image = f"file://{os.path.join(path, 'stars.jpg')}".replace('\\', '/')
             with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
                 file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
                                 "<meta charset='utf-8'>\n<style>\n" + \
                                 f"body {{background-image: url('{file_image}'); background-size: cover;\n" + \
-"""background-repeat: no-repeat}
+"""background-repeat: no-repeat; background-attachment: fixed}
 .but{display:inline-block; cursor: pointer; font-size:20px; text-decoration:none; padding:10px 20px; color:#2a21db; background:#bec0cc; border-radius:19px; border:2px solid #354251}
 .but:hover{background:#354251; color:#ffffff; border:2px solid #354251; transition: all 0.2s ease;}.textcols {white-space: nowrap}
 .textcols-item {white-space: normal; display: inline-block; width: 47.7%; vertical-align: top; background: #595c61; opacity: 0.9;}
@@ -529,7 +602,9 @@ transition: transform 0.15s}
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \
                                 f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
-                                "</small></small></span>\n\n<p style='color: white'><small>" + \
+                                "</small></small></span>\n\n<div>\n<br>\n" + \
+                                f"<a class='but' href='file://{path.replace(repo, '')}crossusers.txt' " + \
+                                "title='open all cross-users'>open all cross-users</a>\n</div>\n\n<p style='color: white'><small>" + \
                                 "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
                                 "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
                                 "alt='' height='40' width='40'></a></small></p>\n<p class='donate'>\n" + \
@@ -546,6 +621,9 @@ transition: transform 0.15s}
                 gener_his_html(diff_lst_up, html_name=f"{path}/all_new_stars.html", stars=stars,
                                title = f"<h2 align='center'>🌟_________Total New Stars/Date ↝ ")
                 console.print(table_up)
+
+# Искать пересеченных пользователей.
+            common_users_found = cross_user_detect(os.path.join(os.path.dirname(path)), "new.txt" )
 
             try:
                 webbrowser.open(f"file://{path}/report.html")

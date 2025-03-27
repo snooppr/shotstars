@@ -1,8 +1,19 @@
 ## Shotstars
 
-*************
+********
+**v2.4**
+********
+
+— Fixed: Image loss in report for OS Windows. Image is no longer scaled.
+
+— New functionality added: Shotstars finds users that overlap with Github projects, including 
+those with hidden/private profiles. In the CLI report, a maximum of 20 intersecting usernames 
+are recorded, in the HTML report, all intersecting users are recorded. (issues/2).
+=================================================================================================
+
+********
 **v2.3**
-*************
+********
 
 — Parallel requests have been unified for all OS, threads are used everywhere instead of 
 processes (main reason: instability of processes on different versions of macOS).
