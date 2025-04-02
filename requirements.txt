@@ -1,2 +1,4 @@
+plotext
+plotly
 requests
 rich

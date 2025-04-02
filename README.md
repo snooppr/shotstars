@@ -19,7 +19,7 @@ or even completely left the platform.
 - [X] Shotstats will show ~ the size of any public repository.  
 - [X] Shotstars will also provide a short description of the repository.  
 - [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
-- [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls)*.  
+- [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls and graphs)*.  
 - [X] Shotstars can simulate results, documented hack: a function designed to check the utility's operation *(to make sure)* on dead/stable repositories without moving stars.  
 - [X] Shotstars finds users that overlap across Github projects, including those with hidden/private profiles.  
 - [X] Shotstars calculates to the minute and displays the time when the github rescan restriction is lifted *(if token is not used)*.  
@@ -29,8 +29,8 @@ or even completely left the platform.
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=2.4)
-![Static Badge](https://img.shields.io/badge/latest%20v2.4-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=2.5)
+![Static Badge](https://img.shields.io/badge/latest%20v2.5-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 
@@ -90,7 +90,7 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstats покажет ~ размер любого публичного репозитория.  
 - [X] Shotstars также предоставит краткое описание репозитория.  
 - [X] Shotstars предлагает историю сканирований с выбором ранее учтенных проектов для быстрой проверки.
-- [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's)*.  
+- [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's и графики)*.  
 - [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд. 
 - [X] Shotstars находит пересекающихся у Github-проектов пользователей, в т.ч. и тех, у кого профиль скрыт/приватный.  
 - [X] Shotstars рассчитывает с точностью до минуты и отображает время снятия github-ограничения на повторные сканирования *(если не используется token)*.  
@@ -151,5 +151,10 @@ Github-токен принадлежит пользователю, хранит�
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update.png" />  
 Shotstars is amazing, it sees everything. Github says that the repository hasn't been committed for a month, but the commits were made secretly (rewriting and manipulating commit dates, this is a question for the repository developer: why do they do this).  
 
+
 *7 Shotstars finds users that overlap across Github projects, including those with hidden/private profiles*
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/cross.png" />  
+
+
+*8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and captured.*
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  

@@ -1,6 +1,18 @@
 ## Shotstars
 
 ********
+**v2.5**
+********
+
+— New functionality added: added time graphs to HTML/CLI reports on new and gone stars,
+(Shotstars for OS Windows does not create graphs in CLI, old console), issues/4.
+
+— The cross-users metric in the CLI has been reduced from 10 users to 5.
+
+— Forced use of code page "65001" on Windows OS.
+=================================================================================================
+
+********
 **v2.4**
 ********
 

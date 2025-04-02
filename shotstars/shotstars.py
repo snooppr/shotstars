@@ -5,7 +5,10 @@ import configparser
 import datetime
 import json
 import os
+import plotext as plt
+import plotly.graph_objects as plt_html
 import random
+import re
 import requests
 import shutil
 import signal
@@ -33,12 +36,18 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.4, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.5, author: https://github.com/snooppr
 """)
 
 
 # Функции...
 def main_cli():
+    try:
+        if Windows:
+            subprocess.call(['chcp', '65001'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+    except Exception:
+        pass
+
     global url_repo, repo, repo_api, path
     try:
         console.print("Enter [bold green]url[/bold green] (Repository On Github) or '[bold green]history[/bold green]': ",
@@ -150,11 +159,10 @@ def cross_user_detect(base_dir, filename="new.txt"):
             common_users[k] = tuple(sorted(list(v)))
 
     if common_users:
-        print("\n")
-        console.rule(f"[bold blue]cross-users ({len(common_users)})[/bold blue]")
+        console.rule(f"[bold blue]cross-users ({len(common_users)})[/bold blue]", characters="#")
 
         padding = 0 if Android else (0, 1)
-        table_his = Table(title=f"\n[bold red]CROSS USERS (in CLI = max 20 users, in HTML = full users)[/bold red]",
+        table_his = Table(title=f"\n[bold red]CROSS USERS (in CLI = max 5 users, in HTML = full users)[/bold red]",
                           title_justify="center", header_style='bold red', style="bold red", padding=padding, show_lines=True)
         table_his.add_column("N", justify="left", style="bold green", no_wrap=False)
         table_his.add_column("Q/S", justify="left", style="red", no_wrap=False)
@@ -162,7 +170,7 @@ def cross_user_detect(base_dir, filename="new.txt"):
         table_his.add_column("Github repositories", justify="left", style="bold yellow", overflow="fold", no_wrap=False)
 
         sorted_items = sorted(common_users.items(), key=lambda item: (-len(item[1]), item[0]))
-        for N, (username, repository) in enumerate(sorted_items[:20], 1):
+        for N, (username, repository) in enumerate(sorted_items[:5], 1):
             table_his.add_row(str(N), str(len(repository)), f'https://github.com/{username}', ", ".join(repository))
         console.print(table_his)
 
@@ -170,6 +178,100 @@ def cross_user_detect(base_dir, filename="new.txt"):
             f.write(f"CROSS-USERS = {len(common_users)}\n\n")
             for username, repository in sorted_items:
                 print(f"https://github.com/{username} ({len(repository)}):\n  ", '\n   '.join(repository), '\n', file=f)
+
+
+def agregated_date(filename):
+    """Читаем HTML-файлы, извлекаем и агрегируем данные: дата и кол-во users."""
+    aggregated_data = defaultdict(int)
+    pattern = re.compile(r"<span class='color2'>\d{4}-\d{2}-\d{2}_\d{2}:\d{2}\s*—\s*(\d{4}-\d{2}-\d{2})_\d{2}:\d{2}</span>.*?" + \
+                         r"users__<b>(\d+)</b>", re.IGNORECASE)
+
+    if not os.path.exists(filename):
+        return aggregated_data
+
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            fr = f.read().splitlines()
+            for i in fr:
+                match = pattern.search(i)
+                if match:
+                    date_str_original = match.group(1)
+                    user_count_str = match.group(2)
+                    aggregated_data[date_str_original] += int(user_count_str)
+    except Exception as e:
+        console.print(f"[bold red]Error data in HTML | {e}[/bold red]\n")
+        aggregated_data.clear()
+
+    return aggregated_data
+
+
+def generate_plots(aggregated_data, source_filename):
+    """Генерация CLI и HTML графиков"""
+    if not aggregated_data:
+        return None
+
+    base_filename = os.path.basename(source_filename)
+
+    sorted_items = sorted(aggregated_data.items(), key=lambda item: datetime.datetime.strptime(item[0], '%Y-%m-%d'))
+    dates_for_plot = [item[0] for item in sorted_items]
+    counts_for_plot = [item[1] for item in sorted_items]
+# График для CLI.
+    if Windows:
+        if base_filename == 'all_new_stars.html':
+            console.print(f"\n[bold red]The graph in CLI is built only for OS: GNU/Linux; macOS and Android.\n" + \
+                          f"See graph in HTML report[/bold red]\n")
+    else:
+        try:
+            plt.clear_figure()
+            plotext_date_format = 'Y-m-d'
+            plt.date_form(plotext_date_format)
+            plt.xlabel("Date")
+            plt.ylabel("Q Users")
+            plt.grid(True, True)
+            plt.ticks_color('yellow')
+
+            if base_filename == 'all_new_stars.html':
+                plt.title("NEW_STARS")
+                plt.canvas_color('black')
+                plt.axes_color('green')
+            elif base_filename == 'all_gone_stars.html':
+                plt.title("GONE_STARS")
+                plt.canvas_color('black')
+                plt.axes_color('red')
+
+            plt.xticks(dates_for_plot)
+            plt.plot(dates_for_plot, counts_for_plot, marker='*')
+            plt.show()
+            print("\n")
+        except Exception:
+            console.print(f"[bold red]CLI Graph for {source_filename} — not created[/bold red]")
+
+# График для HTML.
+    try:
+# Преобразовываем дату str > datetime для реального отображения масштаба на графике.
+        fig = plt_html.Figure()
+        plot_bgcolor = '#f0f0f0'
+        paper_bgcolor = '#e0e0e0'
+
+        if base_filename == 'all_new_stars.html':
+            line_color = 'lime'
+            marker_color = 'green'
+        elif base_filename == 'all_gone_stars.html':
+            line_color = 'red'
+            marker_color = '#a73c3c'
+
+        fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=counts_for_plot, mode='lines+markers',
+                      name=f'Users Count ({base_filename})', marker=dict(color=marker_color, size=8,
+                      symbol='star'), line=dict(color=line_color, width=2)))
+
+        fig.update_layout(title=f"Dynamics Userstars ({base_filename})", xaxis_title="Date", yaxis_title="Quantity Users",
+                          xaxis=dict(tickformat='%Y-%m-%d', showgrid=True, gridwidth=1, gridcolor='lightgray'),
+                          yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
+                          plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor, legend_title_text='Data source')
+
+        fig.write_html(f"{path}/graph_{base_filename}")
+    except Exception as e:
+         console.print(f"[bold red]HTML Graph for graph_{base_filename} — not created | {e}[/bold red]")
 
 
 def backup_table():
@@ -433,7 +535,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v2.4', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v2.5', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -538,7 +640,16 @@ def parsing(diff=False):
             console.print("[bold black on white]NEW stars not detected")
 
         if not any([bool(diff_lst_dn), bool(diff_lst_up)]):
+            if not Windows:
+                print("")
+                console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
+                print("")
+            for html_file in [f"{path}/all_new_stars.html", f"{path}/all_gone_stars.html"]:
+                data = agregated_date(html_file)
+                generate_plots(data, html_file)
+
             common_users_found = cross_user_detect(os.path.join(os.path.dirname(path)), "new.txt" )
+
             finish(token, stars)
             win_exit()
         elif bool(diff_lst_dn) or bool(diff_lst_up):
@@ -585,6 +696,8 @@ transition: transform 0.15s}
 
                 file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
                                 "title='open all history adding stars'>open all history</a>\n" + \
+                                f"\n<a class='but' href='file://{path}/graph_all_new_stars.html' " + \
+                                "title='open all history adding stars graph'>open graph</a>\n" + \
                                 "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
                                 f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
 
@@ -593,6 +706,8 @@ transition: transform 0.15s}
 
                 file_html.write(f"\n<a class='but' href='file://{path}/all_gone_stars.html' " + \
                                 "title='open all history gone stars'>open all history</a>\n" + \
+                                f"\n<a class='but' href='file://{path}/graph_all_gone_stars.html' " + \
+                                "title='open all history gone stars graph'>open graph</a>\n" + \
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 f"<small><small>\n💾 Size:: ~ {size_repo} Mb\n<br>" + \
@@ -621,6 +736,15 @@ transition: transform 0.15s}
                 gener_his_html(diff_lst_up, html_name=f"{path}/all_new_stars.html", stars=stars,
                                title = f"<h2 align='center'>🌟_________Total New Stars/Date ↝ ")
                 console.print(table_up)
+
+# Создание CLI/HTML графиков.
+            if not Windows:
+                print("")
+                console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
+                print("")
+            for html_file in [f"{path}/all_new_stars.html", f"{path}/all_gone_stars.html"]:
+                data = agregated_date(html_file)
+                generate_plots(data, html_file)
 
 # Искать пересеченных пользователей.
             common_users_found = cross_user_detect(os.path.join(os.path.dirname(path)), "new.txt" )
