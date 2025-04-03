@@ -29,8 +29,8 @@ or even completely left the platform.
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=2.5)
-![Static Badge](https://img.shields.io/badge/latest%20v2.5-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=2.6)
+![Static Badge](https://img.shields.io/badge/latest%20v2.6-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 
@@ -156,5 +156,5 @@ Shotstars is amazing, it sees everything. Github says that the repository hasn't
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/cross.png" />  
 
 
-*8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and captured.*
+*8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and gone.*
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  
