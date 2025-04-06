@@ -1,6 +1,21 @@
 ## Shotstars
 
 ********
+**v2.7**
+********
+
+— The algorithm for counting cross-users has been fixed
+(previously, all possible intersections in scanned repositories were counted, now only users 
+relative to the selected, scanned repository are counted, Information about repositories has 
+been added to the CLI panel and HTML report).
+
+— Added a notification to the CLI that report.html is not generated if Shotstars did not detect 
+any star movement, i.e. no stars were added or subtracted.
+
+— Removed duplicate hint in Russian.
+=================================================================================================
+
+********
 **v2.6**
 ********
 

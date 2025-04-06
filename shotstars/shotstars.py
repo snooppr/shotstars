@@ -37,7 +37,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.6, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.7, author: https://github.com/snooppr
 """)
 
 
@@ -51,7 +51,7 @@ def main_cli():
 
     global url_repo, repo, repo_api, path
     try:
-        console.print("Enter [bold green]url[/bold green] (Repository On Github) or '[bold green]history[/bold green]': ",
+        console.print("Enter [bold green]url[/bold green] (Repository On GitHub) or '[bold green]history[/bold green]': ",
                       highlight=False, end="")
         url_repo = input("")
     except KeyboardInterrupt:
@@ -93,12 +93,9 @@ def main_cli():
             check_token()
             parsing(diff=True)
         else:
-            console.print(f"\n<[bold magenta]EN[/bold magenta]>[bold green] A new repository has been added to the tracking " + \
+            console.print(f"\n[bold green]A new repository has been added to the tracking " + \
                           f"database: '[/bold green][cyan]{repo}[/cyan][bold green]'.\nOn subsequent/re-scanning of the " + \
-                          f"repository, 'ShotStars' will attempt to calculate stars.[/bold green]" + \
-                          f"\n<[bold magenta]RU[/bold magenta]>[bold green] В БД для отслеживания добавлен новый репозиторий: " + \
-                          f"'[/bold green][cyan]{repo}[/cyan][bold green]'.\nПри последующем/повторном сканировании репозитория " + \
-                          f"'ShotStars' будет пытаться вычислять звезды.[/bold green]", highlight=False)
+                          f"repository, 'ShotStars' will attempt to calculate stars.[/bold green]", highlight=False)
             his()
             check_token()
             parsing()
@@ -110,73 +107,57 @@ def main_cli():
             os.kill(os.getpid(), signal.SIGKILL)
 
 
-def cross_user_detect(base_dir, filename="new.txt"):
+def cross_user_detect(base_users):
     """
     Последовательно читаем файлы с указанным именем из ВСЕХ подкаталогов,
     находим минимум 2-х перекрестных user-ов, встречающихся более чем в одном файле.
-    Использует os.scandir для эффективности поиска каталогов.
-
-    Аргументы:
-        base_dir (str): Базовый каталог, содержащий подкаталоги для поиска.
-        filename (str): Имя файла для чтения в каждом подкаталоге.
-    Результат:
-        Словарь, где ключи — username, а значения — кортежи
-              с именами каталогов/репозиториев, где найдено слово.
-              Пример: {"snooppr": ("snooppr", "snoop", "shotstars")}
     """
-    user_repos = defaultdict(set)
-    subdirectories_repos = []
-    try:
-        with os.scandir(base_dir) as directory:
-            for dir_ in directory:
-                if dir_.is_dir():
-                    subdirectories_repos.append(dir_.name)
-    except Exception as e:
-        console.print(f"[bold red]ERR, no access?: {base_dir}:: {e}[/bold red]")
-        return {}
+    cross_user = defaultdict(set)
+    base_dir = os.path.join(os.path.dirname(path))
 
-    if not subdirectories_repos:
-        console.print(f"[bold red]Shotstars DB not found[/bold red]")
-        return {}
+    for dir_ in os.scandir(base_dir):
+        if dir_.is_dir():
+            subfile_path = os.path.join(dir_.path, "new.txt")
+            if os.path.isfile(subfile_path):
+                with open(subfile_path, 'r', encoding='utf-8') as f:
+                    git_users = set(f.read().splitlines())
+                    for user in base_users:
+                        if user in git_users:
+                            cross_user[user].add(dir_.name)
 
-    for sub_repo in sorted(subdirectories_repos):
-        file_path = os.path.join(base_dir, sub_repo, filename)
-
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                for user in f.read().splitlines():
-                    user = user.strip()
-                    if user:
-                        user_repos[user].add(sub_repo)
-        except FileNotFoundError:
-            console.print(f"[bold red]File '{filename}' not found in directory '{sub_repo}'[/bold red]")
-        except Exception as e:
-            console.print(f"[bold red]Error reading file {file_path}: {e}[/bold red]")
-
-    # Фильтруем user/repo до 2-х и боле резуьтатов (ключи: user, значения: кортежи-repo)
-    common_users = {}
-    for k, v in user_repos.items():
+    common_users = {} # Фильтруем user/repo до 2-х и боле резуьтатов (ключи: user, значения: кортежи-repo).
+    common_repo = set()
+    for k, v in cross_user.items():
         if len(v) > 1:
+            common_repo.update(v)
             common_users[k] = tuple(sorted(list(v)))
 
+    common_repo.discard(repo)
+
     if common_users:
-        console.rule(f"[bold blue]cross-users ({len(common_users)})[/bold blue]", characters="#")
+        console.rule(f"[bold blue]cross-users ({len(common_users)}), regarding the repository ({repo})[/bold blue]", characters="#")
+        print("")
+        console.print(Panel.fit(f"({repo}) VS ({', '.join(common_repo)})",
+                                title=f"cross-users found in repositories (1 VS {len(common_repo)})",
+                                border_style="magenta"))
 
         padding = 0 if Android else (0, 1)
         table_his = Table(title=f"\n[bold red]CROSS USERS (in CLI = max 5 users, in HTML = full users)[/bold red]",
                           title_justify="center", header_style='bold red', style="bold red", padding=padding, show_lines=True)
         table_his.add_column("N", justify="left", style="bold green", no_wrap=False)
         table_his.add_column("Q/S", justify="left", style="red", no_wrap=False)
-        table_his.add_column("Github username", justify="left", style="bold blue", overflow="fold", no_wrap=False)
-        table_his.add_column("Github repositories", justify="left", style="bold yellow", overflow="fold", no_wrap=False)
+        table_his.add_column("GitHub username", justify="left", style="bold blue", overflow="fold", no_wrap=False)
+        table_his.add_column("GitHub repositories", justify="left", style="bold yellow", overflow="fold", no_wrap=False)
 
         sorted_items = sorted(common_users.items(), key=lambda item: (-len(item[1]), item[0]))
         for N, (username, repository) in enumerate(sorted_items[:5], 1):
             table_his.add_row(str(N), str(len(repository)), f'https://github.com/{username}', ", ".join(repository))
         console.print(table_his)
 
-        with open(os.path.join(os.path.dirname(path), "crossusers.txt"), "w", encoding="utf-8") as f:
-            f.write(f"CROSS-USERS = {len(common_users)}\n\n")
+        with open(os.path.join(os.path.dirname(path), "dynamic_crossusers.txt"), "w", encoding="utf-8") as f:
+            f.write(f"<dynamically updated file>\n\n")
+            f.write(f"CROSS-USERS [regarding the repository: {repo}]:: {len(common_users)} users\n")
+            f.write(f"CROSS-USERS [found in repositories: 1 VS {len(common_repo)}]:: ({repo}) VS ({', '.join(common_repo)}) repositories\n\n")
             for username, repository in sorted_items:
                 print(f"https://github.com/{username} ({len(repository)}):\n  ", '\n   '.join(repository), '\n', file=f)
 
@@ -383,14 +364,17 @@ def dif_time():
     return f"{delta.days}d. {(datetime.datetime.fromtimestamp(0, tz=datetime.timezone.utc) + delta).strftime('%Hh. %Mm.')}"
 
 
-def finish(token, stars=None):
+def finish(token, stars=None, report=None):
     """Финишное время, проверка наличие/отсутствие токена и заполнение истории сканирований."""
-    print('\nfinish', round(time.perf_counter() - time_start, 1), 'sec. in', timeout())
+    print('\nFinish', round(time.perf_counter() - time_start, 1), f"sec, in {timeout()}.")
+
+    if not report:
+        print("Report.html not created, no movement of stars.")
 
     if token == "None":
-        print("Github token not provided.")
+        print("GitHub token not provided.")
     elif token != "None":
-        print("Github-token is used!")
+        print("GitHub-token is used!")
 
     with open(os.path.join(os.path.dirname(path), "history.json"), "r") as his_r:
         his_file = json.load(his_r)
@@ -412,9 +396,9 @@ def limited(req, token):
     console.print("\n[bold red]Attention! The API limit has probably been exceeded, the block will presumably be lifted:",
                   time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
     if token == "None":
-        console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="Github API/No Token"))
+        console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="GitHub API/No Token"))
     else:
-        console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="Github API/Token Used"))
+        console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="GitHub API/Token Used"))
 
     win_exit()
 
@@ -536,7 +520,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v2.6', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v2.7', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -575,17 +559,17 @@ def parsing(diff=False):
             push_ = "BAD!"
         title_repo = "No repository description available" if r.get('description') is None else r.get('description')
         console.print(f"\n[cyan]Size::[/cyan] ~ {size_repo} Mb" + \
-                      f"\n[cyan]Github-rating::[/cyan] {stars} stars" + \
+                      f"\n[cyan]GitHub-rating::[/cyan] {stars} stars" + \
                       f"\n[cyan]Date-of-creation::[/cyan] {created_at}" + \
                       f"\n[cyan]Date-update (including hidden update)::[/cyan] {push_}" + \
                       f"\n[cyan]Repository-description::[/cyan] {title_repo}\n", highlight=False)
     except Exception:
-        console.print('[red]Check Github api (buggy).\nReport issue to developer: "https://github.com/snooppr/shotstars/issues"')
+        console.print('[red]Check GitHub api (buggy).\nReport issue to developer: "https://github.com/snooppr/shotstars/issues"')
         win_exit()
 
     if token == "None" and pages > 60:
         console.print("\n[bold yellow][!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
-                      "by default.\nUsing a free github token, the limits are significantly increased\n(500K+ stars/hour or " + \
+                      "by default.\nUsing a free GitHub token, the limits are significantly increased\n(500K+ stars/hour or " + \
                       "max scanned repository with 40K stars). " + \
                       "\n\nView Readme: https://github.com/snooppr/shotstars#%EF%B8%8F-github-restrictions[/bold yellow]")
         shutil.rmtree(path, ignore_errors=True)
@@ -649,7 +633,7 @@ def parsing(diff=False):
                 data = agregated_date(html_file)
                 generate_plots(data, html_file)
 
-            common_users_found = cross_user_detect(os.path.join(os.path.dirname(path)), "new.txt" )
+            common_users_found = cross_user_detect(set(lst_new))
 
             finish(token, stars)
             win_exit()
@@ -712,14 +696,14 @@ transition: transform 0.15s}
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 f"<small><small>\n💾 Size:: ~ {size_repo} Mb\n<br>" + \
-                                f"✨ Github-rating:: {stars} stars<br>\n⏳ Date-of-creation:: {created_at}<br>\n" + \
+                                f"✨ GitHub-rating:: {stars} stars<br>\n⏳ Date-of-creation:: {created_at}<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                                 f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \
                                 f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
                                 "</small></small></span>\n\n<div>\n<br>\n" + \
-                                f"<a class='but' href='file://{path.replace(repo, '')}crossusers.txt' " + \
+                                f"<a class='but' href='file://{path.replace(repo, '')}dynamic_crossusers.txt' " + \
                                 "title='open all cross-users'>open all cross-users</a>\n</div>\n\n<p style='color: white'><small>" + \
                                 "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
                                 "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
@@ -748,14 +732,14 @@ transition: transform 0.15s}
                 generate_plots(data, html_file)
 
 # Искать пересеченных пользователей.
-            common_users_found = cross_user_detect(os.path.join(os.path.dirname(path)), "new.txt" )
+            common_users_found = cross_user_detect(set(lst_new))
 
             try:
                 webbrowser.open(f"file://{path}/report.html")
             except Exception:
                 console.print("[bold red]It is impossible to open the web browser due to problems with the operating system.")
 
-    finish(token, stars)
+    finish(token, stars, report=True)
     win_exit()
 
 # Arbeiten.

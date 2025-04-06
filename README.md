@@ -29,8 +29,8 @@ or even completely left the platform.
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=2.6)
-![Static Badge](https://img.shields.io/badge/latest%20v2.6-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=2.7)
+![Static Badge](https://img.shields.io/badge/latest%20v2.7-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 
@@ -151,7 +151,7 @@ Github-токен принадлежит пользователю, хранит�
 
 *6 Shotstars Discovers Hidden Developer Activity*
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update.png" />  
-Shotstars is amazing, it sees everything. Github says that the repository hasn't been committed for a month, but the commits were made secretly (rewriting and manipulating commit dates, this is a question for the repository developer: why do they do this).  
+Shotstars is awesome, it sees everything. Github says the repository hasn't had any commits in a month, but there has been some subtle activity, like PR updates, etc. (by the way, commit rewriting and date manipulation is also easily detected).  
 
 
 *7 Shotstars finds users that overlap across Github projects, including those with hidden/private profiles*
