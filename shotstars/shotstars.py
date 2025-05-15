@@ -5,7 +5,7 @@ import configparser
 import datetime
 import json
 import os
-import plotext as plt
+import plotext as plt_cli
 import plotly.graph_objects as plt_html
 import random
 import re
@@ -37,7 +37,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.7, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.8, author: https://github.com/snooppr
 """)
 
 
@@ -101,10 +101,7 @@ def main_cli():
             parsing()
     except KeyboardInterrupt:
         console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
-        if Windows:
-            os.kill(os.getpid(), signal.SIGBREAK)
-        else:
-            os.kill(os.getpid(), signal.SIGKILL)
+        os.kill(os.getpid(), signal.SIGBREAK if Windows else signal.SIGKILL)
 
 
 def cross_user_detect(base_users):
@@ -163,7 +160,13 @@ def cross_user_detect(base_users):
 
 
 def agregated_date(filename):
-    """Читаем HTML-файлы, извлекаем и агрегируем данные: дата и кол-во users."""
+    """
+    Читаем HTML-файл, извлекаем и агрегируем данные: дата и кол-во users (для расчета 'gone stars').
+    Либо возвращаем реальный парсинг по github-api (new stars).
+    """
+    if isinstance(filename, Counter):
+        return filename
+
     aggregated_data = defaultdict(int)
     pattern = re.compile(r"<span class='color2'>\d{4}-\d{2}-\d{2}_\d{2}:\d{2}\s*—\s*(\d{4}-\d{2}-\d{2})_\d{2}:\d{2}</span>.*?" + \
                          r"users__<b>(\d+)</b>", re.IGNORECASE)
@@ -204,26 +207,26 @@ def generate_plots(aggregated_data, source_filename):
                           f"See graph in HTML report[/bold red]\n")
     else:
         try:
-            plt.clear_figure()
+            plt_cli.clear_figure()
             plotext_date_format = 'Y-m-d'
-            plt.date_form(plotext_date_format)
-            plt.xlabel("Date")
-            plt.ylabel("Q Users")
-            plt.grid(True, True)
-            plt.ticks_color('yellow')
+            plt_cli.date_form(plotext_date_format)
+            plt_cli.xlabel("Date")
+            plt_cli.ylabel("Q Users")
+            plt_cli.grid(True, True)
+            plt_cli.ticks_color('yellow')
 
             if base_filename == 'all_new_stars.html':
-                plt.title("NEW_STARS")
-                plt.canvas_color('black')
-                plt.axes_color('green')
+                plt_cli.title("NEW_STARS (real parsing)")
+                plt_cli.canvas_color('black')
+                plt_cli.axes_color('green')
             elif base_filename == 'all_gone_stars.html':
-                plt.title("GONE_STARS")
-                plt.canvas_color('black')
-                plt.axes_color('red')
+                plt_cli.title("GONE_STARS (calculation by algorithms)")
+                plt_cli.canvas_color('black')
+                plt_cli.axes_color('red')
 
-            plt.xticks(dates_for_plot)
-            plt.plot(dates_for_plot, counts_for_plot, marker='*')
-            plt.show()
+            plt_cli.xticks(dates_for_plot)
+            plt_cli.plot(dates_for_plot, counts_for_plot, marker='*')
+            plt_cli.show()
             print("\n")
         except Exception:
             console.print(f"[bold red]CLI Graph for {source_filename} — not created[/bold red]")
@@ -246,7 +249,7 @@ def generate_plots(aggregated_data, source_filename):
                       name=f'Users Count ({base_filename})', marker=dict(color=marker_color, size=8,
                       symbol='star'), line=dict(color=line_color, width=2)))
 
-        fig.update_layout(title=f"Dynamics Userstars ({base_filename})", xaxis_title="Date", yaxis_title="Quantity Users",
+        fig.update_layout(title=f"Dynamics userstars repository: {repo} ({base_filename})", xaxis_title="Date", yaxis_title="Quantity Users",
                           xaxis=dict(tickformat='%Y-%m-%d', showgrid=True, gridwidth=1, gridcolor='lightgray'),
                           yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
                           plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor, legend_title_text='Data source')
@@ -397,6 +400,10 @@ def limited(req, token):
                   time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
     if token == "None":
         console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="GitHub API/No Token"))
+        console.print("\n[bold yellow][!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
+                      "by default.\nUsing a free GitHub token, the limits are significantly increased\n(500K+ stars/hour or " + \
+                      "max scanned repository with 40K stars). " + \
+                      "\n\nView Readme: https://github.com/snooppr/shotstars#%EF%B8%8F-github-restrictions[/bold yellow]")
     else:
         console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="GitHub API/Token Used"))
 
@@ -520,7 +527,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v2.7', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v2.8', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -562,7 +569,7 @@ def parsing(diff=False):
                       f"\n[cyan]GitHub-rating::[/cyan] {stars} stars" + \
                       f"\n[cyan]Date-of-creation::[/cyan] {created_at}" + \
                       f"\n[cyan]Date-update (including hidden update)::[/cyan] {push_}" + \
-                      f"\n[cyan]Repository-description::[/cyan] {title_repo}\n", highlight=False)
+                      f"\n[cyan]Repository-description::[/cyan] {title_repo}", highlight=False)
     except Exception:
         console.print('[red]Check GitHub api (buggy).\nReport issue to developer: "https://github.com/snooppr/shotstars/issues"')
         win_exit()
@@ -588,17 +595,20 @@ def parsing(diff=False):
     executor = ThreadPoolExecutor(max_workers=thread_max)
 
     spinner = 'earth' if diff else 'material'
-    lst_new, futures = [], {}
+    lst_new, futures, datestars_user = [], {}, defaultdict(set)
     with console.status("[cyan]Working", spinner=spinner):
         for page in range(1, pages+1):
-            futures[executor.submit(my_session.get, headers=head, timeout=6,
+            futures[executor.submit(my_session.get, headers={**head, 'Accept': 'application/vnd.github.star+json'}, timeout=6,
                                     url=f'https://api.github.com/repos/{repo_api}/stargazers?per_page=100&page={page}')] = None
         try:
             for future in as_completed(futures):
                 data = future.result(timeout=12)
-                data = data.json()
-                for num in data:
-                    lst_new.append(num.get("login"))
+
+                for num in data.json():
+                    git_username = num.get("user").get("login")
+                    lst_new.append(git_username)
+                    datestars_user[num.get("starred_at").split("T")[0]].add(git_username)
+
                 futures.pop(future, None)
         except Exception:
             limited(req, token)
@@ -607,6 +617,10 @@ def parsing(diff=False):
             executor.shutdown()
         except Exception:
             pass
+
+    Maximum_stars_in_date = Counter({date: len(users) for date, users in datestars_user.items()})
+    for date_stars_max, cnt_stars in Maximum_stars_in_date.most_common(1):
+        console.print(f"\n[cyan]Maximum-stars-in-date::[/cyan] {cnt_stars} stars / {date_stars_max}\n", highlight=False)
 
     with open(f"{path}/new.txt", "w", encoding="utf-8") as f_w:
         print(*lst_new, file=f_w, sep="\n")
@@ -629,8 +643,10 @@ def parsing(diff=False):
                 print("")
                 console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
                 print("")
-            for html_file in [f"{path}/all_new_stars.html", f"{path}/all_gone_stars.html"]:
+            for html_file in [Maximum_stars_in_date, f"{path}/all_gone_stars.html"]:
                 data = agregated_date(html_file)
+                if isinstance(html_file, Counter):
+                    html_file = f"{path}/all_new_stars.html"
                 generate_plots(data, html_file)
 
             common_users_found = cross_user_detect(set(lst_new))
@@ -695,8 +711,10 @@ transition: transform 0.15s}
                                 "title='open all history gone stars graph'>open graph</a>\n" + \
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                                f"<small><small>\n💾 Size:: ~ {size_repo} Mb\n<br>" + \
-                                f"✨ GitHub-rating:: {stars} stars<br>\n⏳ Date-of-creation:: {created_at}<br>\n" + \
+                                f"<small><small>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
+                                f"✨ GitHub-rating:: {stars} stars<br>\n" + \
+                                f"🌟 Maximum-stars-in-date:: {cnt_stars} / {date_stars_max}<br>\n" + \
+                                f"⏳ Date-of-creation:: {created_at}<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                                 f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
@@ -727,8 +745,10 @@ transition: transform 0.15s}
                 print("")
                 console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
                 print("")
-            for html_file in [f"{path}/all_new_stars.html", f"{path}/all_gone_stars.html"]:
+            for html_file in [Maximum_stars_in_date, f"{path}/all_gone_stars.html"]:
                 data = agregated_date(html_file)
+                if isinstance(html_file, Counter):
+                    html_file = f"{path}/all_new_stars.html"
                 generate_plots(data, html_file)
 
 # Искать пересеченных пользователей.

@@ -1,6 +1,19 @@
 ## Shotstars
 
 ********
+**v2.8**
+********
+
+— A new metric has been added to CLI/HTML reports: the maximum number of stars received in the 
+repository per day and this date.
+
+— The algorithm for plotting the star addition graph in CLI/HTML reports has been changed: 
+instead of calculating user activity, pure parsing is used, which allows finding repositories 
+with fake stars. The algorithm for deleting gone stars is the same: 
+based on the user's scan frequency activity.
+=================================================================================================
+
+********
 **v2.7**
 ********
 
