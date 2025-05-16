@@ -15,6 +15,7 @@ or even completely left the platform. In addition, the tool allows you to identi
 
 **Claimed functions:**  
 - [X] Shotstars will help find and expose naked kings and their retinue *(fact: stars in some repositories are inflated)*  
+- [X] Shotstars calculates parameters: aggressive marketing, trend, fake stars, peak of popularity and its date.  
 - [X] Shotstars scans repositories for stars added and removed with statistics for a selected time period.  
 - [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects commits, but Shotstars will not fool them, the utility will display real numbers)*.  
 - [X] Shotstats will show ~ the size of any public repository.  
@@ -30,8 +31,8 @@ or even completely left the platform. In addition, the tool allows you to identi
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=2.8)
-![Static Badge](https://img.shields.io/badge/latest%20v2.8-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.0)
+![Static Badge](https://img.shields.io/badge/latest%20v3.0-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 
@@ -94,10 +95,11 @@ Research on the promotion of fake stars **/** Исследование про н
 
 ## 🇷🇺 TL;DR  
 Shotstars позволяет следить со стороны <u>за любым</u> репозиторием.  
-Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится и вычислит конкретно тех github-пользователей, кто удалил или накинул звезды любому проекту, а то и вовсе удалился с платформы. Кроме того инструмент позволяет вычислять репозитории с фейковыми звездами.  
+Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится и вычислит конкретно тех github-пользователей, кто удалил или накинул звезды любому проекту, а то и вовсе удалился с платформы. Кроме того, инструмент позволяет вычислять репозитории с фейковыми звездами.  
 
 **Заявленные функции:**  
 - [X] Shotstars поможет найти и разоблачить голых королей и их свиту *(факт: звезды в некоторых репозиториях накручивают)*.  
+- [X] Shotstars рассчитывает параметры: агрессивный маркетинг, тренд, фейковые звезды, пик популярности и его дата.  
 - [X] Shotstars проверяет репозитории на предмет прибавления и убавления звезд со статистикой за выбранный период времени.  
 - [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов и коммитов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
 - [X] Shotstats покажет ~ размер любого публичного репозитория.  

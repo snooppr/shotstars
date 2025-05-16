@@ -12,6 +12,7 @@ import re
 import requests
 import shutil
 import signal
+import statistics
 import subprocess
 import sys
 import time
@@ -37,7 +38,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v2.8, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.0, author: https://github.com/snooppr
 """)
 
 
@@ -527,7 +528,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v2.8', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v3.0', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -558,7 +559,7 @@ def parsing(diff=False):
 # Вывод на печать кол-ва звезд, дату создания проекта и описание (если присутствует).
     try:
         size_repo = "N/O" if r.get('size') is None else round(r.get('size') / 1024, 2)
-        created_at = "N/O" if r.get('created_at') is None else r.get('created_at').split("T")[0]
+        created_at = -1 if r.get('created_at') is None else r.get('created_at').split("T")[0]
         push = "N/O" if r.get('pushed_at') is None else r.get('pushed_at')
         try:
             push_ = datetime.datetime.strptime(push, "%Y-%m-%dT%H:%M:%SZ").strftime('%Y-%m-%d__%H:%M') + "_UTC"
@@ -618,14 +619,39 @@ def parsing(diff=False):
         except Exception:
             pass
 
+# Статистика.
     Maximum_stars_in_date = Counter({date: len(users) for date, users in datestars_user.items()})
-    for date_stars_max, cnt_stars in Maximum_stars_in_date.most_common(1):
-        console.print(f"\n[cyan]Maximum-stars-in-date::[/cyan] {cnt_stars} stars / {date_stars_max}\n", highlight=False)
+    stdev = statistics.stdev(list(Maximum_stars_in_date.values()))
+    dif_date = (datetime.datetime.today() - datetime.datetime.strptime(created_at, "%Y-%m-%d")).days
+    _Maximum_stars_in_date = Maximum_stars_in_date.copy()
 
+    for i in range(dif_date - len(_Maximum_stars_in_date)):
+        _Maximum_stars_in_date.update({i: 0})
+
+    trend = f"{int(statistics.median(list(_Maximum_stars_in_date.values())))} stars / day"
+
+    if dif_date > 365:
+        if stdev < 4: marketing, marketing_color, fuckstars = "—", "—", "—"
+        elif 4 < stdev < 6: marketing, marketing_color, fuckstars = "Low", "[green]Low[/green]", "—"
+        elif 6 < stdev < 9: marketing, marketing_color, fuckstars = "Medium", "[yellow]Medium[/yellow]", "—"
+        elif 9 < stdev < 15: marketing, marketing_color, fuckstars = "High", "[red]High[/red]", "—"
+        elif stdev > 15: marketing, marketing_color, fuckstars = "Hard", "[black on red]Hard[/black on red]", "Yes"
+    else:
+        marketing = "The repository is still young, not enough data"
+        marketing_color = "The repository is still young, not enough data"
+        fuckstars = "The repository is still young, not enough data"
+
+    for date_stars_max, cnt_stars in Maximum_stars_in_date.most_common(1):
+        console.print(f"[cyan]Peak-stars-in-date::[/cyan] {cnt_stars} stars / {date_stars_max}", highlight=False)
+
+    console.print("[cyan]The trend of adding stars::[/cyan]", trend, highlight=False)
+    console.print(f"[cyan]Aggressive-marketing::[/cyan] {marketing_color}", highlight=False)
+    console.print(f"[cyan]Fuckstars::[/cyan] {fuckstars}\n", highlight=False)
+
+# Сравнение списков пользователей после временных сканирований для обнаружения в них изменений.
     with open(f"{path}/new.txt", "w", encoding="utf-8") as f_w:
         print(*lst_new, file=f_w, sep="\n")
 
-# Сравнение списков пользователей после временных сканирований для обнаружения в них изменений.
     if diff:
         with open(f"{path}/old.txt", "r") as f_r:
             lst_old = f_r.read().split()
@@ -713,9 +739,12 @@ transition: transform 0.15s}
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 f"<small><small>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
                                 f"✨ GitHub-rating:: {stars} stars<br>\n" + \
-                                f"🌟 Maximum-stars-in-date:: {cnt_stars} / {date_stars_max}<br>\n" + \
+                                f"🌟 Peak-stars-in-date:: {cnt_stars} / {date_stars_max}<br>\n" + \
+                                f"📈 The trend of adding stars: {trend}:<br>\n" + \
                                 f"⏳ Date-of-creation:: {created_at}<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
+                                f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
+                                f"🎃 Fuckstars:: {fuckstars}<br>\n" + \
                                 f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \
