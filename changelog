@@ -4,7 +4,9 @@
 **v3.0**
 ********
 
-— New metrics/algorithms have been added to CLI/HTML reports: date and maximum number of stars received by the repository per day (stars/date); current trend of adding stars (stars/day); aggressive marketing (—, Low/Medium/High/Hard); fake stars (Yes/—).
+— New metrics/algorithms have been added to CLI/HTML reports: date and maximum number of stars 
+received by the repository per day (stars/date); current trend of adding stars (stars/day);
+aggressive marketing (—, Low/Medium/High/Hard); fake stars (Yes/—).
 
 — The algorithm for plotting the star addition graph in CLI/HTML reports has been changed: 
 instead of calculating user activity, pure parsing is used, which allows finding repositories 
