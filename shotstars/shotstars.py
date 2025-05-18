@@ -740,7 +740,7 @@ transition: transform 0.15s}
                                 f"<small><small>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
                                 f"✨ GitHub-rating:: {stars} stars<br>\n" + \
                                 f"🌟 Peak-stars-in-date:: {cnt_stars} / {date_stars_max}<br>\n" + \
-                                f"📈 The trend of adding stars: {trend}:<br>\n" + \
+                                f"📈 The trend of adding stars: {trend}<br>\n" + \
                                 f"⏳ Date-of-creation:: {created_at}<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                                 f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
