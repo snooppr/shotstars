@@ -31,10 +31,8 @@ or even completely left the platform. In addition, the tool allows you to identi
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.0)
-![Static Badge](https://img.shields.io/badge/latest%20v3.0-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
-
-
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.1)
+![Static Badge](https://img.shields.io/badge/latest%20v3.1-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -48,6 +46,7 @@ $ shotstars_cli
  ---
 
 ## ⚙️ Shotstars supports simulation of results  
+An HTML report is generated when Shotstars detects star motion, if there is no star motion but you want an HTML report, just enable star simulation. 👇  
 A documented software hack - or side function designed to test the script on dead/stable repositories without star movement.  
 To simulate the process, the user must scan the new repository once,   
 adding it to the database; randomly delete and add any lines to a file  
@@ -85,7 +84,7 @@ specify the keyword `his/history` instead of the repository url and select the p
 ## 🌀 With Shotstars, users can also detect fake stars  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars.png" />
   
-Example presumably of fake stars *(this repository was previously caught pirating)*.
+Example presumably of fake stars *(this repository was previously caught pirating)*. From the graph of spikes it is clear that in two weeks the repository gained +5K fake stars *(a couple of years later this repository stocked up on fake stars again).*  
 
 Research on the promotion of fake stars **/** Исследование про накрутку фейковых звезд 
 [RU](https://habr.com/ru/articles/723648/) / [RU_2](https://www.opennet.ru/opennews/art.shtml?num=62515) **|** 
@@ -151,18 +150,18 @@ Github-токен принадлежит пользователю, хранит�
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Limit.png" />  
 
 
-*5 Shotstars Scan History*
+*5 Shotstars Scan History*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/scan_history.png" />  
 
 
-*6 Shotstars Discovers Hidden Developer Activity*
+*6 Shotstars Discovers Hidden Developer Activity*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update.png" />  
 Shotstars is awesome, it sees everything. Github says the repository hasn't had any commits in a month, but there has been some subtle activity, like PR updates, etc. (by the way, commit rewriting and date manipulation is also easily detected).  
 
 
-*7 Shotstars finds users that overlap across Github projects, including those with hidden/private profiles*
+*7 Shotstars finds users that overlap across Github projects, including those with hidden/private profiles*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/cross.png" />  
 
 
-*8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and gone.*
+*8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and gone.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  

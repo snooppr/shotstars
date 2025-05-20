@@ -1,6 +1,23 @@
 ## Shotstars
 
 ********
+**v3.1**
+********
+
+— Updated graph formats: from linear to graphs with vertical lines
+(for better interpretation of results, for example, displaying days when the stars were at zero).
+In the HTML graph, the marker has been given captions: date and number of stars. The blue color
+of the stars on the CLI chart has been changed to light blue (for better visibility). The Y/star
+count scale in the CLI now accepts strictly integers (previously they could be fractional).
+Added chart captions to CLI.
+
+— Metrics have been expanded: Aggressive-marketing ('Hard+') and 
+Fake-stars ('Multiple attempts to promote fake stars').
+
+— Renamed metric: 'fuck-stars' to 'fake-stars'.
+=================================================================================================
+
+********
 **v3.0**
 ********
 

@@ -38,7 +38,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.0, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.1, author: https://github.com/snooppr
 """)
 
 
@@ -217,17 +217,22 @@ def generate_plots(aggregated_data, source_filename):
             plt_cli.ticks_color('yellow')
 
             if base_filename == 'all_new_stars.html':
-                plt_cli.title("NEW_STARS (real parsing)")
+                plt_cli.title(f"NEW_STARS, '{repo}' (real parsing)")
                 plt_cli.canvas_color('black')
                 plt_cli.axes_color('green')
             elif base_filename == 'all_gone_stars.html':
-                plt_cli.title("GONE_STARS (calculation by algorithms)")
+                plt_cli.title(f"GONE_STARS, '{repo}' (calculations)")
                 plt_cli.canvas_color('black')
                 plt_cli.axes_color('red')
 
             plt_cli.xticks(dates_for_plot)
-            plt_cli.plot(dates_for_plot, counts_for_plot, marker='*')
+            plt_cli.yticks(range(0, max(counts_for_plot) + 1))
+
+            for i in range(len(dates_for_plot)):
+                plt_cli.plot([dates_for_plot[i], dates_for_plot[i]], [0, counts_for_plot[i]], marker='*', color='blue+')
+
             plt_cli.show()
+
             print("\n")
         except Exception:
             console.print(f"[bold red]CLI Graph for {source_filename} — not created[/bold red]")
@@ -246,11 +251,14 @@ def generate_plots(aggregated_data, source_filename):
             line_color = 'red'
             marker_color = '#a73c3c'
 
-        fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=counts_for_plot, mode='lines+markers',
+        fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=counts_for_plot, mode='markers',
                       name=f'Users Count ({base_filename})', marker=dict(color=marker_color, size=8,
-                      symbol='star'), line=dict(color=line_color, width=2)))
+                      symbol='star'), error_y=dict(type='data', arrayminus=counts_for_plot, array=[0] * len(counts_for_plot),
+                                                   visible=True, thickness=1, width=0, color=line_color),
+                      customdata=counts_for_plot, hovertemplate=("Date: %{x}<br>Stars: %{customdata}<extra></extra>")))
 
-        fig.update_layout(title=f"Dynamics userstars repository: {repo} ({base_filename})", xaxis_title="Date", yaxis_title="Quantity Users",
+        fig.update_layout(title=f"Dynamics userstars, repository '{repo}' ({base_filename})",
+                          xaxis_title="Date", yaxis_title="Quantity Users",
                           xaxis=dict(tickformat='%Y-%m-%d', showgrid=True, gridwidth=1, gridcolor='lightgray'),
                           yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
                           plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor, legend_title_text='Data source')
@@ -528,7 +536,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v3.0', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v3.1', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -633,9 +641,12 @@ def parsing(diff=False):
     if dif_date > 365:
         if stdev < 4: marketing, marketing_color, fuckstars = "—", "—", "—"
         elif 4 < stdev < 6: marketing, marketing_color, fuckstars = "Low", "[green]Low[/green]", "—"
-        elif 6 < stdev < 9: marketing, marketing_color, fuckstars = "Medium", "[yellow]Medium[/yellow]", "—"
-        elif 9 < stdev < 15: marketing, marketing_color, fuckstars = "High", "[red]High[/red]", "—"
-        elif stdev > 15: marketing, marketing_color, fuckstars = "Hard", "[black on red]Hard[/black on red]", "Yes"
+        elif 6 < stdev < 10: marketing, marketing_color, fuckstars = "Medium", "[yellow]Medium[/yellow]", "—"
+        elif 10 < stdev < 16: marketing, marketing_color, fuckstars = "High", "[red]High[/red]", "—"
+        elif 16 < stdev < 30: marketing, marketing_color, fuckstars = "Hard", "[black on red]Hard[/black on red]", "Yes"
+        elif stdev > 30:
+            marketing, marketing_color = "Hard+", "[black on red]Hard+[/black on red]"
+            fuckstars = "Yes, multiple attempts to promote fake stars"
     else:
         marketing = "The repository is still young, not enough data"
         marketing_color = "The repository is still young, not enough data"
@@ -644,9 +655,9 @@ def parsing(diff=False):
     for date_stars_max, cnt_stars in Maximum_stars_in_date.most_common(1):
         console.print(f"[cyan]Peak-stars-in-date::[/cyan] {cnt_stars} stars / {date_stars_max}", highlight=False)
 
-    console.print("[cyan]The trend of adding stars::[/cyan]", trend, highlight=False)
+    console.print("[cyan]The-trend-of-adding-stars::[/cyan]", trend, highlight=False)
     console.print(f"[cyan]Aggressive-marketing::[/cyan] {marketing_color}", highlight=False)
-    console.print(f"[cyan]Fuckstars::[/cyan] {fuckstars}\n", highlight=False)
+    console.print(f"[cyan]Fake-stars::[/cyan] {fuckstars}\n", highlight=False)
 
 # Сравнение списков пользователей после временных сканирований для обнаружения в них изменений.
     with open(f"{path}/new.txt", "w", encoding="utf-8") as f_w:
@@ -740,11 +751,11 @@ transition: transform 0.15s}
                                 f"<small><small>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
                                 f"✨ GitHub-rating:: {stars} stars<br>\n" + \
                                 f"🌟 Peak-stars-in-date:: {cnt_stars} / {date_stars_max}<br>\n" + \
-                                f"📈 The trend of adding stars: {trend}<br>\n" + \
+                                f"📈 The-trend-of-adding-stars: {trend}<br>\n" + \
                                 f"⏳ Date-of-creation:: {created_at}<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                                 f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
-                                f"🎃 Fuckstars:: {fuckstars}<br>\n" + \
+                                f"🎃 Fake-stars:: {fuckstars}<br>\n" + \
                                 f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \
