@@ -82,10 +82,15 @@ specify the keyword `his/history` instead of the repository url and select the p
  ---
 
 ## 🌀 With Shotstars, users can also detect fake stars  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars.png" />
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars.png" />  
   
 Example presumably of fake stars *(this repository was previously caught pirating)*. From the graph of spikes it is clear that in two weeks the repository gained +5K fake stars *(a couple of years later this repository stocked up on fake stars again).*  
-
+Shotstars also offers a line chart: a cumulative set of stars.  
+  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars_cum.png" />  
+  
+Comparison of two repositories, cumulative set of stars. The upper screenshot is the usual movement of stars, the lower screenshot is the promotion of fake stars.  
+  
 Research on the promotion of fake stars **/** Исследование про накрутку фейковых звезд 
 [RU](https://habr.com/ru/articles/723648/) / [RU_2](https://www.opennet.ru/opennews/art.shtml?num=62515) **|** 
 [EN](https://dagster.io/blog/fake-stars) / [EN_2](https://arxiv.org/html/2412.13459v1)  

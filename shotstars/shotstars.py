@@ -20,6 +20,7 @@ import webbrowser
 
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
+from plotly.offline import get_plotlyjs
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -38,7 +39,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.1, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.2, author: https://github.com/snooppr
 """)
 
 
@@ -165,7 +166,7 @@ def agregated_date(filename):
     Читаем HTML-файл, извлекаем и агрегируем данные: дата и кол-во users (для расчета 'gone stars').
     Либо возвращаем реальный парсинг по github-api (new stars).
     """
-    if isinstance(filename, Counter):
+    if isinstance(filename, list):
         return filename
 
     aggregated_data = defaultdict(int)
@@ -191,16 +192,27 @@ def agregated_date(filename):
     return aggregated_data
 
 
+def calc_stars(aggregated_data):
+    sorted_items = sorted(aggregated_data.items(), key=lambda item: datetime.datetime.strptime(item[0], '%Y-%m-%d'))
+    dates_for_plot = [item[0] for item in sorted_items]
+    counts_for_plot = [item[1] for item in sorted_items]
+
+    return dates_for_plot, counts_for_plot
+
+
 def generate_plots(aggregated_data, source_filename):
     """Генерация CLI и HTML графиков"""
     if not aggregated_data:
         return None
+    elif isinstance(aggregated_data, list):
+        aggregated_data1, aggregated_data2 = aggregated_data
+        dates_for_plot, counts_for_plot = calc_stars(aggregated_data1)
+        dates_for_plot2, counts_for_plot2 = calc_stars(aggregated_data2)
+    else:
+        dates_for_plot, counts_for_plot = calc_stars(aggregated_data)
 
     base_filename = os.path.basename(source_filename)
 
-    sorted_items = sorted(aggregated_data.items(), key=lambda item: datetime.datetime.strptime(item[0], '%Y-%m-%d'))
-    dates_for_plot = [item[0] for item in sorted_items]
-    counts_for_plot = [item[1] for item in sorted_items]
 # График для CLI.
     if Windows:
         if base_filename == 'all_new_stars.html':
@@ -237,7 +249,7 @@ def generate_plots(aggregated_data, source_filename):
         except Exception:
             console.print(f"[bold red]CLI Graph for {source_filename} — not created[/bold red]")
 
-# График для HTML.
+# Графики для HTML.
     try:
 # Преобразовываем дату str > datetime для реального отображения масштаба на графике.
         fig = plt_html.Figure()
@@ -252,18 +264,72 @@ def generate_plots(aggregated_data, source_filename):
             marker_color = '#a73c3c'
 
         fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=counts_for_plot, mode='markers',
-                      name=f'Users Count ({base_filename})', marker=dict(color=marker_color, size=8,
-                      symbol='star'), error_y=dict(type='data', arrayminus=counts_for_plot, array=[0] * len(counts_for_plot),
-                                                   visible=True, thickness=1, width=0, color=line_color),
+                      marker=dict(color=marker_color, size=8, symbol='star'),
+                      error_y=dict(type='data', arrayminus=counts_for_plot, array=[0] * len(counts_for_plot),
+                                   visible=True, thickness=1, width=0, color=line_color),
                       customdata=counts_for_plot, hovertemplate=("Date: %{x}<br>Stars: %{customdata}<extra></extra>")))
 
-        fig.update_layout(title=f"Dynamics userstars, repository '{repo}' ({base_filename})",
-                          xaxis_title="Date", yaxis_title="Quantity Users",
+        fig.update_layout(title=f"Dynamics userstars, repository '<b>{repo}</b>' " + \
+                                f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                          xaxis_title="Date", yaxis_title="Quantity stars",
                           xaxis=dict(tickformat='%Y-%m-%d', showgrid=True, gridwidth=1, gridcolor='lightgray'),
                           yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
                           plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor, legend_title_text='Data source')
 
-        fig.write_html(f"{path}/graph_{base_filename}")
+        if not isinstance(aggregated_data, list):
+            fig.write_html(f"{path}/graph_{base_filename}")
+        else: # строим 2-й в HTML-график.
+            fig2 = plt_html.Figure()
+
+            fig2.add_trace(plt_html.Scatter(x=dates_for_plot2, y=counts_for_plot2, mode='lines+markers',
+                                            marker=dict(size=3, symbol='star'), line=dict(shape='spline', width=5)))
+
+            fig2.update_layout(title=f"Cumulative growth of stars, repository '<b>{repo}</b>' " + \
+                                     f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               xaxis_title='Date', yaxis_title='Quantity stars',
+                               xaxis=dict(tickformat='%Y-%m-%d'), autosize=True,
+                               yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
+                               plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor,
+                               width=None, height=None)
+
+            plot_html = fig.to_html(full_html=False, include_plotlyjs=False)
+            plot_html2 = fig2.to_html(full_html=False, include_plotlyjs=False)
+
+            with open(f"{path}/graph_{base_filename}", 'w', encoding='utf-8') as f:
+                f.write(f"""
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script type="text/javascript">window.PlotlyConfig = {{MathJaxConfig: 'local'}};</script>
+    <script type="text/javascript">{get_plotlyjs()}</script>
+    <title>📈 Shotstars, add_stars</title>
+    <style>
+        body {{
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+        }}
+        .plot-container {{
+            width: 100%;
+            margin-bottom: 30px;
+            box-sizing: border-box;
+        }}
+        h1 {{
+            text-align: center;
+            margin-bottom: 20px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="plot-container">
+        {plot_html}
+    </div>
+
+    <div class="plot-container">
+        {plot_html2}
+    </div>
+</body>
+</html>""")
     except Exception as e:
          console.print(f"[bold red]HTML Graph for graph_{base_filename} — not created | {e}[/bold red]")
 
@@ -536,7 +602,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v3.1', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v3.2', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -628,23 +694,28 @@ def parsing(diff=False):
             pass
 
 # Статистика.
-    Maximum_stars_in_date = Counter({date: len(users) for date, users in datestars_user.items()})
+    Maximum_stars_in_date = Counter({date: len(users) for date, users in datestars_user.items()}) #data для 1-го гр.add_stars.
     stdev = statistics.stdev(list(Maximum_stars_in_date.values()))
     dif_date = (datetime.datetime.today() - datetime.datetime.strptime(created_at, "%Y-%m-%d")).days
     _Maximum_stars_in_date = Maximum_stars_in_date.copy()
+    trend = f"{round(statistics.median(list(_Maximum_stars_in_date.values())))} stars / day"
+    cumulative_datestars = Counter() #data для 2-го гр. add_stars.
+
+    s_total = 0
+    for k, v in sorted(Maximum_stars_in_date.items()):
+        s_total += v
+        cumulative_datestars[k] = s_total
 
     for i in range(dif_date - len(_Maximum_stars_in_date)):
         _Maximum_stars_in_date.update({i: 0})
 
-    trend = f"{int(statistics.median(list(_Maximum_stars_in_date.values())))} stars / day"
-
     if dif_date > 365:
         if stdev < 4: marketing, marketing_color, fuckstars = "—", "—", "—"
         elif 4 < stdev < 6: marketing, marketing_color, fuckstars = "Low", "[green]Low[/green]", "—"
-        elif 6 < stdev < 10: marketing, marketing_color, fuckstars = "Medium", "[yellow]Medium[/yellow]", "—"
-        elif 10 < stdev < 16: marketing, marketing_color, fuckstars = "High", "[red]High[/red]", "—"
-        elif 16 < stdev < 30: marketing, marketing_color, fuckstars = "Hard", "[black on red]Hard[/black on red]", "Yes"
-        elif stdev > 30:
+        elif 6 < stdev < 11: marketing, marketing_color, fuckstars = "Medium", "[yellow]Medium[/yellow]", "—"
+        elif 11 < stdev < 17: marketing, marketing_color, fuckstars = "High", "[red]High[/red]", "—"
+        elif 17 < stdev < 35: marketing, marketing_color, fuckstars = "Hard", "[black on red]Hard[/black on red]", "Yes"
+        elif stdev > 35:
             marketing, marketing_color = "Hard+", "[black on red]Hard+[/black on red]"
             fuckstars = "Yes, multiple attempts to promote fake stars"
     else:
@@ -680,9 +751,9 @@ def parsing(diff=False):
                 print("")
                 console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
                 print("")
-            for html_file in [Maximum_stars_in_date, f"{path}/all_gone_stars.html"]:
+            for html_file in [[Maximum_stars_in_date, cumulative_datestars], f"{path}/all_gone_stars.html"]:
                 data = agregated_date(html_file)
-                if isinstance(html_file, Counter):
+                if isinstance(html_file, list):
                     html_file = f"{path}/all_new_stars.html"
                 generate_plots(data, html_file)
 
@@ -785,9 +856,9 @@ transition: transform 0.15s}
                 print("")
                 console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
                 print("")
-            for html_file in [Maximum_stars_in_date, f"{path}/all_gone_stars.html"]:
+            for html_file in [[Maximum_stars_in_date, cumulative_datestars], f"{path}/all_gone_stars.html"]:
                 data = agregated_date(html_file)
-                if isinstance(html_file, Counter):
+                if isinstance(html_file, list):
                     html_file = f"{path}/all_new_stars.html"
                 generate_plots(data, html_file)
 
