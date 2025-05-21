@@ -85,6 +85,7 @@ specify the keyword `his/history` instead of the repository url and select the p
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars.png" />  
   
 Example presumably of fake stars *(this repository was previously caught pirating)*. From the graph of spikes it is clear that in two weeks the repository gained +5K fake stars *(a couple of years later this repository stocked up on fake stars again).*  
+  
 Shotstars also offers a line chart: a cumulative set of stars.  
   
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars_cum.png" />  
