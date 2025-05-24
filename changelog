@@ -1,6 +1,32 @@
 ## Shotstars
 
 ********
+**v3.3**
+********
+
+— All statistics are now calculated if the repository is more than 2 months old (previously,
+it was only calculated if the repository was more than a year old).
+
+— The-trend-of-adding-stars algorithm has been corrected 
+(taking into account days without star movement).
+
+— A new metric has been added to CLI/HTML reports: 'Median-percentage-change
+(adding stars in the previous month compared to the month before last)'. 
+Algorithm: https://en.wikipedia.org/wiki/Relative_change Dynamics are measured in % 
+(the ratio of adding stars (based on the median) from the month before last to the last month).
+For example, in January the adding of stars was (outliers, fake stars are not taken into account, 
+median) 5 stars / day, in February 10 stars / day, then the metric will show +100%. If the 
+dynamics are negative, January - 10 stars / day, February - 5 stars / day, then the metric will 
+show (-50%), this is not an error, because it is not measured in times, 
+check (10 = 100%, 5 = x, x = (5 * 100/10) - 100).
+
+— Added new metric: "Most-of-stars-month / Smallest-of-stars-month", which displays the names of
+the months (in which months the most and least stars were received).
+
+— Minor visual edits to the HTML report.
+=================================================================================================
+
+********
 **v3.2**
 ********
 

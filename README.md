@@ -16,6 +16,8 @@ or even completely left the platform. In addition, the tool allows you to identi
 **Claimed functions:**  
 - [X] Shotstars will help find and expose naked kings and their retinue *(fact: stars in some repositories are inflated)*  
 - [X] Shotstars calculates parameters: aggressive marketing, trend, fake stars, peak of popularity and its date.  
+- [X] Shotstars will calculate progress or regression, percentage change over the last month.  
+- [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars.  
 - [X] Shotstars scans repositories for stars added and removed with statistics for a selected time period.  
 - [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects commits, but Shotstars will not fool them, the utility will display real numbers)*.  
 - [X] Shotstats will show ~ the size of any public repository.  
@@ -31,8 +33,8 @@ or even completely left the platform. In addition, the tool allows you to identi
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.2)
-![Static Badge](https://img.shields.io/badge/latest%20v3.2-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.3)
+![Static Badge](https://img.shields.io/badge/latest%20v3.3-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -105,6 +107,8 @@ Shotstars позволяет следить со стороны <u>за любы
 **Заявленные функции:**  
 - [X] Shotstars поможет найти и разоблачить голых королей и их свиту *(факт: звезды в некоторых репозиториях накручивают)*.  
 - [X] Shotstars рассчитывает параметры: агрессивный маркетинг, тренд, фейковые звезды, пик популярности и его дата.  
+- [X] Shotstars рассчитает прогресс или регресс, процентное изменение за последний месяц.  
+- [X] Shotstars вычислит имена месяцев, в которых было всех больше и всех меньше получено звезд.  
 - [X] Shotstars проверяет репозитории на предмет прибавления и убавления звезд со статистикой за выбранный период времени.  
 - [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов и коммитов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
 - [X] Shotstats покажет ~ размер любого публичного репозитория.  

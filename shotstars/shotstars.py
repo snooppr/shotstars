@@ -39,7 +39,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.2, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.3, author: https://github.com/snooppr
 """)
 
 
@@ -193,6 +193,7 @@ def agregated_date(filename):
 
 
 def calc_stars(aggregated_data):
+    """Получаем дату, и на неё кол-во звезд"""
     sorted_items = sorted(aggregated_data.items(), key=lambda item: datetime.datetime.strptime(item[0], '%Y-%m-%d'))
     dates_for_plot = [item[0] for item in sorted_items]
     counts_for_plot = [item[1] for item in sorted_items]
@@ -262,7 +263,7 @@ def generate_plots(aggregated_data, source_filename):
         elif base_filename == 'all_gone_stars.html':
             line_color = 'red'
             marker_color = '#a73c3c'
-
+# строим 1-й в HTML-график.
         fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=counts_for_plot, mode='markers',
                       marker=dict(color=marker_color, size=8, symbol='star'),
                       error_y=dict(type='data', arrayminus=counts_for_plot, array=[0] * len(counts_for_plot),
@@ -602,7 +603,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v3.2', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v3.3', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -694,22 +695,41 @@ def parsing(diff=False):
             pass
 
 # Статистика.
-    Maximum_stars_in_date = Counter({date: len(users) for date, users in datestars_user.items()}) #data для 1-го гр.add_stars.
-    stdev = statistics.stdev(list(Maximum_stars_in_date.values()))
-    dif_date = (datetime.datetime.today() - datetime.datetime.strptime(created_at, "%Y-%m-%d")).days
-    _Maximum_stars_in_date = Maximum_stars_in_date.copy()
-    trend = f"{round(statistics.median(list(_Maximum_stars_in_date.values())))} stars / day"
-    cumulative_datestars = Counter() #data для 2-го гр. add_stars.
+    start_date = datetime.datetime.strptime(created_at, "%Y-%m-%d")
+    end_date = datetime.datetime.today()
+    Maximum_stars_in_date = Counter({date: len(users) for date, users in datestars_user.items()}) #data для 1-го гр. add_stars.
+    dif_date = (end_date - start_date).days
 
+    cumulative_datestars = Counter() #data для 2-го гр. add_stars.
     s_total = 0
     for k, v in sorted(Maximum_stars_in_date.items()):
         s_total += v
         cumulative_datestars[k] = s_total
 
-    for i in range(dif_date - len(_Maximum_stars_in_date)):
-        _Maximum_stars_in_date.update({i: 0})
+    _Maximum_stars_in_date = Maximum_stars_in_date.copy()
+    while start_date <= end_date:
+        date_str = start_date.strftime('%Y-%m-%d')
+        _Maximum_stars_in_date.setdefault(date_str, 0)
+        start_date += datetime.timedelta(days=1)
 
-    if dif_date > 365:
+    sort_alldate_stars = sorted(_Maximum_stars_in_date.items(), key=lambda item: datetime.datetime.strptime(item[0], '%Y-%m-%d'))
+
+    if dif_date > 31:
+        trend = statistics.median([i[1] for i in sort_alldate_stars[-30:]])
+    else:
+        trend = statistics.median([i[1] for i in sort_alldate_stars])
+
+    trend = f"1 stars / day" if trend == 0.5 else f"{round(trend)} stars / day"
+
+    if dif_date > 62:
+        relative_start = statistics.median([i[1] for i in sort_alldate_stars[-60:-30]])
+        relative_end = statistics.median([i[1] for i in sort_alldate_stars[-30:]])
+        try:
+            relative_percentage = f"{round(((relative_end - relative_start) / relative_start) * 100, 2)} %"
+        except ZeroDivisionError:
+            relative_percentage = "—"
+
+        stdev = statistics.stdev([i[1] for i in sort_alldate_stars])
         if stdev < 4: marketing, marketing_color, fuckstars = "—", "—", "—"
         elif 4 < stdev < 6: marketing, marketing_color, fuckstars = "Low", "[green]Low[/green]", "—"
         elif 6 < stdev < 11: marketing, marketing_color, fuckstars = "Medium", "[yellow]Medium[/yellow]", "—"
@@ -719,14 +739,32 @@ def parsing(diff=False):
             marketing, marketing_color = "Hard+", "[black on red]Hard+[/black on red]"
             fuckstars = "Yes, multiple attempts to promote fake stars"
     else:
-        marketing = "The repository is still young, not enough data"
-        marketing_color = "The repository is still young, not enough data"
-        fuckstars = "The repository is still young, not enough data"
+        none_statistic = "The repository is still young, not enough data"
+        relative_percentage = none_statistic
+        marketing = none_statistic
+        marketing_color = none_statistic
+        fuckstars = none_statistic
 
-    for date_stars_max, cnt_stars in Maximum_stars_in_date.most_common(1):
-        console.print(f"[cyan]Peak-stars-in-date::[/cyan] {cnt_stars} stars / {date_stars_max}", highlight=False)
+    months = ["January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"]
+    month_sum = defaultdict(int)
+    for date_str, _star in sort_alldate_stars:
+        dt = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+        month_number = dt.month
+        month_sum[month_number] += _star
 
-    console.print("[cyan]The-trend-of-adding-stars::[/cyan]", trend, highlight=False)
+    cnt_month_sum = Counter(month_sum)
+    high_stars_month = months[cnt_month_sum.most_common()[0][0] - 1]
+    low_stars_month = months[cnt_month_sum.most_common()[-1][0] - 1]
+
+    max_stars, in_date = Maximum_stars_in_date.most_common(1)[0][-1], Maximum_stars_in_date.most_common(1)[0][0]
+
+    console.print(f"[cyan]Peak-stars-in-date::[/cyan] {max_stars} stars / {in_date}", highlight=False)
+    console.print(f"[cyan]The-trend-of-adding-stars (forecasting)::[/cyan] {trend}", highlight=False)
+    console.print(f"[cyan]Most-of-stars-month / Smallest-of-stars-month::[/cyan] {high_stars_month} / {low_stars_month}",
+                  highlight=False)
+    console.print(f"[cyan]Median-percentage-change (adding stars in the previous month compared to the month before last)" + \
+                  f"::[/cyan] {relative_percentage}", highlight=False)
     console.print(f"[cyan]Aggressive-marketing::[/cyan] {marketing_color}", highlight=False)
     console.print(f"[cyan]Fake-stars::[/cyan] {fuckstars}\n", highlight=False)
 
@@ -806,7 +844,7 @@ transition: transform 0.15s}
                 file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
                                 "title='open all history adding stars'>open all history</a>\n" + \
                                 f"\n<a class='but' href='file://{path}/graph_all_new_stars.html' " + \
-                                "title='open all history adding stars graph'>open graph</a>\n" + \
+                                "title='open all history adding stars graph'>open graphs</a>\n" + \
                                 "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
                                 f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
 
@@ -819,10 +857,13 @@ transition: transform 0.15s}
                                 "title='open all history gone stars graph'>open graph</a>\n" + \
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                                f"<small><small>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
+                                f"<small><small><strong>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
                                 f"✨ GitHub-rating:: {stars} stars<br>\n" + \
-                                f"🌟 Peak-stars-in-date:: {cnt_stars} / {date_stars_max}<br>\n" + \
-                                f"📈 The-trend-of-adding-stars: {trend}<br>\n" + \
+                                f"🌟 Peak-stars-in-date:: {max_stars} / {in_date}<br>\n" + \
+                                f"📈 The-trend-of-adding-stars (forecasting):: {trend}<br>\n" + \
+                                f"📉 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
+                                f"📊 Median-percentage-change (adding stars in the previous month compared " + \
+                                f"to the month before last):: {relative_percentage}<br>\n" + \
                                 f"⏳ Date-of-creation:: {created_at}<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                                 f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
@@ -831,7 +872,7 @@ transition: transform 0.15s}
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \
                                 f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
-                                "</small></small></span>\n\n<div>\n<br>\n" + \
+                                "</strong></small></small></span>\n\n<div>\n<br>\n" + \
                                 f"<a class='but' href='file://{path.replace(repo, '')}dynamic_crossusers.txt' " + \
                                 "title='open all cross-users'>open all cross-users</a>\n</div>\n\n<p style='color: white'><small>" + \
                                 "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
