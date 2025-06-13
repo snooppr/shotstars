@@ -1,6 +1,28 @@
 ## Shotstars
 
 ********
+**v3.7**
+********
+
+— Added new metric: Longest-period-without-add-stars
+(date range and duration in days).
+
+— Added new metric: Average-change-in-fact
+(Unlike the calculated median, the new metric is measured in times and takes into account 
+fluctuations in stars, i.e. "Median-percentage-change" displays the average trend in percentages,
+while "Average-change-in-fact" displays the average value in fact in times).
+
+— Added data in json format: {date: all users who put stars}.
+(For example, on the graph you can find abnormal spikes in the growth of stars, sometimes these
+are fake stars, and instantly check any such peak by opening json and going to the date,
+getting the url - a list of users).
+
+— The file "stars.jpg", which is the background for the report, is no longer copied to each new
+directory of the scanned project. The file is now created once for all projects,
+a small saving of disk space.
+=================================================================================================
+
+********
 **v3.3**
 ********
 

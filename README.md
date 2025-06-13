@@ -10,20 +10,20 @@
 
 Shotstars allows you to monitor any repository from the outside.  
 For example, can a network user say: how many stars have been added or subtracted from some interesting GitHub repository in a month? *(IT hosting does not provide information on the decrease in stars, even to the owner of its own projects)*.  
-Shotstars will take care of and calculate specifically those GitHub users who have deleted or added stars to any project, 
-or even completely left the platform. In addition, the tool allows you to identify repositories with fake stars.  
+Shotstars will care about and count specifically those GitHub users who have removed, added stars to any project; or set their profile to "private"; or even left the platform entirely. In addition to statistics, the tool allows you to identify repositories with fake stars.  
 
 **Claimed functions:**  
 - [X] Shotstars will help find and expose naked kings and their retinue *(fact: stars in some repositories are inflated)*  
 - [X] Shotstars calculates parameters: aggressive marketing, trend, fake stars, peak of popularity and its date.  
-- [X] Shotstars will calculate progress or regression, percentage change over the last month.  
-- [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars.  
+- [X] Shotstars will calculate progress or regression over the last month *(median - trend in percentage change and average - calculated in fact in times).*  
+- [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars *(mode / anti-mode)*.  
+- [X] Shotstars will output the longest period of time without adding stars.  
 - [X] Shotstars scans repositories for stars added and removed with statistics for a selected time period.  
 - [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects commits, but Shotstars will not fool them, the utility will display real numbers)*.  
-- [X] Shotstats will show ~ the size of any public repository.  
+- [X] Shotstars will show ~ the size of any public repository.  
 - [X] Shotstars will also provide a short description of the repository.  
 - [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
-- [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls and graphs)*.  
+- [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls, graphs and json)*.  
 - [X] Shotstars can simulate results, documented hack: a function designed to check the utility's operation *(to make sure)* on dead/stable repositories without moving stars.  
 - [X] Shotstars finds users that overlap across Github projects, including those with hidden/private profiles.  
 - [X] Shotstars calculates to the minute and displays the time when the github rescan restriction is lifted *(if token is not used)*.  
@@ -33,8 +33,8 @@ or even completely left the platform. In addition, the tool allows you to identi
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.3)
-![Static Badge](https://img.shields.io/badge/latest%20v3.3-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.6)
+![Static Badge](https://img.shields.io/badge/latest%20v3.6-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -94,6 +94,10 @@ Shotstars also offers a line chart: a cumulative set of stars.
   
 Comparison of two repositories, cumulative set of stars. The upper screenshot is the usual movement of stars, the lower screenshot is the promotion of fake stars.  
   
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars_json.png" />  
+  
+For any repository, Shotstars will provide all users who have added stars, broken down by date, in json format, which means it's even easier to analyze anomalous peaks on the chart.  
+  
 Research on the promotion of fake stars **/** Исследование про накрутку фейковых звезд 
 [RU](https://habr.com/ru/articles/723648/) / [RU_2](https://www.opennet.ru/opennews/art.shtml?num=62515) **|** 
 [EN](https://dagster.io/blog/fake-stars) / [EN_2](https://arxiv.org/html/2412.13459v1)  
@@ -102,19 +106,20 @@ Research on the promotion of fake stars **/** Исследование про н
 
 ## 🇷🇺 TL;DR  
 Shotstars позволяет следить со стороны <u>за любым</u> репозиторием.  
-Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится и вычислит конкретно тех github-пользователей, кто удалил или накинул звезды любому проекту, а то и вовсе удалился с платформы. Кроме того, инструмент позволяет вычислять репозитории с фейковыми звездами.  
+Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится и вычислит конкретно тех github-пользователей, кто удалил, накинул звезды любому проекту, а то и вовсе удалился с платформы или перевёл профиль в режим "private". Кроме статистики, инструмент позволяет вычислять репозитории с фейковыми звездами.  
 
 **Заявленные функции:**  
 - [X] Shotstars поможет найти и разоблачить голых королей и их свиту *(факт: звезды в некоторых репозиториях накручивают)*.  
 - [X] Shotstars рассчитывает параметры: агрессивный маркетинг, тренд, фейковые звезды, пик популярности и его дата.  
-- [X] Shotstars рассчитает прогресс или регресс, процентное изменение за последний месяц.  
-- [X] Shotstars вычислит имена месяцев, в которых было всех больше и всех меньше получено звезд.  
+- [X] Shotstars рассчитает прогресс или регресс за последний месяц *(медиану — тенденцию в процентном изменении и среднее — рассчитанное по факту в разах).*  
+- [X] Shotstars вычислит имена месяцев, в которых было всех больше и всех меньше получено звезд *(мода / анти-мода)*.  
+- [X] Shotstars выведет самый протяженный период времени без прибавления звезд.  
 - [X] Shotstars проверяет репозитории на предмет прибавления и убавления звезд со статистикой за выбранный период времени.  
 - [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов и коммитов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
-- [X] Shotstats покажет ~ размер любого публичного репозитория.  
+- [X] Shotstars покажет ~ размер любого публичного репозитория.  
 - [X] Shotstars также предоставит краткое описание репозитория.  
-- [X] Shotstars предлагает историю сканирований с выбором ранее учтенных проектов для быстрой проверки.
-- [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's и графики)*.  
+- [X] Shotstars предлагает для быстрой проверки историю сканирований с выбором ранее учтенных проектов.
+- [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's, графики и json)*.  
 - [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд. 
 - [X] Shotstars находит пересекающихся у Github-проектов пользователей, в т.ч. и тех, у кого профиль скрыт/приватный.  
 - [X] Shotstars рассчитывает с точностью до минуты и отображает время снятия github-ограничения на повторные сканирования *(если не используется token)*.  
@@ -175,3 +180,28 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 
 *8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and gone.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  
+
+
+## 💡 Explanation of some metrics  
+
++ **"Date-update (including hidden update)"** — The metric displays two things: firstly, if a developer pushes a commit and then completely erases the commits from the server and/or overwrites them, Shotstars will know about it and tell you; secondly, the metric will be updated if, for example, there are no pushes, but a pull request is cancelled/added, etc.  
+
++ **"Peak-stars-in-date"** — The metric displays the date (per day) on which the maximum number of stars was received.  
+
++ **"The-trend-of-adding-stars (forecasting)"** — The metric displays the predicted increase in stars per day based on the repository history and algorithm.  
+
++ **"Most-of-stars-month / Smallest-of-stars-month"** — The metric displays the calculation of two months in the entire history of the repository (the most profitable month by stars and the month with the least stars, mode / anti-mode).  
+
++ **"Longest-period-without-add-stars"** — The metric displays the longest time span when no stars were submitted to the repository, i.e. every day in a row there were 0 stars (black bar).  
+
++ **"Median-percentage-change"** — The metric reflects the average trend in stars (i.e. does not take into account sharp fluctuations in stars, such as fake stars or a sharp drop/popularity from the media), calculated as a percentage, the ratio of the last month to the penultimate month. Positive numbers are easy to interpret, negative ones are not. The simplest example: a user scans a repository at the beginning of January (in November, the repository received +30 stars, and in December, +60 stars), the metric will display "100%"; if everything was the other way around (in November, the repository received +60 stars, and in December, +30 stars), the metric will display "-50%" (not "-1~~00%"~~).  
+
++ **"Average-change-in-fact"** — Unlike the "Median-percentage-change" metric, it reflects not the average trend, but the real state of affairs, i.e. the arithmetic mean and takes into account all fluctuations and dips in stars for the same period (the ratio of the last month to the penultimate month), but is calculated not in percentages, but in times and units (stars). Example: in November the repository added +30 stars, in December +60 stars, then the metric will display - "2 times (30 stars)" and vice versa, if in November +60 stars, and in December +30 stars, then the metric will display - "-2 times (-30 stars)".  
+
++ **"Aggressive-marketing"** — The metric accepts the following values: "—"; "Low"; "Medium"; "High"; "Hard"; "Hard+". "—" means that the repository consistently receives or does not receive stars, without jumps, usually such repositories do not care about their popularity, are rarely/not mentioned in the media. "Low"; "Medium"; "High" — these repositories are repeatedly mentioned in the media, the movement of stars is uneven, they can attract hundreds of stars per day, the popularity of the repositories is high. "Hard" — frequent and frantic, uneven movement of stars, i.e. unnatural, the promotion of fake stars. "Hard+" — usually this is multiple promotion of fake stars in large quantities, i.e. more than once.  
+
++ **"Fake-stars"** — The metric takes the following values: "Yes"; "Yes, multiple attempts to promote fake stars". In the first case, this could be a one-time, but large promotion of fake stars or regular promotion of stars little by little. In the second case, these are obvious and multiple promotions of fake stars.  
+
++ **"GONE_STARS"** — The metric displays those users: who removed their stars from the repository; or deleted their account from the Github platform; or switched their profile to "private" mode - such a profile, like a deleted one, can lead to "404" by link, i.e. Github (not always) completely hides all user activity and their personal page, but such an account can conduct activity that is almost never displayed anywhere except by the account owner (for example, only reactions are displayed).  
+
++ **"cross-users"** — The metric only displays those overlapping users that overlap in the scanned repositories relative to a specific scanned repository.  

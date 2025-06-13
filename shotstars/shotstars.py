@@ -39,7 +39,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.3, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.7, author: https://github.com/snooppr
 """)
 
 
@@ -87,10 +87,10 @@ def main_cli():
                 html_mark(all_stars=f"{path}/all_gone_stars.html")
             if os.path.isfile(f"{path}/all_new_stars.html") is False:
                 html_mark(all_stars=f"{path}/all_new_stars.html")
-            if os.path.isfile(f"{path}/stars.jpg") is False:
-                shutil.copy(image, f"{path}/stars.jpg")
+            if os.path.isfile(f"{path.replace(repo, '')}/stars.jpg") is False:
+                shutil.copy(image, f"{path.replace(repo, '')}/stars.jpg")
                 if Linux: # снятие исполняемого бита для shotstars_cli.bin build версии.
-                    os.chmod(f"{path}/stars.jpg", 0o644)
+                    os.chmod(f"{path.replace(repo, '')}/stars.jpg", 0o644)
             his()
             check_token()
             parsing(diff=True)
@@ -603,7 +603,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v3.3', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v3.7', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -694,6 +694,12 @@ def parsing(diff=False):
         except Exception:
             pass
 
+# Сохранение даты и всех пользователей, добавивших звезды, в json.
+    json_date_users = {f"{d_}  ({len(u_)} stars)": [f"https://github.com/{_}" for _ in u_]
+                       for d_, u_ in sorted(datestars_user.items())}
+    with open(f"{path}/date_users.json", 'w', encoding='utf-8') as save_datestars_user:
+        json.dump(json_date_users, save_datestars_user, ensure_ascii=False, indent=2)
+
 # Статистика.
     start_date = datetime.datetime.strptime(created_at, "%Y-%m-%d")
     end_date = datetime.datetime.today()
@@ -724,10 +730,23 @@ def parsing(diff=False):
     if dif_date > 62:
         relative_start = statistics.median([i[1] for i in sort_alldate_stars[-60:-30]])
         relative_end = statistics.median([i[1] for i in sort_alldate_stars[-30:]])
-        try:
+        try: #медиана в процентах.
             relative_percentage = f"{round(((relative_end - relative_start) / relative_start) * 100, 2)} %"
         except ZeroDivisionError:
             relative_percentage = "—"
+
+        relative_start_ = statistics.mean([i[1] for i in sort_alldate_stars[-60:-30]])
+        relative_end_ = statistics.mean([i[1] for i in sort_alldate_stars[-30:]])
+        sum_start = sum([i[1] for i in sort_alldate_stars[-60:-30]])
+        sum_end = sum([i[1] for i in sort_alldate_stars[-30:]])
+        average_change_stars = f"{sum_end - sum_start} stars"
+        try: #среднее в разах.
+            if (relative_end_ / relative_start_) < 1:
+                average_change = f"-{relative_start_ / relative_end_:.2f} times"
+            else:
+                average_change = f"{relative_end_ / relative_start_:.2f} times"
+        except ZeroDivisionError:
+            average_change = "—"
 
         stdev = statistics.stdev([i[1] for i in sort_alldate_stars])
         if stdev < 4: marketing, marketing_color, fuckstars = "—", "—", "—"
@@ -741,10 +760,13 @@ def parsing(diff=False):
     else:
         none_statistic = "The repository is still young, not enough data"
         relative_percentage = none_statistic
+        average_change = none_statistic
+        average_change_stars = none_statistic
         marketing = none_statistic
         marketing_color = none_statistic
         fuckstars = none_statistic
 
+## Расчет месяцев с самым высоким и низким трафиком по звездам.
     months = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"]
     month_sum = defaultdict(int)
@@ -759,12 +781,42 @@ def parsing(diff=False):
 
     max_stars, in_date = Maximum_stars_in_date.most_common(1)[0][-1], Maximum_stars_in_date.most_common(1)[0][0]
 
+## Самый продолжительный период без прибавления звезд.
+    max_zeros, current_zeros = 0, 0
+    start_date, max_start_date = None, None
+    for date__, stars__ in sort_alldate_stars:
+        if stars__ == 0:
+            if current_zeros == 0:
+                start_date = date__
+            current_zeros += 1
+        else:
+            if current_zeros > max_zeros:
+                max_zeros = current_zeros
+                max_start_date = start_date
+            current_zeros = 0
+
+    if current_zeros > max_zeros:
+        max_zeros = current_zeros
+        max_start_date = start_date
+
+    tuple_date_no_stars = (max_start_date, max_zeros) if max_start_date is not None else ("—", "—")
+    try:
+        end_date_no_stars = (datetime.datetime.strptime(tuple_date_no_stars[0], '%Y-%m-%d') + \
+                             datetime.timedelta(days=tuple_date_no_stars[1])).strftime('%Y-%m-%d')
+    except Exception:
+        end_date_no_stars = "—"
+##
+
     console.print(f"[cyan]Peak-stars-in-date::[/cyan] {max_stars} stars / {in_date}", highlight=False)
     console.print(f"[cyan]The-trend-of-adding-stars (forecasting)::[/cyan] {trend}", highlight=False)
-    console.print(f"[cyan]Most-of-stars-month / Smallest-of-stars-month::[/cyan] {high_stars_month} / {low_stars_month}",
-                  highlight=False)
-    console.print(f"[cyan]Median-percentage-change (adding stars in the previous month compared to the month before last)" + \
+    console.print(f"[cyan]Most-of-stars-month / Smallest-of-stars-month::[/cyan] " + \
+                  f"{high_stars_month} / {low_stars_month}", highlight=False)
+    console.print(f"[cyan]Longest-period-without-add-stars::[/cyan] " + \
+                  f"{tuple_date_no_stars[0]} — {end_date_no_stars} ({tuple_date_no_stars[1]} days)", highlight=False)
+    console.print(f"[cyan]Median-percentage-change (adding stars for the last month compared to the month before last" + \
                   f"::[/cyan] {relative_percentage}", highlight=False)
+    console.print(f"[cyan]Average-change-in-fact (adding stars for the last month compared to the month before last)" + \
+                  f"::[/cyan] {average_change} ({average_change_stars})", highlight=False)
     console.print(f"[cyan]Aggressive-marketing::[/cyan] {marketing_color}", highlight=False)
     console.print(f"[cyan]Fake-stars::[/cyan] {fuckstars}\n", highlight=False)
 
@@ -817,7 +869,7 @@ def parsing(diff=False):
             table_up.add_column("NEW STARS", justify="left", style="cyan", no_wrap=False)
 
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
-            file_image = f"file://{os.path.join(path, 'stars.jpg')}".replace('\\', '/')
+            file_image = f"file://{os.path.join(path.replace(repo, ''), 'stars.jpg')}".replace('\\', '/')
             with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
                 file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
                                 "<meta charset='utf-8'>\n<style>\n" + \
@@ -861,9 +913,13 @@ transition: transform 0.15s}
                                 f"✨ GitHub-rating:: {stars} stars<br>\n" + \
                                 f"🌟 Peak-stars-in-date:: {max_stars} / {in_date}<br>\n" + \
                                 f"📈 The-trend-of-adding-stars (forecasting):: {trend}<br>\n" + \
-                                f"📉 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
-                                f"📊 Median-percentage-change (adding stars in the previous month compared " + \
+                                f"📅 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
+                                f"0️⃣ Longest-period-without-add-stars:: {tuple_date_no_stars[0]} — " + \
+                                f"{end_date_no_stars} ({tuple_date_no_stars[1]} days)<br>\n" + \
+                                f"📊 Median-percentage-change (adding stars for the last month compared " + \
                                 f"to the month before last):: {relative_percentage}<br>\n" + \
+                                f"📊 Average-change-in-fact (adding stars for the last month compared " + \
+                                f"to the month before last):: {average_change} ({average_change_stars})<br>\n" + \
                                 f"⏳ Date-of-creation:: {created_at}<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                                 f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
@@ -874,7 +930,9 @@ transition: transform 0.15s}
                                 f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
                                 "</strong></small></small></span>\n\n<div>\n<br>\n" + \
                                 f"<a class='but' href='file://{path.replace(repo, '')}dynamic_crossusers.txt' " + \
-                                "title='open all cross-users'>open all cross-users</a>\n</div>\n\n<p style='color: white'><small>" + \
+                                "title='open all cross-users'>open all cross-users</a>\n<br>\n" + \
+                                f"<a class='but' href='file://{path}/date_users.json' " + \
+                                "title='json format'>open date_all-stars_users</a>\n</div>\n\n<p style='color: white'><small>" + \
                                 "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
                                 "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
                                 "alt='' height='40' width='40'></a></small></p>\n<p class='donate'>\n" + \
