@@ -39,7 +39,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.7, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v3.8, author: https://github.com/snooppr
 """)
 
 
@@ -141,7 +141,7 @@ def cross_user_detect(base_users):
                                 border_style="magenta"))
 
         padding = 0 if Android else (0, 1)
-        table_his = Table(title=f"\n[bold red]CROSS USERS (in CLI = max 5 users, in HTML = full users)[/bold red]",
+        table_his = Table(title=f"\n[bold red]CROSS-USERS (in CLI = max 5 users, in HTML = full users)[/bold red]",
                           title_justify="center", header_style='bold red', style="bold red", padding=padding, show_lines=True)
         table_his.add_column("N", justify="left", style="bold green", no_wrap=False)
         table_his.add_column("Q/S", justify="left", style="red", no_wrap=False)
@@ -603,7 +603,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v3.7', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v3.8', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -727,6 +727,8 @@ def parsing(diff=False):
 
     trend = f"1 stars / day" if trend == 0.5 else f"{round(trend)} stars / day"
 
+    none_statistic = "The repository is still young, not enough data"
+
     if dif_date > 62:
         relative_start = statistics.median([i[1] for i in sort_alldate_stars[-60:-30]])
         relative_end = statistics.median([i[1] for i in sort_alldate_stars[-30:]])
@@ -758,7 +760,6 @@ def parsing(diff=False):
             marketing, marketing_color = "Hard+", "[black on red]Hard+[/black on red]"
             fuckstars = "Yes, multiple attempts to promote fake stars"
     else:
-        none_statistic = "The repository is still young, not enough data"
         relative_percentage = none_statistic
         average_change = none_statistic
         average_change_stars = none_statistic
@@ -779,7 +780,23 @@ def parsing(diff=False):
     high_stars_month = months[cnt_month_sum.most_common()[0][0] - 1]
     low_stars_month = months[cnt_month_sum.most_common()[-1][0] - 1]
 
+## Расчет месяцев по квартилям: x < Q1; Q1-Q3; x > Q3.
+    if dif_date > 32:
+        l_cnt_month_sum = list(sorted(cnt_month_sum.values()))
+        Q1 = statistics.median(l_cnt_month_sum[:len(l_cnt_month_sum) // 2])
+        Q3 = statistics.median(l_cnt_month_sum[(len(l_cnt_month_sum) + 1) // 2:])
+        Q1_Q3_index = len([x for x in l_cnt_month_sum if Q1 <= x <= Q3 and x != 0])
+        Q3_index = len([x for x in l_cnt_month_sum if x > Q3 and x != 0])
+        Q3_print = [f"{str(months[i[0]-1]).upper()} ({i[1]} STARS)" for i in cnt_month_sum.most_common(Q3_index)]
+        Q1_Q3_print = [f"{months[i[0]-1]} ({i[1]} Stars)" for i in cnt_month_sum.most_common()[Q3_index:Q3_index+Q1_Q3_index]]
+        Q1_print = [f"{str(months[i[0]-1]).lower()} ({i[1]} stars)" for i in cnt_month_sum.most_common()[Q3_index+Q1_Q3_index:]]
+    else:
+        Q1_print, Q1_Q3_print, Q3_print = [none_statistic], [none_statistic], [none_statistic]
+
     max_stars, in_date = Maximum_stars_in_date.most_common(1)[0][-1], Maximum_stars_in_date.most_common(1)[0][0]
+
+## Private stars
+    private_stars = abs(stars - sum(cnt_month_sum.values()))
 
 ## Самый продолжительный период без прибавления звезд.
     max_zeros, current_zeros = 0, 0
@@ -805,12 +822,18 @@ def parsing(diff=False):
                              datetime.timedelta(days=tuple_date_no_stars[1])).strftime('%Y-%m-%d')
     except Exception:
         end_date_no_stars = "—"
-##
 
+## Печать инфострок.
     console.print(f"[cyan]Peak-stars-in-date::[/cyan] {max_stars} stars / {in_date}", highlight=False)
     console.print(f"[cyan]The-trend-of-adding-stars (forecasting)::[/cyan] {trend}", highlight=False)
     console.print(f"[cyan]Most-of-stars-month / Smallest-of-stars-month::[/cyan] " + \
                   f"{high_stars_month} / {low_stars_month}", highlight=False)
+    if dif_date > 32:
+        console.print(f"[cyan]Distribution-of-stars-by-month" + \
+                      f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''}::[/cyan]{chr(10)}" + \
+                      f"[bold green]{chr(10).join(Q3_print) if Q3_print else '-'*20}[/bold green]\n" + \
+                      f"[bold yellow]{chr(10).join(Q1_Q3_print)}" + \
+                      f"[/bold yellow]\n[bold red]{chr(10).join(Q1_print) if Q1_print else '-'*20}[/bold red]", highlight=False)
     console.print(f"[cyan]Longest-period-without-add-stars::[/cyan] " + \
                   f"{tuple_date_no_stars[0]} — {end_date_no_stars} ({tuple_date_no_stars[1]} days)", highlight=False)
     console.print(f"[cyan]Median-percentage-change (adding stars for the last month compared to the month before last" + \
@@ -903,6 +926,7 @@ transition: transform 0.15s}
                 if bool(diff_lst_dn):
                     table_dn = html_rec(file_html, diff_lst_dn, table_dn)
 
+                sp = "<br>&nbsp;&nbsp;&nbsp;&nbsp;"
                 file_html.write(f"\n<a class='but' href='file://{path}/all_gone_stars.html' " + \
                                 "title='open all history gone stars'>open all history</a>\n" + \
                                 f"\n<a class='but' href='file://{path}/graph_all_gone_stars.html' " + \
@@ -914,6 +938,10 @@ transition: transform 0.15s}
                                 f"🌟 Peak-stars-in-date:: {max_stars} / {in_date}<br>\n" + \
                                 f"📈 The-trend-of-adding-stars (forecasting):: {trend}<br>\n" + \
                                 f"📅 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
+                                f"📅 Distribution-of-stars-by-month" + \
+                                f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''}::{chr(10)}{sp}" + \
+                                f"{sp.join(Q3_print) if Q3_print else '-'*20}\n{sp}{sp.join(Q1_Q3_print)}" + \
+                                f"\n{sp}{sp.join(Q1_print) if Q1_print else '-'*20}<br>\n" + \
                                 f"0️⃣ Longest-period-without-add-stars:: {tuple_date_no_stars[0]} — " + \
                                 f"{end_date_no_stars} ({tuple_date_no_stars[1]} days)<br>\n" + \
                                 f"📊 Median-percentage-change (adding stars for the last month compared " + \

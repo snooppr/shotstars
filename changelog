@@ -1,6 +1,15 @@
 ## Shotstars
 
 ********
+**v3.8**
+********
+
+— Added new metric "Distribution-of-stars-by-month"
+(breakdown of all stars by month based on quartiles, can also display separately the number of
+private stars).
+=================================================================================================
+
+********
 **v3.7**
 ********
 
