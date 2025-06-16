@@ -16,7 +16,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
 - [X] Shotstars will help find and expose naked kings and their retinue *(fact: stars in some repositories are inflated).*  
 - [X] Shotstars calculates parameters: aggressive marketing, trend, fake stars, peak of popularity and its date.  
 - [X] Shotstars will calculate progress or regression over the last month *(median - trend in percentage change and average - calculated in fact in times).*  
-- [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars *(mode / anti-mode)*, and will also display the entire history of stars by quartiles.  
+- [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars *(mode / anti-mode)*, and will also display the entire history of stars by quartiles. a similar calculation is made by year.  
 - [X] Shotstars will output the longest period of time without adding stars.  
 - [X] Shotstars scans repositories for stars added and removed with statistics for a selected time period.  
 - [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects commits, but Shotstars will not fool them, the utility will display real numbers)*.  
@@ -33,8 +33,8 @@ Shotstars will care about and count specifically those GitHub users who have rem
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=3.8)
-![Static Badge](https://img.shields.io/badge/latest%20v3.8-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=4.0)
+![Static Badge](https://img.shields.io/badge/latest%20v4.0-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -112,7 +112,7 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstars поможет найти и разоблачить голых королей и их свиту *(факт: звезды в некоторых репозиториях накручивают)*.  
 - [X] Shotstars рассчитывает параметры: агрессивный маркетинг, тренд, фейковые звезды, пик популярности и его дата.  
 - [X] Shotstars рассчитает прогресс или регресс за последний месяц *(медиану — тенденцию в процентном изменении и среднее — рассчитанное по факту в разах).*  
-- [X] Shotstars вычислит имена месяцев, в которых было всех больше и всех меньше получено звезд *(мода / анти-мода)*, а также выведет всю историю звезд по квартилям.  
+- [X] Shotstars вычислит имена месяцев, в которых было всех больше и всех меньше получено звезд *(мода / анти-мода)*, а также выведет всю историю звезд по квартилям, аналогичный расчет и по годам.  
 - [X] Shotstars выведет самый протяженный период времени без прибавления звезд.  
 - [X] Shotstars проверяет репозитории на предмет прибавления и убавления звезд со статистикой за выбранный период времени.  
 - [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов и коммитов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
@@ -193,6 +193,8 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 + **"Most-of-stars-month / Smallest-of-stars-month"** — The metric displays the calculation of two months in the entire history of the repository (the most profitable month by stars and the month with the least stars, mode / anti-mode).  
 
 + **"Distribution-of-stars-by-month"** — Calculation of stars by month for the entire history of the repository (may include rare phenomenon: private stars, when the sum of all stars ≠ 'GitHub-rating'), coloring of the range of stars by quartiles (green: x > Q3); (yellow: Q1 <= x <= Q3); (red: x < Q1), The font size also decreases from Q3...Q1. Groups are not always arranged "3/6/3", for example, the groups of the "Shotstars" repository are arranged "3/4/5". The characteristic is calculated when the age of the repository is at least one month.  
+
++ **"Distribution-of-stars-by-year"** — Same as the metric '"Distribution-of-stars-by-month"', but the calculation is not by month, but by year, and the metric does not display the number of private stars. The characteristic is calculated when the age of the repository is at least one year.  
 
 + **"Longest-period-without-add-stars"** — The metric displays the longest time span when no stars were submitted to the repository, i.e. every day in a row there were 0 stars (black streak).  
 
