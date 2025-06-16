@@ -16,7 +16,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
 - [X] Shotstars will help find and expose naked kings and their retinue *(fact: stars in some repositories are inflated).*  
 - [X] Shotstars calculates parameters: aggressive marketing, trend, fake stars, peak of popularity and its date.  
 - [X] Shotstars will calculate progress or regression over the last month *(median - trend in percentage change and average - calculated in fact in times).*  
-- [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars *(mode / anti-mode)*, and will also display the entire history of stars by quartiles. a similar calculation is made by year.  
+- [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars *(mode / anti-mode)*, and will also display the entire history of stars by quartiles, a similar calculation is made by year.  
 - [X] Shotstars will output the longest period of time without adding stars.  
 - [X] Shotstars scans repositories for stars added and removed with statistics for a selected time period.  
 - [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects commits, but Shotstars will not fool them, the utility will display real numbers)*.  
