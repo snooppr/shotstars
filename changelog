@@ -1,6 +1,19 @@
 ## Shotstars
 
 ********
+**v4.1**
+********
+
+— Percent calculation has been added to the "Distribution-of-stars-by-month / by-year" metrics.
+
+— Added two histogram to the HTML report: distribution of stars by month and by year.
+
+— Added histogram: star hour, distribution of stars by hour.
+
+— Added line to graphs/histogram: mean.
+=================================================================================================
+
+********
 **v4.0**
 ********
 

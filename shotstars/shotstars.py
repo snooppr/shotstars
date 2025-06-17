@@ -39,7 +39,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v4.0, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v4.1, author: https://github.com/snooppr
 """)
 
 
@@ -201,7 +201,7 @@ def calc_stars(aggregated_data):
     return dates_for_plot, counts_for_plot
 
 
-def generate_plots(aggregated_data, source_filename):
+def generate_plots(aggregated_data, source_filename, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date):
     """Генерация CLI и HTML графиков"""
     if not aggregated_data:
         return None
@@ -267,25 +267,29 @@ def generate_plots(aggregated_data, source_filename):
         fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=counts_for_plot, mode='markers',
                       marker=dict(color=marker_color, size=8, symbol='star'),
                       error_y=dict(type='data', arrayminus=counts_for_plot, array=[0] * len(counts_for_plot),
-                                   visible=True, thickness=1, width=0, color=line_color),
+                                   visible=True, thickness=1, width=0, color=line_color), name='all stars',
                       customdata=counts_for_plot, hovertemplate=("Date: %{x}<br>Stars: %{customdata}<extra></extra>")))
 
-        fig.update_layout(title=f"Dynamics userstars, repository '<b>{repo}</b>' " + \
+        fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=[mean_days] * len(dates_for_plot), mode='lines',
+                                       name=f'mean = {round(mean_days, 1)} stars / days', opacity=0.70,
+                                       line=dict(color='red', width=2)))
+
+        fig.update_layout(title=f"Graph N1. Dynamics userstars, repository '<b>{repo}</b>' " + \
                                 f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                           xaxis_title="Date", yaxis_title="Quantity stars",
                           xaxis=dict(tickformat='%Y-%m-%d', showgrid=True, gridwidth=1, gridcolor='lightgray'),
                           yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
-                          plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor, legend_title_text='Data source')
+                          plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
         if not isinstance(aggregated_data, list):
             fig.write_html(f"{path}/graph_{base_filename}")
-        else: # строим 2-й в HTML-график.
+        else: # строим множество HTML-графиков.
             fig2 = plt_html.Figure()
 
             fig2.add_trace(plt_html.Scatter(x=dates_for_plot2, y=counts_for_plot2, mode='lines+markers',
                                             marker=dict(size=3, symbol='star'), line=dict(shape='spline', width=5)))
 
-            fig2.update_layout(title=f"Cumulative growth of stars, repository '<b>{repo}</b>' " + \
+            fig2.update_layout(title=f"Graph N2. Cumulative growth of stars, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                xaxis_title='Date', yaxis_title='Quantity stars',
                                xaxis=dict(tickformat='%Y-%m-%d'), autosize=True,
@@ -293,8 +297,47 @@ def generate_plots(aggregated_data, source_filename):
                                plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor,
                                width=None, height=None)
 
+            x, y = map(list, zip(*months_stars))
+            fig3 = plt_html.Figure([plt_html.Bar(y=y, x=x, name='Month', opacity=0.90,
+                                    marker=dict(color='orange', line=dict(color='black', width=2)))])
+
+            fig3.update_layout(title=f"Histogram N1. Cumulative set of stars by <b>month</b>, repository '<b>{repo}</b>' " + \
+                                     f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               xaxis_title="Month", yaxis_title="Quantity stars",
+                               plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
+
+            x, y = map(list, zip(*years_stars))
+            fig4 = plt_html.Figure([plt_html.Bar(y=y, x=x, name='Year',
+                                   marker=dict(color='orange', line=dict(color='grey', width=4)))])
+
+            if dif_date > 365:
+                fig4.add_trace(plt_html.Scatter(x=x, y=[mean_year] * len(x), mode='lines',
+                               name=f'mean = {round(mean_year, 1)} stars / year',
+                               line=dict(color='red', width=3)))
+
+            fig4.update_layout(title=f"Histogram N2. Cumulative set of stars by <b>year</b>, repository '<b>{repo}</b>' " + \
+                                     f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               xaxis_title="Year", yaxis_title="Quantity stars", xaxis=dict(dtick=1, tickmode='linear'),
+                               barmode='overlay', plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
+
+
+            x, y = map(list, zip(*hours_stars))
+            fig5 = plt_html.Figure([plt_html.Bar(y=x, x=y, name='Hours', orientation='h',
+                                    hovertemplate=("Hours: %{y}<br>Stars: %{x}<extra></extra>"),
+                                    marker=dict(color='blue', line=dict(color='white', width=2)))])
+
+            fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, UTS</b>), " + \
+                                     f"repository '<b>{repo}</b>' " + \
+                                     f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               xaxis_title="Quantity stars", yaxis_title="Hours", yaxis=dict(dtick=1, tickmode='linear'),
+                               plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
+
+
             plot_html = fig.to_html(full_html=False, include_plotlyjs=False)
             plot_html2 = fig2.to_html(full_html=False, include_plotlyjs=False)
+            plot_html3 = fig3.to_html(full_html=False, include_plotlyjs=False)
+            plot_html4 = fig4.to_html(full_html=False, include_plotlyjs=False)
+            plot_html5 = fig5.to_html(full_html=False, include_plotlyjs=False)
 
             with open(f"{path}/graph_{base_filename}", 'w', encoding='utf-8') as f:
                 f.write(f"""
@@ -328,6 +371,18 @@ def generate_plots(aggregated_data, source_filename):
 
     <div class="plot-container">
         {plot_html2}
+    </div>
+
+    <div class="plot-container">
+        {plot_html3}
+    </div>
+
+    <div class="plot-container">
+        {plot_html4}
+    </div>
+
+    <div class="plot-container">
+        {plot_html5}
     </div>
 </body>
 </html>""")
@@ -587,21 +642,28 @@ def gener_his_html(diff_lst_dn, html_name, title, stars):
 
 
 def quartiles(cnt_sum, none_statistic=None, dif_date=None, months=None, month=False, year=False):
-    """Расчет месяцев/годов по квартилям. (x < Q1; x in Q1-Q3; x > Q3)"""
+    """Расчет звезд и процентного соотношения месяца/года, квартили (x < Q1; x in Q1-Q3; x > Q3)."""
     if (month and dif_date > 32) or (year and dif_date > 365):
         l_cnt_sum = list(sorted(cnt_sum.values()))
         Q1 = statistics.median(l_cnt_sum[:len(l_cnt_sum) // 2])
         Q3 = statistics.median(l_cnt_sum[(len(l_cnt_sum) + 1) // 2:])
         Q1_Q3_index = len([x for x in l_cnt_sum if Q1 <= x <= Q3 and x != 0])
         Q3_index = len([x for x in l_cnt_sum if x > Q3 and x != 0])
+        sum_v = sum(cnt_sum.values())
         if month:
-            Q3_print = [f"{str(months[i[0]-1]).upper()} ({i[1]} STARS)" for i in cnt_sum.most_common(Q3_index)]
-            Q1_Q3_print = [f"{months[i[0]-1]} ({i[1]} Stars)" for i in cnt_sum.most_common()[Q3_index:Q3_index+Q1_Q3_index]]
-            Q1_print = [f"{str(months[i[0]-1]).lower()} ({i[1]} stars)" for i in cnt_sum.most_common()[Q3_index+Q1_Q3_index:]]
+            Q3_print = [f"{str(months[i[0]-1]).upper()}: ({i[1]}_STARS)_[{round(i[1]*100/sum_v, 1)}%]"
+                        for i in cnt_sum.most_common(Q3_index)]
+            Q1_Q3_print = [f"{months[i[0]-1]}: ({i[1]}_Stars)_[{round(i[1]*100/sum_v, 1)}%]"
+                           for i in cnt_sum.most_common()[Q3_index:Q3_index+Q1_Q3_index]]
+            Q1_print = [f"{str(months[i[0]-1]).lower()}: ({i[1]}_stars)_[{round(i[1]*100/sum_v, 1)}%]"
+                        for i in cnt_sum.most_common()[Q3_index+Q1_Q3_index:]]
         if year:
-            Q3_print = [f"{i[0]} ({i[1]} STARS)" for i in cnt_sum.most_common(Q3_index)]
-            Q1_Q3_print = [f"{i[0]} ({i[1]} Stars)" for i in cnt_sum.most_common()[Q3_index:Q3_index+Q1_Q3_index]]
-            Q1_print = [f"{i[0]} ({i[1]} stars)" for i in cnt_sum.most_common()[Q3_index+Q1_Q3_index:]]
+            Q3_print = [f"{i[0]}: ({i[1]}_STARS)_[{round(i[1]*100/sum_v, 1)}%]"
+                        for i in cnt_sum.most_common(Q3_index)]
+            Q1_Q3_print = [f"{i[0]}: ({i[1]}_Stars)_[{round(i[1]*100/sum_v, 1)}%]"
+                           for i in cnt_sum.most_common()[Q3_index:Q3_index+Q1_Q3_index]]
+            Q1_print = [f"{i[0]}: ({i[1]}_stars)_[{round(i[1]*100/sum_v, 1)}%]"
+                        for i in cnt_sum.most_common()[Q3_index+Q1_Q3_index:]]
         return Q1_print, Q1_Q3_print, Q3_print
     else:
         return [none_statistic], [none_statistic], [none_statistic]
@@ -623,7 +685,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v4.0', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v4.1', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -691,7 +753,7 @@ def parsing(diff=False):
     executor = ThreadPoolExecutor(max_workers=thread_max)
 
     spinner = 'earth' if diff else 'material'
-    lst_new, futures, datestars_user = [], {}, defaultdict(set)
+    lst_new, lst_star_hours, futures, datestars_user = [], [], {}, defaultdict(set)
     with console.status("[cyan]Working", spinner=spinner):
         for page in range(1, pages+1):
             futures[executor.submit(my_session.get, headers={**head, 'Accept': 'application/vnd.github.star+json'}, timeout=6,
@@ -704,6 +766,9 @@ def parsing(diff=False):
                     git_username = num.get("user").get("login")
                     lst_new.append(git_username)
                     datestars_user[num.get("starred_at").split("T")[0]].add(git_username)
+
+                    time_h = datetime.datetime.strptime(num.get("starred_at"), '%Y-%m-%dT%H:%M:%SZ')
+                    lst_star_hours.append(time_h.hour)
 
                 futures.pop(future, None)
         except Exception:
@@ -738,6 +803,10 @@ def parsing(diff=False):
         _Maximum_stars_in_date.setdefault(date_str, 0)
         start_date += datetime.timedelta(days=1)
 
+    hours_stars = Counter(lst_star_hours)
+    [hours_stars.setdefault(i, 0) for i in range(24)]
+    hours_stars = sorted(hours_stars.items())
+
     sort_alldate_stars = sorted(_Maximum_stars_in_date.items(), key=lambda item: datetime.datetime.strptime(item[0], '%Y-%m-%d'))
 
     if dif_date > 31:
@@ -747,8 +816,10 @@ def parsing(diff=False):
 
     trend = f"1 stars / day" if trend == 0.5 else f"{round(trend)} stars / day"
 
-    none_statistic = "The repository is still young, not enough data"
+    mean_year = statistics.mean([i[1] for i in sort_alldate_stars]) * 365 if dif_date > 365 else -1
+    mean_days = statistics.mean([i[1] for i in sort_alldate_stars])
 
+    none_statistic = "The repository is still young, not enough data"
     if dif_date > 62:
         relative_start = statistics.median([i[1] for i in sort_alldate_stars[-60:-30]])
         relative_end = statistics.median([i[1] for i in sort_alldate_stars[-30:]])
@@ -804,6 +875,10 @@ def parsing(diff=False):
     high_stars_month = months[cnt_month_sum.most_common()[0][0] - 1]
     low_stars_month = months[cnt_month_sum.most_common()[-1][0] - 1]
 
+# Data для 3-го графика.
+    months_stars = [(months[m_-1], s_) for m_, s_ in sorted(month_sum.items(), key=lambda item: item[0])]
+    years_stars = [(y_, s_) for y_, s_ in sorted(years_sum.items(), key=lambda item: item[0])]
+
 ## Расчет месяцев/лет по квартилям: x < Q1; x в Q1-Q3; x > Q3.
     Q1_print_m, Q1_Q3_print_m, Q3_print_m = quartiles(cnt_month_sum, none_statistic=none_statistic,
                                                       dif_date=dif_date, months=months, month=True)
@@ -845,6 +920,7 @@ def parsing(diff=False):
     console.print(f"[cyan]The-trend-of-adding-stars (forecasting)::[/cyan] {trend}", highlight=False)
     console.print(f"[cyan]Most-of-stars-month / Smallest-of-stars-month::[/cyan] " + \
                   f"{high_stars_month} / {low_stars_month}", highlight=False)
+
     if dif_date > 32:
         console.print(f"[cyan]Distribution-of-stars-by-month" + \
                       f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''}::[/cyan] " + \
@@ -852,11 +928,13 @@ def parsing(diff=False):
                       f"[bold green]{chr(10).join(Q3_print_m) if Q3_print_m else '-'*20}[/bold green]\n" + \
                       f"[bold yellow]{chr(10).join(Q1_Q3_print_m)}" + \
                       f"[/bold yellow]\n[bold red]{chr(10).join(Q1_print_m) if Q1_print_m else '-'*20}[/bold red]", highlight=False)
+
     if dif_date > 365:
         console.print(f"[cyan]Distribution-of-stars-by-year::[/cyan] {sum(cnt_month_sum.values())} stars {chr(10)}" + \
                       f"[green]{chr(10).join(Q3_print_y) if Q3_print_y else '-'*20}[/green]\n" + \
                       f"[yellow]{chr(10).join(Q1_Q3_print_y)}" + \
                       f"[/yellow]\n[red]{chr(10).join(Q1_print_y) if Q1_print_y else '-'*20}[/red]", highlight=False)
+
     console.print(f"[cyan]Longest-period-without-add-stars::[/cyan] " + \
                   f"{tuple_date_no_stars[0]} — {end_date_no_stars} ({tuple_date_no_stars[1]} days)", highlight=False)
     console.print(f"[cyan]Median-percentage-change (adding stars for the last month compared to the month before last" + \
@@ -891,7 +969,7 @@ def parsing(diff=False):
                 data = agregated_date(html_file)
                 if isinstance(html_file, list):
                     html_file = f"{path}/all_new_stars.html"
-                generate_plots(data, html_file)
+                generate_plots(data, html_file, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
 
             common_users_found = cross_user_detect(set(lst_new))
 
@@ -942,7 +1020,7 @@ transition: transform 0.15s}
                 file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
                                 "title='open all history adding stars'>open all history</a>\n" + \
                                 f"\n<a class='but' href='file://{path}/graph_all_new_stars.html' " + \
-                                "title='open all history adding stars graph'>open graphs</a>\n" + \
+                                "title='open all history adding stars graph'>open graphs (5)</a>\n" + \
                                 "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
                                 f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
 
@@ -953,7 +1031,7 @@ transition: transform 0.15s}
                 file_html.write(f"\n<a class='but' href='file://{path}/all_gone_stars.html' " + \
                                 "title='open all history gone stars'>open all history</a>\n" + \
                                 f"\n<a class='but' href='file://{path}/graph_all_gone_stars.html' " + \
-                                "title='open all history gone stars graph'>open graph</a>\n" + \
+                                "title='open all history gone stars graph'>open graph (1)</a>\n" + \
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 f"<small><small><strong>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
@@ -1014,7 +1092,7 @@ transition: transform 0.15s}
                 data = agregated_date(html_file)
                 if isinstance(html_file, list):
                     html_file = f"{path}/all_new_stars.html"
-                generate_plots(data, html_file)
+                generate_plots(data, html_file, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
 
 # Искать пересеченных пользователей.
             common_users_found = cross_user_detect(set(lst_new))
