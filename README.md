@@ -34,8 +34,8 @@ Shotstars will care about and count specifically those GitHub users who have rem
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=4.0)
-![Static Badge](https://img.shields.io/badge/latest%20v4.0-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=4.1)
+![Static Badge](https://img.shields.io/badge/latest%20v4.1-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -183,12 +183,15 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 *8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and gone.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  
 
+
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs.png" />  
 Comparison of two repositories based on stellar history. It is clear that the peak of popularity of the first repository has long passed, the development has gone into decline (forks). The second repository is a legend and is steadily gaining popularity.  
+
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs2.png" />  
 Starry hour. Repository from location RU. It is clear that its audience is European, in the morning hours, at night, much fewer stars come.  
 By the way, all 3 repositories in the screenshots are located in RU, and Shotstars is also from RU.  
+
 
 ## 💡 Explanation of some metrics  
 
