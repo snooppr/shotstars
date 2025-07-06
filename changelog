@@ -1,6 +1,13 @@
 ## Shotstars
 
 ********
+**v4.2**
+********
+
+— Histogram N3 'Star Hour' now displays hours not in UTC, but in the user's local time
+(it's more convenient this way, no need to translate in your mind).
+=================================================================================================
+********
 **v4.1**
 ********
 

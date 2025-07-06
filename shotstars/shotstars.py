@@ -39,7 +39,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v4.1, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v4.2, author: https://github.com/snooppr
 """)
 
 
@@ -326,7 +326,8 @@ def generate_plots(aggregated_data, source_filename, months_stars, years_stars, 
                                     hovertemplate=("Hours: %{y}<br>Stars: %{x}<extra></extra>"),
                                     marker=dict(color='blue', line=dict(color='white', width=2)))])
 
-            fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, UTS</b>), " + \
+            local_tzone = time.tzname[time.localtime().tm_isdst]
+            fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, {local_tzone} time zones</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                xaxis_title="Quantity stars", yaxis_title="Hours", yaxis=dict(dtick=1, tickmode='linear'),
@@ -685,7 +686,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v4.1', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v4.2', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -767,8 +768,8 @@ def parsing(diff=False):
                     lst_new.append(git_username)
                     datestars_user[num.get("starred_at").split("T")[0]].add(git_username)
 
-                    time_h = datetime.datetime.strptime(num.get("starred_at"), '%Y-%m-%dT%H:%M:%SZ')
-                    lst_star_hours.append(time_h.hour)
+                    time_h = datetime.datetime.strptime(num.get("starred_at"), '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=datetime.timezone.utc)
+                    lst_star_hours.append(time_h.astimezone().hour)
 
                 futures.pop(future, None)
         except Exception:
