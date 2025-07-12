@@ -1,6 +1,16 @@
 ## Shotstars
 
 ********
+**v4.4**
+********
+
+— Metric "Date-update" displays date/time/timezone in local time, not UTC.
+— Expanded metric: "Date-of-creation", number of days added in brackets.
+— The "his/history" input is now case-insensitive.
+— Improved visualization in CLI/HTML.
+=================================================================================================
+
+********
 **v4.2**
 ********
 

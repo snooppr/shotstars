@@ -29,6 +29,7 @@ from rich.table import Table
 console = Console()
 config = configparser.ConfigParser()
 image = os.path.join(os.path.dirname(__file__), 'stars.jpg')
+local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
@@ -39,7 +40,7 @@ console.print(r"""[yellow]
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v4.2, author: https://github.com/snooppr
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v4.4, author: https://github.com/snooppr
 """)
 
 
@@ -64,7 +65,7 @@ def main_cli():
     path = path_repo()
 
     try:
-        if url_repo == "history" or url_repo == "his":
+        if url_repo.lower() == "history" or url_repo.lower() == "his":
             shutil.rmtree(path, ignore_errors=True)
             url_repo, repo, repo_api = his(check_file=True, history=True)
             path = path_repo()
@@ -136,7 +137,7 @@ def cross_user_detect(base_users):
     if common_users:
         console.rule(f"[bold blue]cross-users ({len(common_users)}), regarding the repository ({repo})[/bold blue]", characters="#")
         print("")
-        console.print(Panel.fit(f"({repo}) VS ({', '.join(common_repo)})",
+        console.print(Panel.fit(f"[yellow]([/yellow]{repo}[yellow])[/yellow] VS [yellow]([/yellow]{', '.join(common_repo)}[yellow])[/yellow]",
                                 title=f"cross-users found in repositories (1 VS {len(common_repo)})",
                                 border_style="magenta"))
 
@@ -324,13 +325,13 @@ def generate_plots(aggregated_data, source_filename, months_stars, years_stars, 
             x, y = map(list, zip(*hours_stars))
             fig5 = plt_html.Figure([plt_html.Bar(y=x, x=y, name='Hours', orientation='h',
                                     hovertemplate=("Hours: %{y}<br>Stars: %{x}<extra></extra>"),
-                                    marker=dict(color='blue', line=dict(color='white', width=2)))])
+                                    marker=dict(color='blue'))])
 
-            local_tzone = time.tzname[time.localtime().tm_isdst]
             fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, {local_tzone} time zones</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                xaxis_title="Quantity stars", yaxis_title="Hours", yaxis=dict(dtick=1, tickmode='linear'),
+                               xaxis=dict(gridcolor='lightgray'),
                                plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
 
@@ -652,18 +653,18 @@ def quartiles(cnt_sum, none_statistic=None, dif_date=None, months=None, month=Fa
         Q3_index = len([x for x in l_cnt_sum if x > Q3 and x != 0])
         sum_v = sum(cnt_sum.values())
         if month:
-            Q3_print = [f"{str(months[i[0]-1]).upper()}: ({i[1]}_STARS)_[{round(i[1]*100/sum_v, 1)}%]"
+            Q3_print = [f"{str(months[i[0]-1]).upper()}: {i[1]}_STARS___({round(i[1]*100/sum_v, 1)}%)"
                         for i in cnt_sum.most_common(Q3_index)]
-            Q1_Q3_print = [f"{months[i[0]-1]}: ({i[1]}_Stars)_[{round(i[1]*100/sum_v, 1)}%]"
+            Q1_Q3_print = [f"{months[i[0]-1]}: {i[1]}_Stars___({round(i[1]*100/sum_v, 1)}%)"
                            for i in cnt_sum.most_common()[Q3_index:Q3_index+Q1_Q3_index]]
-            Q1_print = [f"{str(months[i[0]-1]).lower()}: ({i[1]}_stars)_[{round(i[1]*100/sum_v, 1)}%]"
+            Q1_print = [f"{str(months[i[0]-1]).lower()}: {i[1]}_stars___({round(i[1]*100/sum_v, 1)}%)"
                         for i in cnt_sum.most_common()[Q3_index+Q1_Q3_index:]]
         if year:
-            Q3_print = [f"{i[0]}: ({i[1]}_STARS)_[{round(i[1]*100/sum_v, 1)}%]"
+            Q3_print = [f"{i[0]}: {i[1]}_STARS___({round(i[1]*100/sum_v, 1)}%)"
                         for i in cnt_sum.most_common(Q3_index)]
-            Q1_Q3_print = [f"{i[0]}: ({i[1]}_Stars)_[{round(i[1]*100/sum_v, 1)}%]"
+            Q1_Q3_print = [f"{i[0]}: {i[1]}_Stars___({round(i[1]*100/sum_v, 1)}%)"
                            for i in cnt_sum.most_common()[Q3_index:Q3_index+Q1_Q3_index]]
-            Q1_print = [f"{i[0]}: ({i[1]}_stars)_[{round(i[1]*100/sum_v, 1)}%]"
+            Q1_print = [f"{i[0]}: {i[1]}_stars___({round(i[1]*100/sum_v, 1)}%)"
                         for i in cnt_sum.most_common()[Q3_index+Q1_Q3_index:]]
         return Q1_print, Q1_Q3_print, Q3_print
     else:
@@ -686,7 +687,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v4.2', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars v4.4', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -718,15 +719,17 @@ def parsing(diff=False):
     try:
         size_repo = "N/O" if r.get('size') is None else round(r.get('size') / 1024, 2)
         created_at = -1 if r.get('created_at') is None else r.get('created_at').split("T")[0]
+        created_at_days = (datetime.datetime.today() - datetime.datetime.strptime(created_at, '%Y-%m-%d')).days if created_at != -1 else -1
         push = "N/O" if r.get('pushed_at') is None else r.get('pushed_at')
         try:
-            push_ = datetime.datetime.strptime(push, "%Y-%m-%dT%H:%M:%SZ").strftime('%Y-%m-%d__%H:%M') + "_UTC"
+            push_ = datetime.datetime.strptime(push, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+            push_ = push_.astimezone().strftime('%Y-%m-%d__%H:%M') + f"_{local_tzone}"
         except Exception:
             push_ = "BAD!"
         title_repo = "No repository description available" if r.get('description') is None else r.get('description')
-        console.print(f"\n[cyan]Size::[/cyan] ~ {size_repo} Mb" + \
+        console.print(f"\n[cyan]Size::[/cyan] ~ {size_repo} MB" + \
                       f"\n[cyan]GitHub-rating::[/cyan] {stars} stars" + \
-                      f"\n[cyan]Date-of-creation::[/cyan] {created_at}" + \
+                      f"\n[cyan]Date-of-creation::[/cyan] {created_at} ({created_at_days} days)" + \
                       f"\n[cyan]Date-update (including hidden update)::[/cyan] {push_}" + \
                       f"\n[cyan]Repository-description::[/cyan] {title_repo}", highlight=False)
     except Exception:
@@ -860,8 +863,8 @@ def parsing(diff=False):
         fuckstars = none_statistic
 
 ## Расчет месяцев с самым высоким и низким трафиком по звездам / Расчет по годам.
-    months = ["January", "February", "March", "April", "May", "June",
-              "July", "August", "September", "October", "November", "December"]
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     month_sum = defaultdict(int)
     years_sum = defaultdict(int)
     for date_str, _star in sort_alldate_stars:
@@ -924,17 +927,17 @@ def parsing(diff=False):
 
     if dif_date > 32:
         console.print(f"[cyan]Distribution-of-stars-by-month" + \
-                      f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''}::[/cyan] " + \
-                      f"{sum(cnt_month_sum.values())} stars {chr(10)}" + \
-                      f"[bold green]{chr(10).join(Q3_print_m) if Q3_print_m else '-'*20}[/bold green]\n" + \
+                      f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''} " + \
+                      f"({sum(cnt_month_sum.values())} stars)::[/cyan] {chr(10)}" + \
+                      f"[bold green]{chr(10).join(Q3_print_m) if Q3_print_m else '-'*25}[/bold green]\n" + \
                       f"[bold yellow]{chr(10).join(Q1_Q3_print_m)}" + \
-                      f"[/bold yellow]\n[bold red]{chr(10).join(Q1_print_m) if Q1_print_m else '-'*20}[/bold red]", highlight=False)
+                      f"[/bold yellow]\n[bold red]{chr(10).join(Q1_print_m) if Q1_print_m else '-'*25}[/bold red]", highlight=False)
 
     if dif_date > 365:
-        console.print(f"[cyan]Distribution-of-stars-by-year::[/cyan] {sum(cnt_month_sum.values())} stars {chr(10)}" + \
-                      f"[green]{chr(10).join(Q3_print_y) if Q3_print_y else '-'*20}[/green]\n" + \
+        console.print(f"[cyan]Distribution-of-stars-by-year ({sum(cnt_month_sum.values())} stars)::[/cyan] {chr(10)}" + \
+                      f"[green]{chr(10).join(Q3_print_y) if Q3_print_y else '-'*25}[/green]\n" + \
                       f"[yellow]{chr(10).join(Q1_Q3_print_y)}" + \
-                      f"[/yellow]\n[red]{chr(10).join(Q1_print_y) if Q1_print_y else '-'*20}[/red]", highlight=False)
+                      f"[/yellow]\n[red]{chr(10).join(Q1_print_y) if Q1_print_y else '-'*25}[/red]", highlight=False)
 
     console.print(f"[cyan]Longest-period-without-add-stars::[/cyan] " + \
                   f"{tuple_date_no_stars[0]} — {end_date_no_stars} ({tuple_date_no_stars[1]} days)", highlight=False)
@@ -1019,9 +1022,9 @@ transition: transform 0.15s}
                     table_up = html_rec(file_html, diff_lst_up, table_up)
 
                 file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
-                                "title='open all history adding stars'>open all history</a>\n" + \
+                                "title='open history adding stars'>open history</a>\n" + \
                                 f"\n<a class='but' href='file://{path}/graph_all_new_stars.html' " + \
-                                "title='open all history adding stars graph'>open graphs (5)</a>\n" + \
+                                "title='open all history adding stars'>open graphs (5)</a>\n" + \
                                 "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
                                 f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
 
@@ -1030,31 +1033,31 @@ transition: transform 0.15s}
 
                 sp = "<br>&nbsp;&nbsp;&nbsp;&nbsp;"
                 file_html.write(f"\n<a class='but' href='file://{path}/all_gone_stars.html' " + \
-                                "title='open all history gone stars'>open all history</a>\n" + \
+                                "title='open history gone stars'>open history</a>\n" + \
                                 f"\n<a class='but' href='file://{path}/graph_all_gone_stars.html' " + \
-                                "title='open all history gone stars graph'>open graph (1)</a>\n" + \
+                                "title='open history of calculations gone stars'>open graph (1)</a>\n" + \
                                 "</div>\n</div>\n\n<br>\n<span class='donate' " + \
                                 "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                                f"<small><small><strong>\n💾 Size:: ~ {size_repo} Mb<br>\n" + \
+                                f"<small><strong>\n💾 Size:: ~ {size_repo} MB<br>\n" + \
                                 f"✨ GitHub-rating:: {stars} stars<br>\n" + \
                                 f"🌟 Peak-stars-in-date:: {max_stars} / {in_date}<br>\n" + \
                                 f"📈 The-trend-of-adding-stars (forecasting):: {trend}<br>\n" + \
                                 f"📅 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
                                 f"📅 Distribution-of-stars-by-month" + \
-                                f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''}:: " + \
-                                f"{sum(cnt_month_sum.values())} stars {chr(10)}{sp}" + \
-                                f"{sp.join(Q3_print_m) if Q3_print_m else '-'*20}\n{sp}{sp.join(Q1_Q3_print_m)}" + \
-                                f"\n{sp}{sp.join(Q1_print_m) if Q1_print_m else '-'*20}<br>\n" + \
-                                f"📅 Distribution-of-stars-by-year:: {sum(cnt_month_sum.values())} stars {chr(10)}{sp}" + \
-                                f"{sp.join(Q3_print_y) if Q3_print_y else '-'*20}\n{sp}{sp.join(Q1_Q3_print_y)}" + \
-                                f"\n{sp}{sp.join(Q1_print_y) if Q1_print_y else '-'*20}<br>\n" + \
+                                f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''} " + \
+                                f"({sum(cnt_month_sum.values())} stars):: {chr(10)}{sp}" + \
+                                f"{sp.join(Q3_print_m) if Q3_print_m else '-'*25}\n{sp}{sp.join(Q1_Q3_print_m)}" + \
+                                f"\n{sp}{sp.join(Q1_print_m) if Q1_print_m else '-'*25}<br>\n" + \
+                                f"📅 Distribution-of-stars-by-year ({sum(cnt_month_sum.values())} stars):: {chr(10)}{sp}" + \
+                                f"{sp.join(Q3_print_y) if Q3_print_y else '-'*25}\n{sp}{sp.join(Q1_Q3_print_y)}" + \
+                                f"\n{sp}{sp.join(Q1_print_y) if Q1_print_y else '-'*25}<br>\n" + \
                                 f"0️⃣ Longest-period-without-add-stars:: {tuple_date_no_stars[0]} — " + \
                                 f"{end_date_no_stars} ({tuple_date_no_stars[1]} days)<br>\n" + \
                                 f"📊 Median-percentage-change (adding stars for the last month compared " + \
                                 f"to the month before last):: {relative_percentage}<br>\n" + \
                                 f"📊 Average-change-in-fact (adding stars for the last month compared " + \
                                 f"to the month before last):: {average_change} ({average_change_stars})<br>\n" + \
-                                f"⏳ Date-of-creation:: {created_at}<br>\n" + \
+                                f"⏳ Date-of-creation:: {created_at} ({created_at_days} days)<br>\n" + \
                                 f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                                 f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
                                 f"🎃 Fake-stars:: {fuckstars}<br>\n" + \
@@ -1062,9 +1065,9 @@ transition: transform 0.15s}
                                 "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                                 "<small><small>╭📅 Changes over the past " + \
                                 f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
-                                "</strong></small></small></span>\n\n<div>\n<br>\n" + \
+                                "</strong></small></span>\n\n<div>\n<br>\n" + \
                                 f"<a class='but' href='file://{path.replace(repo, '')}dynamic_crossusers.txt' " + \
-                                "title='open all cross-users'>open all cross-users</a>\n<br>\n" + \
+                                "title='txt format'>open all cross-users</a>\n<br>\n" + \
                                 f"<a class='but' href='file://{path}/date_users.json' " + \
                                 "title='json format'>open date_all-stars_users</a>\n</div>\n\n<p style='color: white'><small>" + \
                                 "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
