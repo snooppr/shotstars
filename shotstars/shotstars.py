@@ -1047,13 +1047,13 @@ def parsing(diff=False):
 
 # Настройка таблиц для вывода на печать в CLI.
         table_dn = Table(title=f"\n[yellow]Gone stars (-{per_stars_dn}%)\nin the last: {dif_time()}[/yellow]",
-                            title_justify="center", header_style='yellow', style="yellow", show_lines=True)
+                         title_justify="center", header_style='yellow', style="yellow", show_lines=True)
         table_dn.row_styles = ["none", "dim"]
         table_dn.add_column("N", justify="left", style="yellow", no_wrap=True)
         table_dn.add_column("GONE STARS", justify="left", style="yellow", no_wrap=False)
 
         table_up = Table(title=f"\n[cyan]New stars (+{per_stars_up}%)\nin the last: {dif_time()}[/cyan]",
-                            title_justify="center", header_style='cyan', style="cyan", show_lines=True)
+                         title_justify="center", header_style='cyan', style="cyan", show_lines=True)
         table_up.row_styles = ["none", "dim"]
         table_up.add_column("N", justify="left", style="cyan", no_wrap=True)
         table_up.add_column("NEW STARS", justify="left", style="cyan", no_wrap=False)
