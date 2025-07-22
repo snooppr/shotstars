@@ -1,12 +1,37 @@
 ## Shotstars
 
 ********
+**v4.5**
+********
+
+— Added Github token check. If the token has expired, or been revoked by the user, or the
+user made a mistake and entered not the token in "config.ini" but a test string, then now in 
+addition to the failed connection the user is offered a hint: recheck the token/config.ini.
+
+— The 'ShotStars' directory on UNIX-like OS has become hidden '.ShotStars', a common practice
+in GNU/Linux OS. All old data is preserved. Issues/9.
+
+— HTML report is now generated after rescanning the repository regardless of the movement of
+the stars.
+
+— Added a splash screen and a new banner. If the user has a large terminal, there will be a
+large, new banner.
+
+— In the Html report, a counter also appeared on the 'open graph' button for calculating
+gone stars, for example '0' means the graph was not created, and not an error when opening
+the browser tab.
+=================================================================================================
+
+********
 **v4.4**
 ********
 
 — Metric "Date-update" displays date/time/timezone in local time, not UTC.
+
 — Expanded metric: "Date-of-creation", number of days added in brackets.
+
 — The "his/history" input is now case-insensitive.
+
 — Improved visualization in CLI/HTML.
 =================================================================================================
 

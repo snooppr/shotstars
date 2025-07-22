@@ -5,6 +5,7 @@ import configparser
 import datetime
 import json
 import os
+import platform
 import plotext as plt_cli
 import plotly.graph_objects as plt_html
 import random
@@ -21,9 +22,11 @@ import webbrowser
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 from plotly.offline import get_plotlyjs
+from rich.align import Align
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.text import Text
 
 
 console = Console()
@@ -33,18 +36,74 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
+__version__ = "v4.5"
 
 
-console.print(r"""[yellow]
+if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
+    banner = r"""
+   SSSSSSSSSSSSSSS hhhhhhh                                       tttt          
+ SS:::::::::::::::Sh:::::h                                    ttt:::t          
+S:::::SSSSSS::::::Sh:::::h                                    t:::::t          
+S:::::S     SSSSSSSh:::::h                                    t:::::t          
+S:::::S             h::::h hhhhh          ooooooooooo   ttttttt:::::ttttttt    
+S:::::S             h::::hh:::::hhh     oo:::::::::::oo t:::::::::::::::::t    
+ S::::SSSS          h::::::::::::::hh  o:::::::::::::::ot:::::::::::::::::t    
+  SS::::::SSSSS     h:::::::hhh::::::h o:::::ooooo:::::otttttt:::::::tttttt    
+    SSS::::::::SS   h::::::h   h::::::ho::::o     o::::o      t:::::t          
+       SSSSSS::::S  h:::::h     h:::::ho::::o     o::::o      t:::::t          
+            S:::::S h:::::h     h:::::ho::::o     o::::o      t:::::t          
+            S:::::S h:::::h     h:::::ho::::o     o::::o      t:::::t    tttttt
+SSSSSSS     S:::::S h:::::h     h:::::ho:::::ooooo:::::o      t::::::tttt:::::t
+S::::::SSSSSS:::::S h:::::h     h:::::ho:::::::::::::::o      tt::::::::::::::t
+S:::::::::::::::SS  h:::::h     h:::::h oo:::::::::::oo         tt:::::::::::tt
+ SSSSSSSSSSSSSSS    hhhhhhh     hhhhhhh   ooooooooooo             ttttttttttt  
+                                                                           
+   SSSSSSSSSSSSSSS      tttt                                               
+ SS:::::::::::::::S  ttt:::t                                               
+S:::::SSSSSS::::::S  t:::::t                                               
+S:::::S     SSSSSSS  t:::::t                                               
+S:::::S        ttttttt:::::ttttttt      aaaaaaaaaaaaa  rrrrr   rrrrrrrrr       ssssssssss
+S:::::S        t:::::::::::::::::t      a::::::::::::a r::::rrr:::::::::r    ss::::::::::s
+ S::::SSSS     t:::::::::::::::::t      aaaaaaaaa:::::ar:::::::::::::::::r ss:::::::::::::s
+  SS::::::SSSSStttttt:::::::tttttt               a::::arr::::::rrrrr::::::rs::::::ssss:::::s
+    SSS::::::::SS    t:::::t              aaaaaaa:::::a r:::::r     r:::::r s:::::s  ssssss
+       SSSSSS::::S   t:::::t            aa::::::::::::a r:::::r     rrrrrrr   s::::::s
+            S:::::S  t:::::t           a::::aaaa::::::a r:::::r                  s::::::s
+            S:::::S  t:::::t    tttttta::::a    a:::::a r:::::r            ssssss   s:::::s
+SSSSSSS     S:::::S  t::::::tttt:::::ta::::a    a:::::a r:::::r            s:::::ssss::::::s
+S::::::SSSSSS:::::S  tt::::::::::::::ta:::::aaaa::::::a r:::::r            s::::::::::::::s
+S:::::::::::::::SS     tt:::::::::::tt a::::::::::aa:::ar:::::r             s:::::::::::ss
+ SSSSSSSSSSSSSSS         ttttttttttt    aaaaaaaaaa  aaaarrrrrrr              sssssssssss"""
+else:
+    banner = r"""
  ____  _           _     ____  _
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
-|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/[/yellow]  v4.4, author: https://github.com/snooppr
-""")
+|____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/"""
 
 
 # Функции...
+def screen_banner():
+    "Заставка/баннер."
+    if not Windows or (Windows and int(platform.version().split('.')[2]) >= 19045):
+        with console.screen(style="dim cyan") as screen:
+            for count in range(7, 0, -1):
+                text_screen = Align.center(Text.from_markup(f"SHOTSTARS OVER FAB TOOL TO TRACK STARS!\n\n{count}",
+                                                            justify="center"))
+                if count < 6:
+                    text_screen = Align.center(Text.from_markup(f"support with a donation or a star\n\n{count}",
+                                                                justify="center"))
+                if count < 3:
+                    text_screen = Align.center(Text.from_markup(f"[blink]support with a donation or a star[/blink]\n\n{count}",
+                                                                justify="center"))
+
+                screen.update(Panel(text_screen))
+                time.sleep(1)
+
+    console.print(f"[yellow]{banner}[/yellow]\n{__version__}, author: https://github.com/snooppr\n")
+
+
 def main_cli():
     try:
         if Windows:
@@ -54,12 +113,17 @@ def main_cli():
 
     global url_repo, repo, repo_api, path
     try:
+        screen_banner()
         console.print("Enter [bold green]url[/bold green] (Repository On GitHub) or '[bold green]history[/bold green]': ",
                       highlight=False, end="")
         url_repo = input("")
     except KeyboardInterrupt:
-        console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
-        sys.exit()
+        try:
+            name_os = f"{os.getlogin()}, "
+        except Exception:
+            name_os = ""
+        console.print(f"\n[bold red][italic]Interrupt, {name_os}please think about how open source projects exist.[/italic][/bold red]")
+        win_exit()
     repo = url_repo.rsplit(sep='/', maxsplit=1)[-1]
     repo_api = '/'.join(url_repo.rsplit(sep='/', maxsplit=2)[-2:])
     path = path_repo()
@@ -98,7 +162,7 @@ def main_cli():
         else:
             console.print(f"\n[bold green]A new repository has been added to the tracking " + \
                           f"database: '[/bold green][cyan]{repo}[/cyan][bold green]'.\nOn subsequent/re-scanning of the " + \
-                          f"repository, 'ShotStars' will attempt to calculate stars.[/bold green]", highlight=False)
+                          f"repository, ShotStars will attempt to calculate stars.[/bold green]", highlight=False)
             his()
             check_token()
             parsing()
@@ -218,8 +282,8 @@ def generate_plots(aggregated_data, source_filename, months_stars, years_stars, 
 # График для CLI.
     if Windows:
         if base_filename == 'all_new_stars.html':
-            console.print(f"\n[bold red]The graph in CLI is built only for OS: GNU/Linux; macOS and Android.\n" + \
-                          f"See graph in HTML report[/bold red]\n")
+            console.print(f"\n[yellow][!] The graph in CLI is built only for OS: GNU/Linux; macOS and Android/Termux.\n" + \
+                          f"    See graph in HTML report.[/yellow]\n")
     else:
         try:
             plt_cli.clear_figure()
@@ -463,8 +527,19 @@ def his(check_file=False, history=False):
 
 
 def path_repo():
-    """Создание каталогов для репозиториев."""
-    path = os.path.join(os.environ["LOCALAPPDATA" if Windows else "HOME"], 'ShotStars', 'results', repo)
+    """
+    Создание каталога для данных репозиториев.
+    v4.5 Переименование каталога в скрытый на GNU/Linux из 'ShotStars/.ShotStars'.
+    """
+    try:
+        if not Windows:
+            replace_shotstars_dir = os.path.join(os.environ["HOME"], 'ShotStars')
+            if os.path.exists(replace_shotstars_dir):
+                shutil.move(replace_shotstars_dir, os.path.join(os.environ["HOME"], '.ShotStars'))
+    except Exception:
+        pass
+
+    path = os.path.join(os.environ["LOCALAPPDATA" if Windows else "HOME"], 'ShotStars' if Windows else '.ShotStars', 'results', repo)
     os.makedirs(path, exist_ok=True)
 
     return path
@@ -687,7 +762,7 @@ def parsing(diff=False):
     config.read(os.path.join(os.path.dirname(path), "config.ini"))
     token = config.get('Shotstars', 'token')
     if token != "None":
-        head = {'User-Agent': f'Shotstars v4.4', 'Authorization': f'Bearer {token}'}
+        head = {'User-Agent': f'Shotstars {__version__}', 'Authorization': f'Bearer {token}'}
     elif token == "None":
         head = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}
 
@@ -709,6 +784,9 @@ def parsing(diff=False):
         console.print(f"\n[bold red]Check the entered[/bold red] [red]url[/red][bold red], " + \
                       f"it seems that such a repository does not exist:\n<[/bold red] [yellow]{url_repo}[/yellow] " + \
                       f"[bold red]>.[/bold red]", highlight=False)
+        if token != "None":
+            console.print(f"\n[bold red]Your GitHub token may have expired (default: token = None), check:\n" + \
+                          f"{os.path.join(os.path.dirname(path), 'config.ini')}[/bold red]")
         if not os.path.isfile(f"{path}/new.txt"):
             shutil.rmtree(path, ignore_errors=True)
         win_exit()
@@ -727,7 +805,7 @@ def parsing(diff=False):
         except Exception:
             push_ = "BAD!"
         title_repo = "No repository description available" if r.get('description') is None else r.get('description')
-        console.print(f"\n[cyan]Size::[/cyan] ~ {size_repo} MB" + \
+        console.print(f"\n[cyan]Size::[/cyan] ~{size_repo} MB" + \
                       f"\n[cyan]GitHub-rating::[/cyan] {stars} stars" + \
                       f"\n[cyan]Date-of-creation::[/cyan] {created_at} ({created_at_days} days)" + \
                       f"\n[cyan]Date-update (including hidden update)::[/cyan] {push_}" + \
@@ -964,44 +1042,28 @@ def parsing(diff=False):
         if bool(diff_lst_up) is False:
             console.print("[bold black on white]NEW stars not detected")
 
-        if not any([bool(diff_lst_dn), bool(diff_lst_up)]):
-            if not Windows:
-                print("")
-                console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
-                print("")
-            for html_file in [[Maximum_stars_in_date, cumulative_datestars], f"{path}/all_gone_stars.html"]:
-                data = agregated_date(html_file)
-                if isinstance(html_file, list):
-                    html_file = f"{path}/all_new_stars.html"
-                generate_plots(data, html_file, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
-
-            common_users_found = cross_user_detect(set(lst_new))
-
-            finish(token, stars)
-            win_exit()
-        elif bool(diff_lst_dn) or bool(diff_lst_up):
-            per_stars_dn = round(len(diff_lst_dn) * 100 / stars, 2) # расчет % соотношения потерь звезд к общему рейтингу.
-            per_stars_up = round(len(diff_lst_up) * 100 / stars, 2) # расчет % соотношения прибавления звезд к общему рейтингу.
+        per_stars_dn = round(len(diff_lst_dn) * 100 / stars, 2) # расчет % соотношения потерь звезд к общему рейтингу.
+        per_stars_up = round(len(diff_lst_up) * 100 / stars, 2) # расчет % соотношения прибавления звезд к общему рейтингу.
 
 # Настройка таблиц для вывода на печать в CLI.
-            table_dn = Table(title=f"\n[yellow]Gone stars (-{per_stars_dn}%)\nin the last: {dif_time()}[/yellow]",
-                             title_justify="center", header_style='yellow', style="yellow", show_lines=True)
-            table_dn.row_styles = ["none", "dim"]
-            table_dn.add_column("N", justify="left", style="yellow", no_wrap=True)
-            table_dn.add_column("GONE STARS", justify="left", style="yellow", no_wrap=False)
+        table_dn = Table(title=f"\n[yellow]Gone stars (-{per_stars_dn}%)\nin the last: {dif_time()}[/yellow]",
+                            title_justify="center", header_style='yellow', style="yellow", show_lines=True)
+        table_dn.row_styles = ["none", "dim"]
+        table_dn.add_column("N", justify="left", style="yellow", no_wrap=True)
+        table_dn.add_column("GONE STARS", justify="left", style="yellow", no_wrap=False)
 
-            table_up = Table(title=f"\n[cyan]New stars (+{per_stars_up}%)\nin the last: {dif_time()}[/cyan]",
-                             title_justify="center", header_style='cyan', style="cyan", show_lines=True)
-            table_up.row_styles = ["none", "dim"]
-            table_up.add_column("N", justify="left", style="cyan", no_wrap=True)
-            table_up.add_column("NEW STARS", justify="left", style="cyan", no_wrap=False)
+        table_up = Table(title=f"\n[cyan]New stars (+{per_stars_up}%)\nin the last: {dif_time()}[/cyan]",
+                            title_justify="center", header_style='cyan', style="cyan", show_lines=True)
+        table_up.row_styles = ["none", "dim"]
+        table_up.add_column("N", justify="left", style="cyan", no_wrap=True)
+        table_up.add_column("NEW STARS", justify="left", style="cyan", no_wrap=False)
 
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
-            file_image = f"file://{os.path.join(path.replace(repo, ''), 'stars.jpg')}".replace('\\', '/')
-            with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
-                file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
-                                "<meta charset='utf-8'>\n<style>\n" + \
-                                f"body {{background-image: url('{file_image}'); background-size: cover;\n" + \
+        file_image = f"file://{os.path.join(path.replace(repo, ''), 'stars.jpg')}".replace('\\', '/')
+        with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
+            file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
+                            "<meta charset='utf-8'>\n<style>\n" + \
+                            f"body {{background-image: url('{file_image}'); background-size: cover;\n" + \
 """background-repeat: no-repeat; background-attachment: fixed}
 .but{display:inline-block; cursor: pointer; font-size:20px; text-decoration:none; padding:10px 20px; color:#2a21db; background:#bec0cc; border-radius:19px; border:2px solid #354251}
 .but:hover{background:#354251; color:#ffffff; border:2px solid #354251; transition: all 0.2s ease;}.textcols {white-space: nowrap}
@@ -1014,97 +1076,98 @@ def parsing(diff=False):
 transition: transform 0.15s}
 </style>
 </head>\n\n<body link="#6cccfb">\n""")
-                file_html.write(f"<h2 align='center' style='text-shadow: 0px 0px 13px #84d2ca' >{url_repo}</h2>\n" + \
-                                "<div class='textcols'>\n<div class='textcols-item'>\n" + \
-                                f"<h4 style='color:#32CD32'>🌟 New stars (+{per_stars_up}%):</h4>\n")
-
-                if bool(diff_lst_up):
-                    table_up = html_rec(file_html, diff_lst_up, table_up)
-
-                file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
-                                "title='open history adding stars'>open history</a>\n" + \
-                                f"\n<a class='but' href='file://{path}/graph_all_new_stars.html' " + \
-                                "title='open all history adding stars'>open graphs (5)</a>\n" + \
-                                "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
-                                f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
-
-                if bool(diff_lst_dn):
-                    table_dn = html_rec(file_html, diff_lst_dn, table_dn)
-
-                sp = "<br>&nbsp;&nbsp;&nbsp;&nbsp;"
-                file_html.write(f"\n<a class='but' href='file://{path}/all_gone_stars.html' " + \
-                                "title='open history gone stars'>open history</a>\n" + \
-                                f"\n<a class='but' href='file://{path}/graph_all_gone_stars.html' " + \
-                                "title='open history of calculations gone stars'>open graph (1)</a>\n" + \
-                                "</div>\n</div>\n\n<br>\n<span class='donate' " + \
-                                "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                                f"<small><strong>\n💾 Size:: ~ {size_repo} MB<br>\n" + \
-                                f"✨ GitHub-rating:: {stars} stars<br>\n" + \
-                                f"🌟 Peak-stars-in-date:: {max_stars} / {in_date}<br>\n" + \
-                                f"📈 The-trend-of-adding-stars (forecasting):: {trend}<br>\n" + \
-                                f"📅 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
-                                f"📅 Distribution-of-stars-by-month" + \
-                                f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''} " + \
-                                f"({sum(cnt_month_sum.values())} stars):: {chr(10)}{sp}" + \
-                                f"{sp.join(Q3_print_m) if Q3_print_m else '-'*25}\n{sp}{sp.join(Q1_Q3_print_m)}" + \
-                                f"\n{sp}{sp.join(Q1_print_m) if Q1_print_m else '-'*25}<br>\n" + \
-                                f"📅 Distribution-of-stars-by-year ({sum(cnt_month_sum.values())} stars):: {chr(10)}{sp}" + \
-                                f"{sp.join(Q3_print_y) if Q3_print_y else '-'*25}\n{sp}{sp.join(Q1_Q3_print_y)}" + \
-                                f"\n{sp}{sp.join(Q1_print_y) if Q1_print_y else '-'*25}<br>\n" + \
-                                f"0️⃣ Longest-period-without-add-stars:: {tuple_date_no_stars[0]} — " + \
-                                f"{end_date_no_stars} ({tuple_date_no_stars[1]} days)<br>\n" + \
-                                f"📊 Median-percentage-change (adding stars for the last month compared " + \
-                                f"to the month before last):: {relative_percentage}<br>\n" + \
-                                f"📊 Average-change-in-fact (adding stars for the last month compared " + \
-                                f"to the month before last):: {average_change} ({average_change_stars})<br>\n" + \
-                                f"⏳ Date-of-creation:: {created_at} ({created_at_days} days)<br>\n" + \
-                                f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
-                                f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
-                                f"🎃 Fake-stars:: {fuckstars}<br>\n" + \
-                                f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
-                                "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                                "<small><small>╭📅 Changes over the past " + \
-                                f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
-                                "</strong></small></span>\n\n<div>\n<br>\n" + \
-                                f"<a class='but' href='file://{path.replace(repo, '')}dynamic_crossusers.txt' " + \
-                                "title='txt format'>open all cross-users</a>\n<br>\n" + \
-                                f"<a class='but' href='file://{path}/date_users.json' " + \
-                                "title='json format'>open date_all-stars_users</a>\n</div>\n\n<p style='color: white'><small>" + \
-                                "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
-                                "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
-                                "alt='' height='40' width='40'></a></small></p>\n<p class='donate'>\n" + \
-                                "<a href='https://yoomoney.ru/to/4100111364257544' target='blank' title='Was the program useful? " + \
-                                "Support the developer financially.'>💳 DONATE</a></p>\n\n</body>\n</html>")
-
-# Сохранение/txt-отчета по убывающим звездам на длинной дистанции. Отчеты в CLI-таблицах.
-            if bool(diff_lst_dn):
-                gener_his_html(diff_lst_dn, html_name=f"{path}/all_gone_stars.html", stars=stars,
-                               title = f"<h2 align='center'>💫_________Total Gone Stars/Date ⇢ ")
-                console.print(table_dn)
+            file_html.write(f"<h2 align='center' style='text-shadow: 0px 0px 13px #84d2ca' >{url_repo}</h2>\n" + \
+                            "<div class='textcols'>\n<div class='textcols-item'>\n" + \
+                            f"<h4 style='color:#32CD32'>🌟 New stars (+{per_stars_up}%):</h4>\n")
 
             if bool(diff_lst_up):
-                gener_his_html(diff_lst_up, html_name=f"{path}/all_new_stars.html", stars=stars,
-                               title = f"<h2 align='center'>🌟_________Total New Stars/Date ↝ ")
-                console.print(table_up)
+                table_up = html_rec(file_html, diff_lst_up, table_up)
+
+            file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
+                            "title='open history adding stars'>open history</a>\n" + \
+                            f"\n<a class='but' href='file://{path}/graph_all_new_stars.html' " + \
+                            "title='open all history adding stars'>open graphs (5)</a>\n" + \
+                            "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
+                            f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
+
+            if bool(diff_lst_dn):
+                table_dn = html_rec(file_html, diff_lst_dn, table_dn)
+
+            sp = "<br>&nbsp;&nbsp;&nbsp;&nbsp;"
+            n_graph = '1' if os.path.isfile(f"{path}/graph_all_gone_stars.html") else "0"
+            file_html.write(f"\n<a class='but' href='file://{path}/all_gone_stars.html' " + \
+                            "title='open history gone stars'>open history</a>\n" + \
+                            f"\n<a class='but' href='file://{path}/graph_all_gone_stars.html' " + \
+                            f"title='open history of calculations gone stars'>open graph ({n_graph})</a>\n" + \
+                            "</div>\n</div>\n\n<br>\n<span class='donate' " + \
+                            "style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
+                            f"<small><strong>\n💾 Size:: ~{size_repo} MB<br>\n" + \
+                            f"✨ GitHub-rating:: {stars} stars<br>\n" + \
+                            f"🌟 Peak-stars-in-date:: {max_stars} / {in_date}<br>\n" + \
+                            f"📈 The-trend-of-adding-stars (forecasting):: {trend}<br>\n" + \
+                            f"📅 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
+                            f"📅 Distribution-of-stars-by-month" + \
+                            f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''} " + \
+                            f"({sum(cnt_month_sum.values())} stars):: {chr(10)}{sp}" + \
+                            f"{sp.join(Q3_print_m) if Q3_print_m else '-'*25}\n{sp}{sp.join(Q1_Q3_print_m)}" + \
+                            f"\n{sp}{sp.join(Q1_print_m) if Q1_print_m else '-'*25}<br>\n" + \
+                            f"📅 Distribution-of-stars-by-year ({sum(cnt_month_sum.values())} stars):: {chr(10)}{sp}" + \
+                            f"{sp.join(Q3_print_y) if Q3_print_y else '-'*25}\n{sp}{sp.join(Q1_Q3_print_y)}" + \
+                            f"\n{sp}{sp.join(Q1_print_y) if Q1_print_y else '-'*25}<br>\n" + \
+                            f"0️⃣ Longest-period-without-add-stars:: {tuple_date_no_stars[0]} — " + \
+                            f"{end_date_no_stars} ({tuple_date_no_stars[1]} days)<br>\n" + \
+                            f"📊 Median-percentage-change (adding stars for the last month compared " + \
+                            f"to the month before last):: {relative_percentage}<br>\n" + \
+                            f"📊 Average-change-in-fact (adding stars for the last month compared " + \
+                            f"to the month before last):: {average_change} ({average_change_stars})<br>\n" + \
+                            f"⏳ Date-of-creation:: {created_at} ({created_at_days} days)<br>\n" + \
+                            f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
+                            f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
+                            f"🎃 Fake-stars:: {fuckstars}<br>\n" + \
+                            f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
+                            "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
+                            "<small><small>╭📅 Changes over the past " + \
+                            f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
+                            "</strong></small></span>\n\n<div>\n<br>\n" + \
+                            f"<a class='but' href='file://{path.replace(repo, '')}dynamic_crossusers.txt' " + \
+                            "title='txt format'>open all cross-users</a>\n<br>\n" + \
+                            f"<a class='but' href='file://{path}/date_users.json' " + \
+                            "title='json format'>open date_all-stars_users</a>\n</div>\n\n<p style='color: white'><small>" + \
+                            "Software developed for a competition<br>©Author: <a href='https://github.com/snooppr' " + \
+                            "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
+                            "alt='' height='40' width='40'></a></small></p>\n<p class='donate'>\n" + \
+                            "<a href='https://yoomoney.ru/to/4100111364257544' target='blank' title='Was the program useful? " + \
+                            "Support the developer financially.'>💳 DONATE</a></p>\n\n</body>\n</html>")
+
+# Сохранение/txt-отчета по убывающим звездам на длинной дистанции. Отчеты в CLI-таблицах.
+        if bool(diff_lst_dn):
+            gener_his_html(diff_lst_dn, html_name=f"{path}/all_gone_stars.html", stars=stars,
+                           title = f"<h2 align='center'>💫_________Total Gone Stars/Date ⇢ ")
+            console.print(table_dn)
+
+        if bool(diff_lst_up):
+            gener_his_html(diff_lst_up, html_name=f"{path}/all_new_stars.html", stars=stars,
+                           title = f"<h2 align='center'>🌟_________Total New Stars/Date ↝ ")
+            console.print(table_up)
 
 # Создание CLI/HTML графиков.
-            if not Windows:
-                print("")
-                console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
-                print("")
-            for html_file in [[Maximum_stars_in_date, cumulative_datestars], f"{path}/all_gone_stars.html"]:
-                data = agregated_date(html_file)
-                if isinstance(html_file, list):
-                    html_file = f"{path}/all_new_stars.html"
-                generate_plots(data, html_file, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
+        if not Windows:
+            print("")
+            console.rule(f"[bold blue]graph in CLI[/bold blue]", characters="#")
+            print("")
+        for html_file in [[Maximum_stars_in_date, cumulative_datestars], f"{path}/all_gone_stars.html"]:
+            data = agregated_date(html_file)
+            if isinstance(html_file, list):
+                html_file = f"{path}/all_new_stars.html"
+            generate_plots(data, html_file, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
 
 # Искать пересеченных пользователей.
-            common_users_found = cross_user_detect(set(lst_new))
+        common_users_found = cross_user_detect(set(lst_new))
 
-            try:
-                webbrowser.open(f"file://{path}/report.html")
-            except Exception:
-                console.print("[bold red]It is impossible to open the web browser due to problems with the operating system.")
+        try:
+            webbrowser.open(f"file://{path}/report.html")
+        except Exception:
+            console.print("[bold red]It is impossible to open the web browser due to problems with the operating system.")
 
     finish(token, stars, report=True)
     win_exit()

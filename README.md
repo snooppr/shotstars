@@ -34,8 +34,8 @@ Shotstars will care about and count specifically those GitHub users who have rem
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=4.4)
-![Static Badge](https://img.shields.io/badge/latest%20v4.4-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=4.5)
+![Static Badge](https://img.shields.io/badge/latest%20v4.5-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -49,12 +49,12 @@ $ shotstars_cli
  ---
 
 ## ⚙️ Shotstars supports simulation of results  
-An HTML report is generated when Shotstars detects star motion, if there is no star motion but you want an HTML report, just enable star simulation. 👇  
+Note that the HTML report is generated when the repository is rescanned. If the user needs to force a specific HTML report, simply enable star simulation. 👇  
 A documented software hack - or side function designed to test the script on dead/stable repositories without star movement.  
 To simulate the process, the user must scan the new repository once,   
 adding it to the database; randomly delete and add any lines to a file  
 (OS GNU/Linux and Termux):    
-`/home/{user}/ShotStars/results/{repo}/new.txt`  
+`/home/{user}/.ShotStars/results/{repo}/new.txt`  
 (OS Windows):  
 `C:\Users\{User}\AppData\Local\ShotStars\result\{repo}\new.txt`;  
 run a second scan of the same repository.  
@@ -69,7 +69,7 @@ Steps to get a token *(free)*:
 2) open your profile -> settings -> developer settings -> personal acces tokens -> generate new token;  
 3) insert the resulting token (string) into in the field instead of 'None'  
 GNU/Linux & Android/Termux::  
-`/home/{user}/ShotStars/results/config.ini`  
+`/home/{user}/.ShotStars/results/config.ini`  
 OS Windows::  
 `C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`.  
 
@@ -135,7 +135,7 @@ Shotstars позволяет следить со стороны <u>за любы
 2) откройте профиль -> settings -> developer settings -> personal acces tokens -> generate new token;  
 3) полученный токен (строку) вставьте в поле заместо 'None' в файл  
 OS GNU/Linux & Android/Termux::  
-`/home/{user}/ShotStars/results/config.ini`  
+`/home/{user}/.ShotStars/results/config.ini`  
 OS Windows::  
 `C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`.  
 
@@ -145,7 +145,7 @@ Github-токен принадлежит пользователю, хранит�
 В Shotstars доступна история сканирований, не нужно теперь каждый раз вводить или копи/пастить url,
 укажите вместо url репозитория ключевое слово `his/history` и выберите цифрой ранее сканируемый репозиторий.  
 
-Обратите внимание, что HTML-отчет создается только тогда, когда Shotstars обнаружил движение звезд в репозитории. Если пользователю требуется принудительно получить HTML-отчет, просто включите [симуляцию](https://github.com/snooppr/shotstars#%EF%B8%8F-shotstars-supports-simulation-of-results) звезд.  
+Обратите внимание, что HTML-отчет создается при повторном сканировании репозитория. Если пользователю требуется принудительно получить особенный HTML-отчет, просто включите [симуляцию](https://github.com/snooppr/shotstars#%EF%B8%8F-shotstars-supports-simulation-of-results) звезд.  
 
  ---
 
