@@ -84,26 +84,6 @@ else:
 
 
 # Функции...
-def screen_banner():
-    "Заставка/баннер."
-    if not Windows or (Windows and int(platform.version().split('.')[2]) >= 19045):
-        with console.screen(style="dim cyan") as screen:
-            for count in range(7, 0, -1):
-                text_screen = Align.center(Text.from_markup(f"SHOTSTARS OVER FAB TOOL TO TRACK STARS!\n\n{count}",
-                                                            justify="center"))
-                if count < 6:
-                    text_screen = Align.center(Text.from_markup(f"support with a donation or a star\n\n{count}",
-                                                                justify="center"))
-                if count < 3:
-                    text_screen = Align.center(Text.from_markup(f"[blink]support with a donation or a star[/blink]\n\n{count}",
-                                                                justify="center"))
-
-                screen.update(Panel(text_screen))
-                time.sleep(1)
-
-    console.print(f"[yellow]{banner}[/yellow]\n{__version__}, author: https://github.com/snooppr\n")
-
-
 def main_cli():
     try:
         if Windows:
@@ -169,6 +149,31 @@ def main_cli():
     except KeyboardInterrupt:
         console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
         os.kill(os.getpid(), signal.SIGBREAK if Windows else signal.SIGKILL)
+
+
+def screen_banner():
+    "Заставка/баннер."
+    path_ = os.path.join(os.environ["LOCALAPPDATA" if Windows else "HOME"], 'ShotStars' if Windows else '.ShotStars', 'results')
+
+    if os.path.exists(path_):
+        lst_dir = [d for d in os.scandir(path_) if d.is_dir()]
+
+        if len(lst_dir) > 3 and (not Windows or (Windows and int(platform.version().split('.')[2]) >= 19045)):
+            with console.screen(style="dim cyan") as screen:
+                for count in range(5, 0, -1):
+                    text_screen = Align.center(Text.from_markup(f"SHOTSTARS OVER FAB TOOL TO TRACK STARS!\n\n{count}",
+                                                                justify="center"))
+                    if count < 5:
+                        text_screen = Align.center(Text.from_markup(f"support with a donation or a star\n\n{count}",
+                                                                    justify="center"))
+                    if count < 2:
+                        text_screen = Align.center(Text.from_markup(f"[blink]support with a donation or a star[/blink]\n\n{count}",
+                                                                    justify="center"))
+
+                    screen.update(Panel(text_screen))
+                    time.sleep(1)
+
+    console.print(f"[yellow]{banner}[/yellow]\n{__version__}, author: https://github.com/snooppr\n")
 
 
 def cross_user_detect(base_users):

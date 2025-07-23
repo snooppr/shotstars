@@ -34,7 +34,6 @@ Shotstars will care about and count specifically those GitHub users who have rem
  ---
 
 ## ⌨️ Native Installation  
-[![Downloads](https://static.pepy.tech/badge/shotstars)](https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version&includeCIDownloads=true&granularity=daily&viewType=table&versions=4.5)
 ![Static Badge](https://img.shields.io/badge/latest%20v4.5-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
