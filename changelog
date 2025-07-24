@@ -1,7 +1,7 @@
 ## Shotstars
 
 ********
-**v4.5**
+**v4.5a1**
 ********
 
 — Added Github token check. If the token has expired, or been revoked by the user, or the
@@ -20,6 +20,9 @@ large, new banner.
 — In the Html report, a counter also appeared on the 'open graph' button for calculating
 gone stars, for example '0' means the graph was not created, and not an error when opening
 the browser tab.
+
+— An Easter egg has been added to the software.
+(If you try to parse something related to the project itself as a goal, then...)
 =================================================================================================
 
 ********

@@ -36,7 +36,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.5"
+__version__ = "v4.5a2"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -109,6 +109,27 @@ def main_cli():
     path = path_repo()
 
     try:
+        if "shotstars" in url_repo.lower(): 
+            with console.status("[bold blue] 💡 An Easter egg has been discovered...", spinner='noise'):
+                try:
+                    r_east = requests.get(url="https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version" + \
+                                              "&includeCIDownloads=true&granularity=daily&viewType=line", 
+                                          headers = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:' + \
+                                                     f'{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}, timeout=7)
+
+                    r_east_ = re.search(r'totalDownloads\\":(\d+)', r_east.text)
+                    if r_east_:
+                        print('')
+                        console.print(Panel.fit(f"[bold white on blue]{r_east_.group(1)}[/bold white on blue]",
+                                                title='total ShotStars software downloads',
+                                                border_style="bold blue"),
+                                      justify="center")
+                        print('')
+                except Exception as e:
+                    console.print(f"[bold red][!] Network connection failure (Internet Censorship?),\n" + \
+                                  f"    unable to receive data.\n\nexit.[/bold red]")
+            shutil.rmtree(path, ignore_errors=True)
+            win_exit()
         if url_repo.lower() == "history" or url_repo.lower() == "his":
             shutil.rmtree(path, ignore_errors=True)
             url_repo, repo, repo_api = his(check_file=True, history=True)
@@ -126,7 +147,7 @@ def main_cli():
             date_file_new = os.path.getmtime(f"{path}/new.txt")
             date = time.strftime('%Y-%m-%d_%H:%M', time.localtime(date_file_new))
             d = datetime.datetime.today() - datetime.datetime.fromtimestamp(date_file_new)
-            console.print(f"\nRepository '{repo}' was last checked ->  {date} :: ({d.days} days)")
+            console.print(f"\nRepository '{repo}' was last checked ->  {date} ({d.days} days)")
             a = shutil.copy(f"{path}/new.txt", f"{path}/old.txt")
             if os.path.isfile(f"{path}/all_gone_stars.html") is False:
                 html_mark(all_stars=f"{path}/all_gone_stars.html")
@@ -163,10 +184,10 @@ def screen_banner():
                 for count in range(5, 0, -1):
                     text_screen = Align.center(Text.from_markup(f"SHOTSTARS OVER FAB TOOL TO TRACK STARS!\n\n{count}",
                                                                 justify="center"))
-                    if count < 5:
+                    if count > 2:
                         text_screen = Align.center(Text.from_markup(f"support with a donation or a star\n\n{count}",
                                                                     justify="center"))
-                    if count < 2:
+                    else:
                         text_screen = Align.center(Text.from_markup(f"[blink]support with a donation or a star[/blink]\n\n{count}",
                                                                     justify="center"))
 
