@@ -36,7 +36,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.5"
+__version__ = "v4.5с0"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -109,6 +109,26 @@ def main_cli():
     path = path_repo()
 
     try:
+        if "shotstars" in url_repo.lower(): 
+            with console.status("[bold blue] 💡 An Easter egg has been discovered...", spinner='noise'):
+                try:
+                    r_east = requests.get(url="https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version" + \
+                                              "&includeCIDownloads=true&granularity=daily&viewType=line", 
+                                          headers = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:' + \
+                                                     f'{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}, timeout=7)
+
+                    r_east_ = re.search(r'totalDownloads\\":(\d+)', r_east.text)
+                    if r_east_:
+                        print('')
+                        console.print(Panel.fit(f"[bold white on blue]{r_east_.group(1)}[/bold white on blue]",
+                                                title='total ShotStars software downloads',
+                                                border_style="bold blue"),
+                                      justify="center")
+                        print('')
+                except Exception as e:
+                    console.print(f"[bold red][!] Network connection failure (Internet Censorship?),\n" + \
+                                  f"    unable to receive data.\n\nexit.[/bold red]")
+            win_exit()
         if url_repo.lower() == "history" or url_repo.lower() == "his":
             shutil.rmtree(path, ignore_errors=True)
             url_repo, repo, repo_api = his(check_file=True, history=True)
