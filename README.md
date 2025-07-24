@@ -221,3 +221,9 @@ Starry hour. Repository from location RU. It is clear that its audience is Europ
 + **"Gone stars"** — The metric displays those users: who removed their stars from the repository; or deleted their account from the Github platform; or switched their profile to "private" mode - such a profile, like a deleted one, can lead to "404" by link, i.e. Github (not always) completely hides all user activity and their personal page, but such an account can conduct activity that is almost never displayed anywhere except by the account owner (for example, only reactions are displayed). Gone stars for the repository for the period from the penultimate scan to the last scan. The characteristic is calculated based on the frequency of repository scans.  
 
 + **"cross-users"** — The metric only displays those overlapping users that overlap in the scanned repositories relative to a specific scanned repository.  
+
+ ---
+
+## 🪺 Easter eggs  
+
+Many good softwares have Easter eggs. Shotstars has them too, try looking for something related to the project itself, you'll get...  
