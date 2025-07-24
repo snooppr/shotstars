@@ -47,6 +47,33 @@ $ shotstars_cli
 
  ---
 
+## 💾 Scan history  
+In Shotstars the scan history is available, now you no longer need to enter or copy/paste the URL each time,
+specify the keyword `his/history` instead of the repository url and select the previously scanned repository by number.
+
+ ---
+
+## 🌀 With Shotstars, users can also detect fake stars  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars.png" />  
+  
+Example presumably of fake stars *(this repository was previously caught pirating)*. From the graph of spikes it is clear that in two weeks the repository gained +5K fake stars *(a couple of years later this repository stocked up on fake stars again).*  
+  
+Shotstars also offers a line chart: a cumulative set of stars.  
+  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars_cum.png" />  
+  
+Comparison of two repositories, cumulative set of stars. The upper screenshot is the usual movement of stars, the lower screenshot is the promotion of fake stars.  
+  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars_json.png" />  
+  
+For any repository, Shotstars will provide all users who have added stars, broken down by date, in json format, which means it's even easier to analyze anomalous peaks on the chart.  
+  
+Research on the promotion of fake stars **/** Исследование про накрутку фейковых звезд 
+[RU](https://habr.com/ru/articles/723648/) / [RU_2](https://www.opennet.ru/opennews/art.shtml?num=62515) **|** 
+[EN](https://dagster.io/blog/fake-stars) / [EN_2](https://arxiv.org/html/2412.13459v1)  
+
+ ---
+
 ## ⚙️ Shotstars supports simulation of results  
 Note that the HTML report is generated when the repository is rescanned. If the user needs to force a specific HTML report, simply enable star simulation. 👇  
 A documented software hack - or side function designed to test the script on dead/stable repositories without star movement.  
@@ -77,35 +104,8 @@ You can parse both your own and third-party repositories (by default, registrati
 
  ---
 
-## 💾 Scan history  
-In Shotstars the scan history is available, now you no longer need to enter or copy/paste the URL each time,
-specify the keyword `his/history` instead of the repository url and select the previously scanned repository by number.
-
- ---
-
-## 🌀 With Shotstars, users can also detect fake stars  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars.png" />  
-  
-Example presumably of fake stars *(this repository was previously caught pirating)*. From the graph of spikes it is clear that in two weeks the repository gained +5K fake stars *(a couple of years later this repository stocked up on fake stars again).*  
-  
-Shotstars also offers a line chart: a cumulative set of stars.  
-  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars_cum.png" />  
-  
-Comparison of two repositories, cumulative set of stars. The upper screenshot is the usual movement of stars, the lower screenshot is the promotion of fake stars.  
-  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/anomalies_among_stars_json.png" />  
-  
-For any repository, Shotstars will provide all users who have added stars, broken down by date, in json format, which means it's even easier to analyze anomalous peaks on the chart.  
-  
-Research on the promotion of fake stars **/** Исследование про накрутку фейковых звезд 
-[RU](https://habr.com/ru/articles/723648/) / [RU_2](https://www.opennet.ru/opennews/art.shtml?num=62515) **|** 
-[EN](https://dagster.io/blog/fake-stars) / [EN_2](https://arxiv.org/html/2412.13459v1)  
-
- ---
-
 ## 🇷🇺 TL;DR  
-Shotstars позволяет следить со стороны <u>за любым</u> репозиторием.  
+Shotstars позволяет следить со стороны <u>за любым публичным</u> репозиторием.  
 Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится и вычислит конкретно тех github-пользователей, кто удалил, накинул звезды любому проекту, а то и вовсе удалился с платформы или перевёл профиль в режим "private". Кроме статистики, инструмент позволяет вычислять репозитории с фейковыми звездами.  
 
 **Заявленные функции:**  
