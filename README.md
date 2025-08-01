@@ -24,7 +24,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
 - [X] Shotstars will also provide a short description of the repository.  
 - [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
 - [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls and json)*.  
-- [X] Shotstars creates graphs and histograms *(all star history by date, by month, by year, by hour, cumulative set of stars)*.  
+- [X] Shotstars creates graphs and histograms *(all star history by date, by month, by year, by hour, by days of the week, cumulative set of stars)*.  
 - [X] Shotstars can simulate results, documented hack: a function designed to check the utility's operation *(to make sure)* on dead/stable repositories without moving stars.  
 - [X] Shotstars finds users that overlap across Github projects, including those with hidden/private profiles.  
 - [X] Shotstars calculates to the minute and displays the time when the github rescan restriction is lifted *(if token is not used)*.  
@@ -34,7 +34,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
  ---
 
 ## ⌨️ Native Installation  
-![Static Badge](https://img.shields.io/badge/latest%20v4.5a1-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+![Static Badge](https://img.shields.io/badge/latest%20v4.6-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -120,7 +120,7 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstars также предоставит краткое описание репозитория.  
 - [X] Shotstars предлагает для быстрой проверки историю сканирований с выбором ранее учтенных проектов.
 - [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's и json)*.  
-- [X] Shotstars создает графики и гистограммы *(вся история звезд по дате/времени: по месяцам, по годам, по часам, кумулятивный набор звезд)*.  
+- [X] Shotstars создает графики и гистограммы *(вся история звезд по дате/времени: по месяцам, по годам, по часам, по дням недели, кумулятивный набор звезд)*.  
 - [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд. 
 - [X] Shotstars находит пересекающихся у Github-проектов пользователей, в т.ч. и тех, у кого профиль скрыт/приватный.  
 - [X] Shotstars рассчитывает с точностью до минуты и отображает время снятия github-ограничения на повторные сканирования *(если не используется token)*.  
@@ -184,11 +184,15 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs.png" />  
-Comparison of two repositories based on stellar history. It is clear that the peak of popularity of the first repository has long passed, the development has gone into decline (forks). The second repository is a legend and is steadily gaining popularity.  
+<p>Comparison of two repositories based on stellar history. It is clear that the peak of popularity of the first repository has long passed, the development has gone into decline (forks). The second repository is a legend and is steadily gaining popularity.</p>  
 
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs2.png" />  
-Starry hour. Repository from location RU. It is clear that its audience is European, in the morning hours, at night, much fewer stars come.  
+<p>Starry hour. Repository from location RU. It is clear that its audience is European, in the morning hours, at night, much fewer stars come.</p>  
+
+
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs3.png" />  
+<p>Starry day of week. From the graph it is clear that stars come intensively at the beginning and end of the working week for this repository. Oh, and outside the US, people start their workweek according to <a href="https://github.com/orgs/community/discussions/42104">international norms</a> — on Monday, not Sunday.</p>  
 
  ---
 
@@ -199,6 +203,8 @@ Starry hour. Repository from location RU. It is clear that its audience is Europ
 + **"Peak-stars-in-date"** — The metric displays the date (per day) on which the maximum number of stars was received.  
 
 + **"The-trend-of-adding-stars (forecasting)"** — The metric displays the predicted increase in stars per day based on the repository history and algorithm.  
+
++ **"Most-of-stars-d.w. / Smallest-of-stars-d.w."** — The metric displays the calculation of two days of the week for the entire history of the repository (the most profitable day of the week by stars and the day with the least number of stars, mod/anti-mod).  
 
 + **"Most-of-stars-month / Smallest-of-stars-month"** — The metric displays the calculation of two months in the entire history of the repository (the most profitable month by stars and the month with the least stars, mode / anti-mode).  
 
@@ -220,7 +226,7 @@ Starry hour. Repository from location RU. It is clear that its audience is Europ
 
 + **"Gone stars"** — The metric displays those users: who removed their stars from the repository; or deleted their account from the Github platform; or switched their profile to "private" mode - such a profile, like a deleted one, can lead to "404" by link, i.e. Github (not always) completely hides all user activity and their personal page, but such an account can conduct activity that is almost never displayed anywhere except by the account owner (for example, only reactions are displayed). Gone stars for the repository for the period from the penultimate scan to the last scan. The characteristic is calculated based on the frequency of repository scans.  
 
-+ **"cross-users"** — The metric only displays those overlapping users that overlap in the scanned repositories relative to a specific scanned repository.  
++ **"Cross-users"** — The metric only displays those overlapping users that overlap in the scanned repositories relative to a specific scanned repository.  
 
  ---
 

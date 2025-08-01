@@ -16,6 +16,7 @@ import signal
 import statistics
 import subprocess
 import sys
+import textwrap
 import time
 import webbrowser
 
@@ -36,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.5a2"
+__version__ = "v4.6"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -74,13 +75,18 @@ SSSSSSS     S:::::S  t::::::tttt:::::ta::::a    a:::::a r:::::r            s::::
 S::::::SSSSSS:::::S  tt::::::::::::::ta:::::aaaa::::::a r:::::r            s::::::::::::::s
 S:::::::::::::::SS     tt:::::::::::tt a::::::::::aa:::ar:::::r             s:::::::::::ss
  SSSSSSSSSSSSSSS         ttttttttttt    aaaaaaaaaa  aaaarrrrrrr              sssssssssss"""
-else:
+elif os.get_terminal_size().columns > 49:
     banner = r"""
  ____  _           _     ____  _
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
 \___ \| '_ \ / _ \| __| \___ \| __/ _` | '__/ __|
  ___) | | | | (_) | |_   ___) | || (_| | |  \__ \
 |____/|_| |_|\___/ \__| |____/ \__\__,_|_|  |___/"""
+else:
+    banner = r"""
+ __           __           
+(_ |_  _ _|_ (_ _|_ _. _ _ 
+__)| )(_) |_ __) |_(_|| _)"""
 
 
 # Функции...
@@ -114,7 +120,7 @@ def main_cli():
                 try:
                     r_east = requests.get(url="https://pepy.tech/projects/shotstars?timeRange=threeMonths&category=version" + \
                                               "&includeCIDownloads=true&granularity=daily&viewType=line", 
-                                          headers = {'User-Agent': f'Mozilla/5.0 (X11; Linux x86_64; rv:' + \
+                                          headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:' + \
                                                      f'{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}, timeout=7)
 
                     r_east_ = re.search(r'totalDownloads\\":(\d+)', r_east.text)
@@ -126,8 +132,8 @@ def main_cli():
                                       justify="center")
                         print('')
                 except Exception as e:
-                    console.print(f"[bold red][!] Network connection failure (Internet Censorship?),\n" + \
-                                  f"    unable to receive data.\n\nexit.[/bold red]")
+                    format_message1 = '[!] Network connection failure (Internet Censorship?), unable to receive data. Exit.'
+                    console.print(f"[bold red]{format_text(format_message1)}[/bold red]")
             shutil.rmtree(path, ignore_errors=True)
             win_exit()
         if url_repo.lower() == "history" or url_repo.lower() == "his":
@@ -196,6 +202,9 @@ def screen_banner():
 
     console.print(f"[yellow]{banner}[/yellow]\n{__version__}, author: https://github.com/snooppr\n")
 
+
+def format_text(text):
+    return textwrap.fill(text, width=os.get_terminal_size()[0], subsequent_indent=" " * 4)
 
 def cross_user_detect(base_users):
     """
@@ -292,7 +301,9 @@ def calc_stars(aggregated_data):
     return dates_for_plot, counts_for_plot
 
 
-def generate_plots(aggregated_data, source_filename, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date):
+def generate_plots(aggregated_data, source_filename, day_week_stars,
+                   months_stars, years_stars, hours_stars,
+                   mean_year, mean_days, dif_date):
     """Генерация CLI и HTML графиков"""
     if not aggregated_data:
         return None
@@ -308,8 +319,9 @@ def generate_plots(aggregated_data, source_filename, months_stars, years_stars, 
 # График для CLI.
     if Windows:
         if base_filename == 'all_new_stars.html':
-            console.print(f"\n[yellow][!] The graph in CLI is built only for OS: GNU/Linux; macOS and Android/Termux.\n" + \
-                          f"    See graph in HTML report.[/yellow]\n")
+            format_message2 = "[!] The graph in CLI is built only for OS: GNU/Linux; macOS and Android/Termux. " + \
+                              "See graph in HTML report."
+            console.print(f"\n[yellow]{format_text(format_message2)}[/yellow]\n")
     else:
         try:
             plt_cli.clear_figure()
@@ -389,40 +401,70 @@ def generate_plots(aggregated_data, source_filename, months_stars, years_stars, 
                                width=None, height=None)
 
             x, y = map(list, zip(*months_stars))
-            fig3 = plt_html.Figure([plt_html.Bar(y=y, x=x, name='Month', opacity=0.90,
-                                    marker=dict(color='orange', line=dict(color='black', width=2)))])
+            perc_m = [round((p / sum(y)) * 100, 1) for p in y]
+            fig3 = plt_html.Figure([plt_html.Bar(y=y, x=x, name='Month', opacity=0.90, customdata=perc_m,
+                                                 hovertemplate=("<b>Month:</b> %{x}<br><b>Stars:</b> %" + \
+                                                                "{y}___(%{customdata}%)<extra></extra>"),
+                                                 marker=dict(color='orange', line=dict(color='grey', width=2)))])
 
             fig3.update_layout(title=f"Histogram N1. Cumulative set of stars by <b>month</b>, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                xaxis_title="Month", yaxis_title="Quantity stars",
+                               hoverlabel=dict(bgcolor='lightgray', font_color='black'),
                                plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
             x, y = map(list, zip(*years_stars))
-            fig4 = plt_html.Figure([plt_html.Bar(y=y, x=x, name='Year',
-                                   marker=dict(color='orange', line=dict(color='grey', width=4)))])
+            perc_y = [round((p / sum(y)) * 100, 1) for p in y]
+            fig4 = plt_html.Figure([plt_html.Bar(y=y, x=x, name='Year', customdata=perc_y,
+                                                 hovertemplate=("<b>Year:</b> %{x}<br><b>Stars:</b> %" + \
+                                                                "{y}___(%{customdata}%)<extra></extra>"),
+                                                 hoverlabel=dict(bgcolor='lightgray', font_color='black'),
+                                                 marker=dict(color='#ff9200', line=dict(color='black', width=4)))])
 
             if dif_date > 365:
                 fig4.add_trace(plt_html.Scatter(x=x, y=[mean_year] * len(x), mode='lines',
-                               name=f'mean = {round(mean_year, 1)} stars / year',
-                               line=dict(color='red', width=3)))
+                                                name=f'mean = {round(mean_year, 1)} stars / year',
+                                                line=dict(color='red', width=3)))
 
             fig4.update_layout(title=f"Histogram N2. Cumulative set of stars by <b>year</b>, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                xaxis_title="Year", yaxis_title="Quantity stars", xaxis=dict(dtick=1, tickmode='linear'),
+                               hoverlabel=dict(bgcolor='lightgray', font_color='black'),
                                barmode='overlay', plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
 
             x, y = map(list, zip(*hours_stars))
-            fig5 = plt_html.Figure([plt_html.Bar(y=x, x=y, name='Hours', orientation='h',
-                                    hovertemplate=("Hours: %{y}<br>Stars: %{x}<extra></extra>"),
-                                    marker=dict(color='blue'))])
+            perc_h = [round((p / sum(y)) * 100, 1) for p in y]
+            fig5 = plt_html.Figure([plt_html.Bar(y=x, x=y, name='Hours', orientation='h', customdata=perc_h,
+                                                 hovertemplate=("<b>Hours:</b> %{y}<br><b>Stars:</b> %" + \
+                                                                "{x}___(%{customdata}%)<extra></extra>"),
+                                                 marker=dict(color='blue'))])
 
             fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, {local_tzone} time zones</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
-                               xaxis_title="Quantity stars", yaxis_title="Hours", yaxis=dict(dtick=1, tickmode='linear'),
+                               xaxis_title="Quantity stars", yaxis_title="Hours",
+                               yaxis=dict(dtick=1, tickmode='linear', autorange='reversed'),
                                xaxis=dict(gridcolor='lightgray'),
+                               hoverlabel=dict(bgcolor='lightgray', font_color='black'),
                                plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
+
+
+            x, y = map(list, zip(*day_week_stars))
+            perc_dw = [round((p / sum(y)) * 100, 1) for p in y]
+            fig6 = plt_html.Figure([plt_html.Bar(y=x, x=y, name='Day of the week', orientation='h', customdata=perc_dw,
+                                                 hovertemplate=("<b>Day of the week:</b> %{y}<br><b>Stars:</b> %" + \
+                                                                "{x}___(%{customdata}%)<extra></extra>"),
+                                                 marker=dict(color='#4e00ff'))])
+
+            fig6.update_layout(title=f"Histogram N4. Star Day (distribution of stars by <b>day of the week</b>), " + \
+                                     f"repository '<b>{repo}</b>' " + \
+                                     f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               xaxis_title="Quantity stars", yaxis_title="day of the week",
+                               yaxis=dict(dtick=1, tickmode='linear', autorange='reversed'),
+                               xaxis=dict(gridcolor='lightgray'),
+                               hoverlabel=dict(bgcolor='lightgray', font_color='black'),
+                               plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)      
 
 
             plot_html = fig.to_html(full_html=False, include_plotlyjs=False)
@@ -430,6 +472,7 @@ def generate_plots(aggregated_data, source_filename, months_stars, years_stars, 
             plot_html3 = fig3.to_html(full_html=False, include_plotlyjs=False)
             plot_html4 = fig4.to_html(full_html=False, include_plotlyjs=False)
             plot_html5 = fig5.to_html(full_html=False, include_plotlyjs=False)
+            plot_html6 = fig6.to_html(full_html=False, include_plotlyjs=False)
 
             with open(f"{path}/graph_{base_filename}", 'w', encoding='utf-8') as f:
                 f.write(f"""
@@ -475,6 +518,10 @@ def generate_plots(aggregated_data, source_filename, months_stars, years_stars, 
 
     <div class="plot-container">
         {plot_html5}
+    </div>
+
+    <div class="plot-container">
+        {plot_html6}
     </div>
 </body>
 </html>""")
@@ -966,24 +1013,35 @@ def parsing(diff=False):
         marketing_color = none_statistic
         fuckstars = none_statistic
 
-## Расчет месяцев с самым высоким и низким трафиком по звездам / Расчет по годам.
+## Расчет периодов с самым высоким и низким трафиком по звездам.
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday",
+                    "Friday", "Saturday", "Sunday"]
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    day_week_sum = defaultdict(int)
     month_sum = defaultdict(int)
     years_sum = defaultdict(int)
+
     for date_str, _star in sort_alldate_stars:
         dt = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+        day_week_number = dt.weekday()
         month_number = dt.month
         year_number = dt.year
         month_sum[month_number] += _star
         years_sum[year_number] += _star
+        day_week_sum[day_week_number] += _star
 
+    cnt_day_week_sum = Counter(day_week_sum)
     cnt_month_sum = Counter(month_sum)
     cnt_year_sum = Counter(years_sum)
+    high_stars_day_week = days_of_week[cnt_day_week_sum.most_common()[0][0]]
+    low_stars_day_week = days_of_week[cnt_day_week_sum.most_common()[-1][0]]
     high_stars_month = months[cnt_month_sum.most_common()[0][0] - 1]
     low_stars_month = months[cnt_month_sum.most_common()[-1][0] - 1]
 
-# Data для 3-го графика.
+# Data для n-го графика.
+    day_week_stars = [(days_of_week[dw_], s_) for dw_, s_ in sorted(day_week_sum.items(), key=lambda item: item[0])]
     months_stars = [(months[m_-1], s_) for m_, s_ in sorted(month_sum.items(), key=lambda item: item[0])]
     years_stars = [(y_, s_) for y_, s_ in sorted(years_sum.items(), key=lambda item: item[0])]
 
@@ -1026,6 +1084,8 @@ def parsing(diff=False):
 ## Печать инфострок.
     console.print(f"[cyan]Peak-stars-in-date::[/cyan] {max_stars} stars / {in_date}", highlight=False)
     console.print(f"[cyan]The-trend-of-adding-stars (forecasting)::[/cyan] {trend}", highlight=False)
+    console.print(f"[cyan]Most-of-stars-d.w. / Smallest-of-stars-d.w.::[/cyan] " + \
+                  f"{high_stars_day_week} / {low_stars_day_week}", highlight=False)    
     console.print(f"[cyan]Most-of-stars-month / Smallest-of-stars-month::[/cyan] " + \
                   f"{high_stars_month} / {low_stars_month}", highlight=False)
 
@@ -1112,7 +1172,7 @@ transition: transform 0.15s}
             file_html.write(f"\n<a class='but' href='file://{path}/all_new_stars.html' " + \
                             "title='open history adding stars'>open history</a>\n" + \
                             f"\n<a class='but' href='file://{path}/graph_all_new_stars.html' " + \
-                            "title='open all history adding stars'>open graphs (5)</a>\n" + \
+                            "title='open all history adding stars'>open graphs (6)</a>\n" + \
                             "</div>\n\n<div class='textcols-item'>\n<h4 style='color:#fc3f1d'>" + \
                             f"💫 Gone stars (-{per_stars_dn}%):</h4>\n")
 
@@ -1131,6 +1191,7 @@ transition: transform 0.15s}
                             f"✨ GitHub-rating:: {stars} stars<br>\n" + \
                             f"🌟 Peak-stars-in-date:: {max_stars} / {in_date}<br>\n" + \
                             f"📈 The-trend-of-adding-stars (forecasting):: {trend}<br>\n" + \
+                            f"📅 Most-of-stars-d.w. / Smallest-of-stars-d.w.:: {high_stars_day_week} / {low_stars_day_week}<br>\n" + \
                             f"📅 Most-of-stars-month / Smallest-of-stars-month:: {high_stars_month} / {low_stars_month}<br>\n" + \
                             f"📅 Distribution-of-stars-by-month" + \
                             f"{' (' + str(private_stars) + ' private stars)' if private_stars != 0 else ''} " + \
@@ -1185,7 +1246,7 @@ transition: transform 0.15s}
             data = agregated_date(html_file)
             if isinstance(html_file, list):
                 html_file = f"{path}/all_new_stars.html"
-            generate_plots(data, html_file, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
+            generate_plots(data, html_file, day_week_stars, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
 
 # Искать пересеченных пользователей.
         common_users_found = cross_user_detect(set(lst_new))

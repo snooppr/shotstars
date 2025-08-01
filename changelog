@@ -1,7 +1,30 @@
 ## Shotstars
 
 ********
-**v4.5a1**
+**v4.6**
+********
+
+— In the Html report, a counter also appeared on the 'open graph' button for calculating
+gone stars, for example '0' means the graph was not created, and not an error when opening
+the browser tab.
+
+— Added a new histogram to the HTML report: cumulative "day of week" star set.
+
+— Added a new metric to the CLI: 'Most-of-stars-d.w. / Smallest-of-stars-d.w.'.
+
+— Reverse of the "Y" scale in the "star hour" histogram, the reason is unification: 
+the "star hour" and "star day" histograms are read from top to bottom.
+
+— Added percentage calculation to all histograms when selecting a column.
+
+— Added small banner for compressed CLI.
+
+— An Easter egg has been added to the software.
+(If you try to parse something related to the project itself as a goal, then...)
+=================================================================================================
+
+********
+**v4.5**
 ********
 
 — Added Github token check. If the token has expired, or been revoked by the user, or the
@@ -16,13 +39,6 @@ the stars.
 
 — Added a splash screen and a new banner. If the user has a large terminal, there will be a
 large, new banner.
-
-— In the Html report, a counter also appeared on the 'open graph' button for calculating
-gone stars, for example '0' means the graph was not created, and not an error when opening
-the browser tab.
-
-— An Easter egg has been added to the software.
-(If you try to parse something related to the project itself as a goal, then...)
 =================================================================================================
 
 ********
