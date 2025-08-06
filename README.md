@@ -22,6 +22,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
 - [X] Shotstars reports the real date of the repository *(fact: developers can declare/fake/change the date of their projects commits, but Shotstars will not fool them, the utility will display real numbers)*.  
 - [X] Shotstars will show ~ the size of any public repository.  
 - [X] Shotstars will also provide a short description of the repository.  
+- [X] Shotstars will report the underlying PL of a repository as background in the HTML report.  
 - [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
 - [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls and json)*.  
 - [X] Shotstars creates graphs and histograms *(all star history by date, by month, by year, by hour, by days of the week, cumulative set of stars)*.  
@@ -34,7 +35,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
  ---
 
 ## ⌨️ Native Installation  
-![Static Badge](https://img.shields.io/badge/latest%20v4.6-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+![Static Badge](https://img.shields.io/badge/latest%20v4.7-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -90,7 +91,7 @@ run a second scan of the same repository.
 ## ⛔️ Github restrictions  
 There are restrictions from Github 【**6K stars/hour** from one IP address】, repositories with more than 6K stars do not physically make sense to scan.  
 In Shotstars with Github token  you can [bypass the restrictions](https://github.com/snooppr/shotstars/issues/3) and scan repositories up to **500K stars/hour**.  
-Steps to get a token *(free)*:  
+Steps to get a token *(**free**)*:  
 1) register for an account on Github (if you don’t already have one);  
 2) open your profile -> settings -> developer settings -> personal acces tokens -> generate new token;  
 3) insert the resulting token (string) into in the field instead of 'None'  
@@ -118,6 +119,7 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов и коммитов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
 - [X] Shotstars покажет ~ размер любого публичного репозитория.  
 - [X] Shotstars также предоставит краткое описание репозитория.  
+- [X] Shotstars сообщит основной ЯП у репозитория в виде фона в HTML-отчете.  
 - [X] Shotstars предлагает для быстрой проверки историю сканирований с выбором ранее учтенных проектов.
 - [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's и json)*.  
 - [X] Shotstars создает графики и гистограммы *(вся история звезд по дате/времени: по месяцам, по годам, по часам, по дням недели, кумулятивный набор звезд)*.  
@@ -129,7 +131,7 @@ Shotstars позволяет следить со стороны <u>за любы
 
 Существуют ограничения со стороны Github 【**6K звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.  
 В Shotstars с Github-токеном [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до **500K звезд/час**.  
-Шаги для получения токена *(бесплатный)*:  
+Шаги для получения токена *(**бесплатный**)*:  
 1) зарегистрируйте аккаунт на Github (если у вас его еще нет);  
 2) откройте профиль -> settings -> developer settings -> personal acces tokens -> generate new token;  
 3) полученный токен (строку) вставьте в поле заместо 'None' в файл  

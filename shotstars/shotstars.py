@@ -37,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.6"
+__version__ = "v4.7"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -159,10 +159,13 @@ def main_cli():
                 html_mark(all_stars=f"{path}/all_gone_stars.html")
             if os.path.isfile(f"{path}/all_new_stars.html") is False:
                 html_mark(all_stars=f"{path}/all_new_stars.html")
-            if os.path.isfile(f"{path.replace(repo, '')}/stars.jpg") is False:
+            if ((os.path.isfile(f"{path.replace(repo, '')}/stars.jpg") and 
+                 os.path.getsize(f"{path.replace(repo, '')}/stars.jpg") < 270000) or 
+                    not os.path.isfile(f"{path.replace(repo, '')}/stars.jpg")):
                 shutil.copy(image, f"{path.replace(repo, '')}/stars.jpg")
                 if Linux: # снятие исполняемого бита для shotstars_cli.bin build версии.
                     os.chmod(f"{path.replace(repo, '')}/stars.jpg", 0o644)
+
             his()
             check_token()
             parsing(diff=True)
@@ -680,11 +683,12 @@ def limited(req, token):
     console.print("\n[bold red]Attention! The API limit has probably been exceeded, the block will presumably be lifted:",
                   time.strftime('%Y-%m-%d_%H:%M', time.localtime(headers_time)), f"::: ({minut} min.)")
     if token == "None":
+        format_message3 = "[!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
+                          "by default. Using a free GitHub token, the limits are significantly increased (500K+ stars/hour or " + \
+                          "max scanned repository with 40K stars). " + \
+                          "View Readme: https://github.com/snooppr/shotstars#%EF%B8%8F-github-restrictions"
         console.print(Panel.fit("Limitations: ~limit max '30 requests/hour' or '6000 stars/hour'", title="GitHub API/No Token"))
-        console.print("\n[bold yellow][!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
-                      "by default.\nUsing a free GitHub token, the limits are significantly increased\n(500K+ stars/hour or " + \
-                      "max scanned repository with 40K stars). " + \
-                      "\n\nView Readme: https://github.com/snooppr/shotstars#%EF%B8%8F-github-restrictions[/bold yellow]")
+        console.print(f"\n[bold yellow]{format_text(format_message3)}[/bold yellow]")
     else:
         console.print(Panel.fit("Limitations: ~limit max '500K stars/hour'", title="GitHub API/Token Used"))
 
@@ -848,18 +852,30 @@ def parsing(diff=False):
 
 # Расчет кол-ва страниц для итераций.
 # В случае сбоя проверка заголовка 'X-RateLimit-Reset' от сервера на предмет расчета времени до снятия ограничений.
+    lst_lang = ["python", "c", "shell", "c++", "mdx", "javascript", "typescript", "erlang", "visual basic .net", "rust",
+                "julia", "scala", "elixir", "lua", "css", "kotlin", "html", "perl", "swift", "go", "ruby", "php", "c#",
+                "java", "dockerfile", "r"]
+
     try:
         if r.get('status') or (r.get('message') and "Not Found" in r.get('message')):
             raise ValueError("")
         stars = int(r.get("stargazers_count"))
+        try:
+            b_gr_image = lst_lang[lst_lang.index(r.get("language").lower())]
+            b_gr_image = "c%23" if b_gr_image == "c#" else b_gr_image
+            b_gr_image = "c%2B%2B" if b_gr_image == "c++" else b_gr_image
+            b_gr_image = "visual%20basic%20.net" if b_gr_image == "visual basic .net" else b_gr_image
+        except Exception as ee:
+            b_gr_image = "stars"
         pages = (stars // 100) + 1
     except ValueError as err:
         console.print(f"\n[bold red]Check the entered[/bold red] [red]url[/red][bold red], " + \
                       f"it seems that such a repository does not exist:\n<[/bold red] [yellow]{url_repo}[/yellow] " + \
                       f"[bold red]>.[/bold red]", highlight=False)
         if token != "None":
-            console.print(f"\n[bold red]Your GitHub token may have expired (default: token = None), check:\n" + \
-                          f"{os.path.join(os.path.dirname(path), 'config.ini')}[/bold red]")
+            format_message5 = f"[!] Your GitHub token may have expired (default: token = None), check: " + \
+                              f"{os.path.join(os.path.dirname(path), 'config.ini')}"
+            console.print(f"\n[bold red]{format_text(format_message5)}[/bold red]")
         if not os.path.isfile(f"{path}/new.txt"):
             shutil.rmtree(path, ignore_errors=True)
         win_exit()
@@ -888,15 +904,16 @@ def parsing(diff=False):
         win_exit()
 
     if token == "None" and pages > 60:
-        console.print("\n[bold yellow][!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
-                      "by default.\nUsing a free GitHub token, the limits are significantly increased\n(500K+ stars/hour or " + \
-                      "max scanned repository with 40K stars). " + \
-                      "\n\nView Readme: https://github.com/snooppr/shotstars#%EF%B8%8F-github-restrictions[/bold yellow]")
+        format_message3 = "[!] Shotstars does not process repositories with stars > 6K+ without a github token " + \
+                          "by default. Using a free GitHub token, the limits are significantly increased (500K+ stars/hour or " + \
+                          "max scanned repository with 40K stars). " + \
+                          "View Readme: https://github.com/snooppr/shotstars#%EF%B8%8F-github-restrictions"
+        console.print(f"\n[bold yellow]{format_text(format_message3)}[/bold yellow]")
         shutil.rmtree(path, ignore_errors=True)
         win_exit()
     elif token != "None" and pages > 400:
-        console.print("\n[bold yellow][!] Using a github token, the maximum crawlable repository on Shotstars " + \
-                      "is limited to 40K stars.[/bold yellow]")
+        format_message4 = "[!] Using a github token, the maximum crawlable repository on Shotstars is limited to 40K stars."
+        console.print(f"\n[bold yellow]{format_text(format_message4)}[/bold yellow]")
         shutil.rmtree(path, ignore_errors=True)
         win_exit()
 
@@ -1008,7 +1025,7 @@ def parsing(diff=False):
     else:
         relative_percentage = none_statistic
         average_change = none_statistic
-        average_change_stars = none_statistic
+        average_change_stars = "-"
         marketing = none_statistic
         marketing_color = none_statistic
         fuckstars = none_statistic
@@ -1105,10 +1122,9 @@ def parsing(diff=False):
 
     console.print(f"[cyan]Longest-period-without-add-stars::[/cyan] " + \
                   f"{tuple_date_no_stars[0]} — {end_date_no_stars} ({tuple_date_no_stars[1]} days)", highlight=False)
-    console.print(f"[cyan]Median-percentage-change (adding stars for the last month compared to the month before last" + \
-                  f"::[/cyan] {relative_percentage}", highlight=False)
-    console.print(f"[cyan]Average-change-in-fact (adding stars for the last month compared to the month before last)" + \
-                  f"::[/cyan] {average_change} ({average_change_stars})", highlight=False)
+    console.print(f"[cyan]Median-percentage-change (in the last 30 days)::[/cyan] {relative_percentage}", highlight=False)
+    console.print(f"[cyan]Average-change-in-fact (in the last 30 days)::[/cyan] " + \
+                  f"{average_change} ({average_change_stars})", highlight=False)
     console.print(f"[cyan]Aggressive-marketing::[/cyan] {marketing_color}", highlight=False)
     console.print(f"[cyan]Fake-stars::[/cyan] {fuckstars}\n", highlight=False)
 
@@ -1149,7 +1165,7 @@ def parsing(diff=False):
         with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
             file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
                             "<meta charset='utf-8'>\n<style>\n" + \
-                            f"body {{background-image: url('{file_image}'); background-size: cover;\n" + \
+                            f"body {{background-size: cover;\n" + \
 """background-repeat: no-repeat; background-attachment: fixed}
 .but{display:inline-block; cursor: pointer; font-size:20px; text-decoration:none; padding:10px 20px; color:#2a21db; background:#bec0cc; border-radius:19px; border:2px solid #354251}
 .but:hover{background:#354251; color:#ffffff; border:2px solid #354251; transition: all 0.2s ease;}.textcols {white-space: nowrap}
@@ -1203,10 +1219,8 @@ transition: transform 0.15s}
                             f"\n{sp}{sp.join(Q1_print_y) if Q1_print_y else '-'*25}<br>\n" + \
                             f"0️⃣ Longest-period-without-add-stars:: {tuple_date_no_stars[0]} — " + \
                             f"{end_date_no_stars} ({tuple_date_no_stars[1]} days)<br>\n" + \
-                            f"📊 Median-percentage-change (adding stars for the last month compared " + \
-                            f"to the month before last):: {relative_percentage}<br>\n" + \
-                            f"📊 Average-change-in-fact (adding stars for the last month compared " + \
-                            f"to the month before last):: {average_change} ({average_change_stars})<br>\n" + \
+                            f"📊 Median-percentage-change (in the last 30 days):: {relative_percentage}<br>\n" + \
+                            f"📊 Average-change-in-fact (in the last 30 days):: {average_change} ({average_change_stars})<br>\n" + \
                             f"⏳ Date-of-creation:: {created_at} ({created_at_days} days)<br>\n" + \
                             f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                             f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
@@ -1224,7 +1238,13 @@ transition: transform 0.15s}
                             "target='blank'><img align='center' src='https://github.githubassets.com/favicons/favicon.svg' " + \
                             "alt='' height='40' width='40'></a></small></p>\n<p class='donate'>\n" + \
                             "<a href='https://yoomoney.ru/to/4100111364257544' target='blank' title='Was the program useful? " + \
-                            "Support the developer financially.'>💳 DONATE</a></p>\n\n</body>\n</html>")
+                            "Support the developer financially.'>💳 DONATE</a></p>\n\n</body>\n\n<body>\n<script>\n" + \
+                            "const body = document.body;\nconst serverImage = " + \
+                            f"'https://raw.githubusercontent.com/snooppr/shotstars/refs/heads/main/images/{b_gr_image}.jpg';\n" + \
+                            f"const localImage = '{file_image}';\n\nconst img = new Image();\nimg.src = serverImage;\n\n" + 
+                            "img.onload = function() {body.style.backgroundImage = `url('${serverImage}')`;};\n" + \
+                            "img.onerror = function() {body.style.backgroundImage = `url('${localImage}')`;};\n</script>\n" + \
+                            "</body>\n\n</html>")
 
 # Сохранение/txt-отчета по убывающим звездам на длинной дистанции. Отчеты в CLI-таблицах.
         if bool(diff_lst_dn):

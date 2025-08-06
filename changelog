@@ -1,6 +1,14 @@
 ## Shotstars
 
 ********
+**v4.7**
+********
+
+— Added a custom background to the HTML report. Depending on the main programming language of
+the scanned repository, the corresponding background is selected.
+=================================================================================================
+
+********
 **v4.6**
 ********
 
