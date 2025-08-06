@@ -4,8 +4,10 @@
 **v4.7**
 ********
 
-— Added a custom background to the HTML report. Depending on the main programming language of
-the scanned repository, the corresponding background is selected.
+— Added a new metric to the HTML report: "Repository's Primary Programming Language".
+This metric is original and is displayed not as text, but as a background in the HTML report.
+For example, if the scanned repository is mainly written in "C++", then the background in the
+HTML report will be "C++".
 =================================================================================================
 
 ********
