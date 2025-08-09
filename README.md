@@ -83,7 +83,7 @@ adding it to the database; randomly delete and add any lines to a file
 (OS GNU/Linux and Termux):    
 `/home/{user}/.ShotStars/results/{repo}/new.txt`  
 (OS Windows):  
-`C:\Users\{User}\AppData\Local\ShotStars\result\{repo}\new.txt`;  
+`C:\Users\{User}\AppData\Local\ShotStars\results\{repo}\new.txt`;  
 run a second scan of the same repository.  
 
  ---
@@ -98,7 +98,7 @@ Steps to get a token *(**free**)*:
 GNU/Linux & Android/Termux::  
 `/home/{user}/.ShotStars/results/config.ini`  
 OS Windows::  
-`C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`.  
+`C:\Users\{User}\AppData\Local\ShotStars\results\config.ini`.  
 
 The Github token belongs to the user, is stored locally and is not transferred or downloaded anywhere.  
 You can parse both your own and third-party repositories (by default, registration/authorization/token are not required).  
@@ -138,7 +138,7 @@ Shotstars позволяет следить со стороны <u>за любы
 OS GNU/Linux & Android/Termux::  
 `/home/{user}/.ShotStars/results/config.ini`  
 OS Windows::  
-`C:\Users\{User}\AppData\Local\ShotStars\result\config.ini`.  
+`C:\Users\{User}\AppData\Local\ShotStars\results\config.ini`.  
 
 Github-токен принадлежит пользователю, хранится локально и никуда не передается и не скачивается.  
 Парсить можно, как свои, так и сторонние репозитории *(по умолчанию регистрация/авторизация/токен не требуются)*.  
