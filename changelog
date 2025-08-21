@@ -1,6 +1,17 @@
 ## Shotstars
 
 ********
+**v4.8**
+********
+
+— For the N3 "Star Hour" histogram, a second Y axis has been added that displays the 12-hour time
+format. The histogram now displays time in 24-hour and 12-hour time formats.
+
+— Added detection of new languages ​​for HTML background:
+"Matlab"; "Pascal"; "Assembly" and "PowerShell".
+=================================================================================================
+
+********
 **v4.7**
 ********
 

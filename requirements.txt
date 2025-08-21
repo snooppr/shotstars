@@ -1,4 +1,4 @@
 plotext
 plotly
 requests
-rich
+rich>=13.0.1

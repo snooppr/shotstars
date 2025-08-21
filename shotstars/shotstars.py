@@ -37,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.7"
+__version__ = "v4.8"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -441,15 +441,24 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
             fig5 = plt_html.Figure([plt_html.Bar(y=x, x=y, name='Hours', orientation='h', customdata=perc_h,
                                                  hovertemplate=("<b>Hours:</b> %{y}<br><b>Stars:</b> %" + \
                                                                 "{x}___(%{customdata}%)<extra></extra>"),
-                                                 marker=dict(color='blue'))])
+                                                 marker=dict(color='blue')),
+                                    plt_html.Scatter(x=[None, None], y=[None, None], yaxis='y2', showlegend=False,
+                                                     hoverinfo='skip', marker=dict(opacity=0), line=dict(width=0))])
 
             fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, {local_tzone} time zones</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
-                               xaxis_title="Quantity stars", yaxis_title="Hours",
-                               yaxis=dict(dtick=1, tickmode='linear', autorange='reversed'),
+                               xaxis_title="Quantity stars", yaxis_title="24 hour time format",
+                               yaxis=dict(tickmode='array', tickvals=list(range(24)), gridcolor='lightgray',
+                                          gridwidth=1, griddash='dash', showgrid=True,
+                                          ticktext=[f"{h:02d}:00" for h in range(24)], dtick=1, range=[23.5,-0.5]),
                                xaxis=dict(gridcolor='lightgray'),
-                               hoverlabel=dict(bgcolor='lightgray', font_color='black'),
+                               yaxis2=dict(title='12 hour time format', overlaying='y', side='right',
+                                           visible=True, showline=False, zeroline=False, showgrid=False,
+                                           tickmode='array', tickvals=list(range(24)),
+                                           ticktext=[f"{(h%12 or 12):02d}:00 {'AM' if h<12 else 'PM'}" for h in range(24)],
+                                           dtick=1, range=[23.5,-0.5]),
+                               hoverlabel=dict(bgcolor='lightgray', font_color='black'), showlegend=False,
                                plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
 
@@ -458,7 +467,7 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
             fig6 = plt_html.Figure([plt_html.Bar(y=x, x=y, name='Day of the week', orientation='h', customdata=perc_dw,
                                                  hovertemplate=("<b>Day of the week:</b> %{y}<br><b>Stars:</b> %" + \
                                                                 "{x}___(%{customdata}%)<extra></extra>"),
-                                                 marker=dict(color='#4e00ff'))])
+                                                 marker=dict(color='#6800ff'))])
 
             fig6.update_layout(title=f"Histogram N4. Star Day (distribution of stars by <b>day of the week</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
@@ -854,7 +863,7 @@ def parsing(diff=False):
 # В случае сбоя проверка заголовка 'X-RateLimit-Reset' от сервера на предмет расчета времени до снятия ограничений.
     lst_lang = ["python", "c", "shell", "c++", "mdx", "javascript", "typescript", "erlang", "visual basic .net", "rust",
                 "julia", "scala", "elixir", "lua", "css", "kotlin", "html", "perl", "swift", "go", "ruby", "php", "c#",
-                "java", "dockerfile", "r"]
+                "java", "dockerfile", "r", "powershell", "assembly", "pascal", "matlab"]
 
     try:
         if r.get('status') or (r.get('message') and "Not Found" in r.get('message')):
@@ -1268,7 +1277,7 @@ transition: transform 0.15s}
                 html_file = f"{path}/all_new_stars.html"
             generate_plots(data, html_file, day_week_stars, months_stars, years_stars, hours_stars, mean_year, mean_days, dif_date)
 
-# Искать пересеченных пользователей.
+# Искать пересекающихся пользователей.
         common_users_found = cross_user_detect(set(lst_new))
 
         try:
