@@ -25,7 +25,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
 - [X] Shotstars will report the underlying PL of a repository as background in the HTML report.  
 - [X] Shotstars offers a scan history with a selection of previously registered projects for quick checking.  
 - [X] Shotstars generates CLI/HTML reports *(stats, time periods, duplicate user activity, urls and json)*.  
-- [X] Shotstars creates graphs and histograms *(all star history by date, by month, by year, by hour, by days of the week, cumulative set of stars)*.  
+- [X] Shotstars creates graphs and histograms [with night mode support](https://github.com/snooppr/shotstars/issues/11) *(all star history by date, by month, by year, by hour, by days of the week, cumulative set of stars)*.  
 - [X] Shotstars can simulate results, documented hack: a function designed to check the utility's operation *(to make sure)* on dead/stable repositories without moving stars.  
 - [X] Shotstars finds users that overlap across Github projects, including those with hidden/private profiles.  
 - [X] Shotstars calculates to the minute and displays the time when the github rescan restriction is lifted *(if token is not used)*.  
@@ -35,7 +35,7 @@ Shotstars will care about and count specifically those GitHub users who have rem
  ---
 
 ## ⌨️ Native Installation  
-![Static Badge](https://img.shields.io/badge/latest%20v4.8-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+![Static Badge](https://img.shields.io/badge/latest%20v4.9-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
@@ -122,7 +122,7 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstars сообщит основной ЯП у репозитория в виде фона в HTML-отчете.  
 - [X] Shotstars предлагает для быстрой проверки историю сканирований с выбором ранее учтенных проектов.
 - [X] Shotstars генерирует CLI/HTML отчеты *(статистика, периоды времени, дублирующая активность пользователей, url's и json)*.  
-- [X] Shotstars создает графики и гистограммы *(вся история звезд по дате/времени: по месяцам, по годам, по часам, по дням недели, кумулятивный набор звезд)*.  
+- [X] Shotstars создает графики и гистограммы с поддержкой [ночного режима](https://github.com/snooppr/shotstars/issues/11) *(вся история звезд по дате/времени: по месяцам, по годам, по часам, по дням недели, кумулятивный набор звезд)*.  
 - [X] Shotstars умеет имитировать результаты, задокументированный хак: функция, призванная проверить работу утилиты *(удостовериться)* на мертвых/стабильных репозиториях без движения звезд. 
 - [X] Shotstars находит пересекающихся у Github-проектов пользователей, в т.ч. и тех, у кого профиль скрыт/приватный.  
 - [X] Shotstars рассчитывает с точностью до минуты и отображает время снятия github-ограничения на повторные сканирования *(если не используется token)*.  

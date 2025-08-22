@@ -37,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.8"
+__version__ = "v4.9"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -298,8 +298,7 @@ def agregated_date(filename):
 def calc_stars(aggregated_data):
     """Получаем дату, и на неё кол-во звезд"""
     sorted_items = sorted(aggregated_data.items(), key=lambda item: datetime.datetime.strptime(item[0], '%Y-%m-%d'))
-    dates_for_plot = [item[0] for item in sorted_items]
-    counts_for_plot = [item[1] for item in sorted_items]
+    dates_for_plot, counts_for_plot = map(list, zip(*sorted_items))
 
     return dates_for_plot, counts_for_plot
 
@@ -358,18 +357,24 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
 
 # Графики для HTML.
     try:
-# Преобразовываем дату str > datetime для реального отображения масштаба на графике.
-        fig = plt_html.Figure()
-        plot_bgcolor = '#f0f0f0'
-        paper_bgcolor = '#e0e0e0'
+        if datetime.datetime.today().time().hour in range(3, 20):
+            plot_bgcolor, paper_bgcolor, color, gridcolor = '#f0f0f0', '#e0e0e0', 'black', 'lightgray'
+            shapes = None
+        else: # ночная тема для графиков.
+            plot_bgcolor, paper_bgcolor, color, gridcolor = '#2B2B2B', '#2B2B2B', 'yellow', '#363636'
+            shapes = [dict(type="rect", xref="paper", yref="paper",
+                           x0=0, y0=0, x1=1, y1=1,
+                           xanchor="left", yanchor="bottom",
+                           line=dict(color="black", width=2), fillcolor="rgba(0,0,0,0)")]
 
         if base_filename == 'all_new_stars.html':
-            line_color = 'lime'
-            marker_color = 'green'
+            line_color, marker_color = 'lime', 'green'
         elif base_filename == 'all_gone_stars.html':
-            line_color = 'red'
-            marker_color = '#a73c3c'
-# строим 1-й в HTML-график.
+            line_color, marker_color = 'red', '#a73c3c'
+
+# строим 1-й в HTML-график (add/gone_stars).
+        fig = plt_html.Figure()
+
         fig.add_trace(plt_html.Scatter(x=dates_for_plot, y=counts_for_plot, mode='markers',
                       marker=dict(color=marker_color, size=8, symbol='star'),
                       error_y=dict(type='data', arrayminus=counts_for_plot, array=[0] * len(counts_for_plot),
@@ -382,14 +387,15 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
 
         fig.update_layout(title=f"Graph N1. Dynamics userstars, repository '<b>{repo}</b>' " + \
                                 f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                          font=dict(color=color), shapes=shapes,
                           xaxis_title="Date", yaxis_title="Quantity stars",
-                          xaxis=dict(tickformat='%Y-%m-%d', showgrid=True, gridwidth=1, gridcolor='lightgray'),
-                          yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
+                          xaxis=dict(tickformat='%Y-%m-%d', showgrid=True, gridwidth=1, gridcolor=gridcolor),
+                          yaxis=dict(showgrid=True, gridwidth=1, gridcolor=gridcolor, zeroline=False),
                           plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
         if not isinstance(aggregated_data, list):
             fig.write_html(f"{path}/graph_{base_filename}")
-        else: # строим множество HTML-графиков.
+        else: # строим множество HTML-графиков (add_stars).
             fig2 = plt_html.Figure()
 
             fig2.add_trace(plt_html.Scatter(x=dates_for_plot2, y=counts_for_plot2, mode='lines+markers',
@@ -397,9 +403,10 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
 
             fig2.update_layout(title=f"Graph N2. Cumulative growth of stars, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               font=dict(color=color), shapes=shapes,
                                xaxis_title='Date', yaxis_title='Quantity stars',
-                               xaxis=dict(tickformat='%Y-%m-%d'), autosize=True,
-                               yaxis=dict(showgrid=True, gridwidth=1, gridcolor='lightgray'),
+                               xaxis=dict(tickformat='%Y-%m-%d', gridcolor=gridcolor), autosize=True,
+                               yaxis=dict(showgrid=True, gridwidth=1, gridcolor=gridcolor, zeroline=False),
                                plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor,
                                width=None, height=None)
 
@@ -412,7 +419,9 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
 
             fig3.update_layout(title=f"Histogram N1. Cumulative set of stars by <b>month</b>, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               font=dict(color=color), shapes=shapes,
                                xaxis_title="Month", yaxis_title="Quantity stars",
+                               yaxis=dict(showgrid=True, gridwidth=1, gridcolor=gridcolor, zeroline=False),
                                hoverlabel=dict(bgcolor='lightgray', font_color='black'),
                                plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
@@ -431,7 +440,10 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
 
             fig4.update_layout(title=f"Histogram N2. Cumulative set of stars by <b>year</b>, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
-                               xaxis_title="Year", yaxis_title="Quantity stars", xaxis=dict(dtick=1, tickmode='linear'),
+                               font=dict(color=color), shapes=shapes,
+                               xaxis_title="Year", yaxis_title="Quantity stars",
+                               xaxis=dict(dtick=1, tickmode='linear'),
+                               yaxis=dict(showgrid=True, gridwidth=1, gridcolor=gridcolor, zeroline=False),
                                hoverlabel=dict(bgcolor='lightgray', font_color='black'),
                                barmode='overlay', plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
@@ -448,9 +460,10 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
             fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, {local_tzone} time zones</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               font=dict(color=color), shapes=shapes,
                                xaxis_title="Quantity stars", yaxis_title="24 hour time format",
                                yaxis=dict(tickmode='array', tickvals=list(range(24)), gridcolor='lightgray',
-                                          gridwidth=1, griddash='dash', showgrid=True,
+                                          gridwidth=1, griddash='dash', showgrid=True, zeroline=False,
                                           ticktext=[f"{h:02d}:00" for h in range(24)], dtick=1, range=[23.5,-0.5]),
                                xaxis=dict(gridcolor='lightgray'),
                                yaxis2=dict(title='12 hour time format', overlaying='y', side='right',
@@ -472,11 +485,12 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
             fig6.update_layout(title=f"Histogram N4. Star Day (distribution of stars by <b>day of the week</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
+                               font=dict(color=color), shapes=shapes,
                                xaxis_title="Quantity stars", yaxis_title="day of the week",
-                               yaxis=dict(dtick=1, tickmode='linear', autorange='reversed'),
-                               xaxis=dict(gridcolor='lightgray'),
+                               yaxis=dict(dtick=1, tickmode='linear', autorange='reversed', zeroline=False),
+                               xaxis=dict(gridcolor=gridcolor),
                                hoverlabel=dict(bgcolor='lightgray', font_color='black'),
-                               plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)      
+                               plot_bgcolor=plot_bgcolor, paper_bgcolor=paper_bgcolor)
 
 
             plot_html = fig.to_html(full_html=False, include_plotlyjs=False)
@@ -499,6 +513,7 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
             margin: 0;
             padding: 15px;
             box-sizing: border-box;
+            background-color: gray;
         }}
         .plot-container {{
             width: 100%;
@@ -509,9 +524,22 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
             text-align: center;
             margin-bottom: 20px;
         }}
+            #night-mode-message {{
+            background-color: gray;
+            color: black;
+            font-size: 12px;
+            opacity: 1;
+            transition: opacity 4s ease-out
+        }}
     </style>
 </head>
 <body>
+    <div>
+        <p id="night-mode-message" style="background-color: gray; color: black; font-size: 14px;">
+            Night mode is activated from 8 pm to 3 am.
+        </p>
+    </div>
+
     <div class="plot-container">
         {plot_html}
     </div>
@@ -535,6 +563,15 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
     <div class="plot-container">
         {plot_html6}
     </div>
+
+    <script>
+        function fadeOutMessage() {{
+            const message = document.getElementById('night-mode-message');
+            message.style.opacity = 0;
+        }}
+        setTimeout(fadeOutMessage, 2000);
+    </script>
+
 </body>
 </html>""")
     except Exception as e:
@@ -1176,11 +1213,14 @@ def parsing(diff=False):
                             "<meta charset='utf-8'>\n<style>\n" + \
                             f"body {{background-size: cover;\n" + \
 """background-repeat: no-repeat; background-attachment: fixed}
-.but{display:inline-block; cursor: pointer; font-size:20px; text-decoration:none; padding:10px 20px; color:#2a21db; background:#bec0cc; border-radius:19px; border:2px solid #354251}
-.but:hover{background:#354251; color:#ffffff; border:2px solid #354251; transition: all 0.2s ease;}.textcols {white-space: nowrap}
-.textcols-item {white-space: normal; display: inline-block; width: 47.7%; vertical-align: top; background: #595c61; opacity: 0.9;}
-.textcols .textcols-item:first-child {margin-right: 4.3%}
-.donate{white-space: normal; display: inline-block; background: #595c61; opacity: 0.8}
+.but{display:inline-block; cursor: pointer; font-size:20px; text-decoration:none; padding:10px 20px;
+color:#2a21db; background:#bec0cc; border-radius:19px; border:2px solid #354251}
+.but:hover{background:#354251; color:#ffffff; border:2px solid #354251; transition: all 0.2s ease;}
+.textcols {white-space: nowrap}
+.textcols-item {white-space: normal; display: inline-block; width: 47.7%; vertical-align: top;
+background: #595c61; opacity: 0.9; border-radius: 10px}
+.textcols .textcols-item:first-child {margin-right: 4.3%; border-radius: 10px}
+.donate{white-space: normal; display: inline-block; background: #595c61; opacity: 0.8; border-radius: 10px}
 .pic {float: right}
 .shad{display: inline-block}
 .shad:hover{text-shadow: 0px 0px 14px #6495ED; transform: scale(1.1);
@@ -1236,8 +1276,8 @@ transition: transform 0.15s}
                             f"🎃 Fake-stars:: {fuckstars}<br>\n" + \
                             f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
                             "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
-                            "<small><small>╭📅 Changes over the past " + \
-                            f"({dif_time()}): <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
+                            "<small><small>╭📅 Changes from last scan " + \
+                            f"({dif_time()}) <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
                             "</strong></small></span>\n\n<div>\n<br>\n" + \
                             f"<a class='but' href='file://{path.replace(repo, '')}dynamic_crossusers.txt' " + \
                             "title='txt format'>open all cross-users</a>\n<br>\n" + \
