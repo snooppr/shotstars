@@ -37,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.9"
+__version__ = "v4.10"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -172,7 +172,7 @@ def main_cli():
         else:
             console.print(f"\n[bold green]A new repository has been added to the tracking " + \
                           f"database: '[/bold green][cyan]{repo}[/cyan][bold green]'.\nOn subsequent/re-scanning of the " + \
-                          f"repository, ShotStars will attempt to calculate stars.[/bold green]", highlight=False)
+                          f"repository, ShotStars will calculate the rest of the analytics.[/bold green]", highlight=False)
             his()
             check_token()
             parsing()
@@ -203,7 +203,7 @@ def screen_banner():
                     screen.update(Panel(text_screen))
                     time.sleep(1)
 
-    console.print(f"[yellow]{banner}[/yellow]\n{__version__}, author: https://github.com/snooppr\n")
+    console.print(f"[yellow]{banner}[/yellow]\n{__version__}, (c)_2024_author: https://github.com/snooppr\n")
 
 
 def format_text(text):
@@ -303,6 +303,19 @@ def calc_stars(aggregated_data):
     return dates_for_plot, counts_for_plot
 
 
+def plt_histogram(data, color, title=None, special=None):
+    """"Строим 4 гистограммы в CLI."""
+    if special:
+        x, y = [f"{(h%12 or 12):02d}:00 {'AM' if h<12 else 'PM'}" for h in range(24)], [s[1] for s in data]
+    else:
+        x, y = map(list, zip(*data))
+
+    plt_cli.simple_bar(x, y, width = 79, title=title,  color=color)
+    plt_cli.show()
+
+    print("")
+
+
 def generate_plots(aggregated_data, source_filename, day_week_stars,
                    months_stars, years_stars, hours_stars,
                    mean_year, mean_days, dif_date):
@@ -327,15 +340,14 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
     else:
         try:
             plt_cli.clear_figure()
-            plotext_date_format = 'Y-m-d'
-            plt_cli.date_form(plotext_date_format)
+            plt_cli.date_form('Y-m-d')
             plt_cli.xlabel("Date")
             plt_cli.ylabel("Q Users")
             plt_cli.grid(True, True)
             plt_cli.ticks_color('yellow')
 
             if base_filename == 'all_new_stars.html':
-                plt_cli.title(f"NEW_STARS, '{repo}' (real parsing)")
+                plt_cli.title(f"ALL_STARS, '{repo}' (real parsing)")
                 plt_cli.canvas_color('black')
                 plt_cli.axes_color('green')
             elif base_filename == 'all_gone_stars.html':
@@ -351,7 +363,14 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
 
             plt_cli.show()
 
-            print("\n")
+            if base_filename == 'all_new_stars.html' and not Windows:
+                print('')
+                plt_histogram(years_stars, title="all stars by YEAR", color=202)
+                plt_histogram(months_stars, title="all stars by MONTH", color="orange")
+                plt_histogram(day_week_stars, title="all stars by DAYS OF THE WEEK", color=91)
+                plt_histogram(hours_stars, title="all stars by HOUR", color="blue", special=True)
+
+            print("")
         except Exception:
             console.print(f"[bold red]CLI Graph for {source_filename} — not created[/bold red]")
 
@@ -417,7 +436,7 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
                                                                 "{y}___(%{customdata}%)<extra></extra>"),
                                                  marker=dict(color='orange', line=dict(color='grey', width=2)))])
 
-            fig3.update_layout(title=f"Histogram N1. Cumulative set of stars by <b>month</b>, repository '<b>{repo}</b>' " + \
+            fig3.update_layout(title=f"Histogram N2. Cumulative set of stars by <b>month</b>, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                font=dict(color=color), shapes=shapes,
                                xaxis_title="Month", yaxis_title="Quantity stars",
@@ -438,7 +457,7 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
                                                 name=f'mean = {round(mean_year, 1)} stars / year',
                                                 line=dict(color='red', width=3)))
 
-            fig4.update_layout(title=f"Histogram N2. Cumulative set of stars by <b>year</b>, repository '<b>{repo}</b>' " + \
+            fig4.update_layout(title=f"Histogram N1. Cumulative set of stars by <b>year</b>, repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                font=dict(color=color), shapes=shapes,
                                xaxis_title="Year", yaxis_title="Quantity stars",
@@ -457,7 +476,7 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
                                     plt_html.Scatter(x=[None, None], y=[None, None], yaxis='y2', showlegend=False,
                                                      hoverinfo='skip', marker=dict(opacity=0), line=dict(width=0))])
 
-            fig5.update_layout(title=f"Histogram N3. Star Hour (distribution of stars by <b>hour, {local_tzone} time zones</b>), " + \
+            fig5.update_layout(title=f"Histogram N4. Star Hour (distribution of stars by <b>hour, {local_tzone} time zones</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                font=dict(color=color), shapes=shapes,
@@ -482,7 +501,7 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
                                                                 "{x}___(%{customdata}%)<extra></extra>"),
                                                  marker=dict(color='#6800ff'))])
 
-            fig6.update_layout(title=f"Histogram N4. Star Day (distribution of stars by <b>day of the week</b>), " + \
+            fig6.update_layout(title=f"Histogram N3. Star Day (distribution of stars by <b>day of the week</b>), " + \
                                      f"repository '<b>{repo}</b>' " + \
                                      f"␥ Created with <a href='https://github.com/snooppr/shotstars'>Shotstars software</a>.",
                                font=dict(color=color), shapes=shapes,
@@ -549,19 +568,19 @@ def generate_plots(aggregated_data, source_filename, day_week_stars,
     </div>
 
     <div class="plot-container">
-        {plot_html3}
-    </div>
-
-    <div class="plot-container">
         {plot_html4}
     </div>
 
     <div class="plot-container">
-        {plot_html5}
+        {plot_html3}
     </div>
 
     <div class="plot-container">
         {plot_html6}
+    </div>
+
+    <div class="plot-container">
+        {plot_html5}
     </div>
 
     <script>
@@ -614,7 +633,7 @@ def his(check_file=False, history=False):
         table_his.add_column("N", justify="left", style="bold blue", no_wrap=False)
         table_his.add_column("URL", justify="left", style="magenta", overflow="fold", no_wrap=False)
         table_his.add_column("STARS", justify="left", style="bold yellow", overflow="fold", no_wrap=False)
-        table_his.add_column("DATE", justify="center", style="green", no_wrap=False)
+        table_his.add_column("LAST SCAN", justify="center", style="green", no_wrap=False)
         with open(os.path.join(os.path.dirname(path), "history.json"), 'r') as his_file:
             his_dict = json.load(his_file)
 

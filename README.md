@@ -89,8 +89,8 @@ run a second scan of the same repository.
  ---
 
 ## ⛔️ Github restrictions  
-There are restrictions from Github 【**6K stars/hour** from one IP address】, repositories with more than 6K stars do not physically make sense to scan.  
-In Shotstars with Github token  you can [bypass the restrictions](https://github.com/snooppr/shotstars/issues/3) and scan repositories up to **500K stars/hour**.  
+There are scanning restrictions from Github 【**6K stars/hour** from one IP address】.  
+In Shotstars with a Github token [limits are gone](https://github.com/snooppr/shotstars/issues/3) and you can scan repositories up to **500K stars/hour**.  
 Steps to get a token *(**free**)*:  
 1) register for an account on Github (if you don’t already have one);  
 2) open your profile -> settings -> developer settings -> personal acces tokens -> generate new token;  
@@ -129,8 +129,8 @@ Shotstars позволяет следить со стороны <u>за любы
 - [X] Shotstars создан для людей и работает из коробки, поддержка OS: Windows7+, GNU/Linux, Android *(от пользователя [не требуются](https://github.com/snooppr/shotstars/releases): владения техническими навыками; регистрация/авторизация на Github и даже наличие Python)*.  
 - [X] Shotstars отрабатывает задачи с реактивной скоростью и задаром *(open source, кроссплатформенность, донаты приветствуются)*.  
 
-Существуют ограничения со стороны Github 【**6K звезд/час** с одного IP адреса】, репозитории с более 6К звезд не имеет физического смысла сканировать.  
-В Shotstars с Github-токеном [ограничения можно обойти](https://github.com/snooppr/shotstars/issues/3) и сканировать репозитории до **500K звезд/час**.  
+Существуют ограничения на сканирование со стороны Github 【**6K звезд/час** с одного IP адреса】.  
+В Shotstars с Github-токеном [ограничения уходят](https://github.com/snooppr/shotstars/issues/3) и можно сканировать репозитории до **500K звезд/час**.  
 Шаги для получения токена *(**бесплатный**)*:  
 1) зарегистрируйте аккаунт на Github (если у вас его еще нет);  
 2) откройте профиль -> settings -> developer settings -> personal acces tokens -> generate new token;  
@@ -226,7 +226,7 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 
 + **"New stars"** — New stars for the repository from the penultimate scan to the last scan. The characteristic is calculated based on the frequency of repository scans. For the graph, the actual parsing is calculated, i.e. the stars received for the entire history of the repository.  
 
-+ **"Gone stars"** — The metric displays those users: who removed their stars from the repository; or deleted their account from the Github platform; or switched their profile to "private" mode - such a profile, like a deleted one, can lead to "404" by link, i.e. Github (not always) completely hides all user activity and their personal page, but such an account can conduct activity that is almost never displayed anywhere except by the account owner (for example, only reactions are displayed). Gone stars for the repository for the period from the penultimate scan to the last scan. The characteristic is calculated based on the frequency of repository scans.  
++ **"Gone stars"** — The metric displays those users: who removed their stars from the repository; or deleted their account from the Github platform; or switched their profile to "private" mode - such a profile, like a deleted one, can lead to "404" by link, i.e. Github (not always) completely hides all user activity and their personal page, but such an account can conduct activity that is almost never displayed anywhere except by the account owner (for example, only reactions are displayed). This metric is not calculated for the entire history of the repository, but starts from the date of the first scan. Gone stars for the repository for the period from the penultimate scan to the last scan. The characteristic is calculated based on the frequency of repository scans.  
 
 + **"Cross-users"** — The metric only displays those overlapping users that overlap in the scanned repositories relative to a specific scanned repository.  
 

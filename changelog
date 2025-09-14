@@ -1,5 +1,16 @@
 ## Shotstars
 
+*********
+**v4.10**
+*********
+
+— Added 4 histograms to the CLI: All stars by year/month/days of the week/hour.
+Convenient quick analysis if there is no way to check HTML reports, for example,
+a clean console on the server or on the phone (Works on all OS except Windows).
+
+— In the HTML report, the histograms are sorted in descending order: from year to hour.
+=================================================================================================
+
 ********
 **v4.9**
 ********
