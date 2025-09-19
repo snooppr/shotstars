@@ -8,13 +8,12 @@
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />  
 
-Shotstars allows you to monitor any repository from the outside.  
-For example, can a network user say: how many stars have been added or subtracted from some interesting GitHub repository in a month? *(IT hosting does not provide information on the decrease in stars, even to the owner of its own projects)*.  
-Shotstars will care about and count specifically those GitHub users who have removed, added stars to any project; or set their profile to "private"; or even left the platform entirely. In addition to statistics, the tool allows you to identify repositories with fake stars.  
+Shotstars allows you to monitor any public repository from a distance.
+For example, can a web user tell how many stars an interesting Github repository has gained or lost in a month? *(IT hosting doesn't provide information on star decrement, even to the owner of their own projects)*. Shotstars takes care of calculating and visualizing not only this, but much, much more. In addition to statistics, the tool can identify repositories with **𐔥ᥲkᥱ ᥉tᥲr᥉**.
 
 **Claimed functions:**  
 - [X] Shotstars will help find and expose naked kings and their retinue *(fact: stars in some repositories are inflated).*  
-- [X] Shotstars calculates parameters: aggressive marketing, trend, fake stars, peak of popularity and its date.  
+- [X] Shotstars calculates parameters: aggressive marketing, projected growth, fake stars, peak of popularity and its date.  
 - [X] Shotstars will calculate progress or regression over the last month *(median - trend in percentage change and average - calculated in fact in times).*  
 - [X] Shotstars Shotstars will calculate the names of the months that had the most and the least stars *(mode / anti-mode)*, and will also display the entire history of stars by quartiles, a similar calculation is made by year.  
 - [X] Shotstars will output the longest period of time without adding stars.  
@@ -106,14 +105,14 @@ You can parse both your own and third-party repositories (by default, registrati
  ---
 
 ## 🇷🇺 TL;DR  
-Shotstars позволяет следить со стороны <u>за любым публичным</u> репозиторием.  
-Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится и вычислит конкретно тех github-пользователей, кто удалил, накинул звезды любому проекту, а то и вовсе удалился с платформы или перевёл профиль в режим "private". Кроме статистики, инструмент позволяет вычислять репозитории с фейковыми звездами.  
+Shotstars позволяет следить со стороны за любым публичным репозиторием.
+Например, может ли пользователь сети сказать: сколько прибавилось или убавилось звезд у какого-нибудь интересного github-репозитория за месяц? *(IT-хостинг не предоставляет информацию по убыванию звезд, даже хозяину своих собственных проектов)*. Shotstars позаботится вычислит и визуализирует не только это, но и многое, многое другое.  Кроме статистики, инструмент позволяет вычислять репозитории с **накрученными звездами**.  
 
 **Заявленные функции:**  
 - [X] Shotstars поможет найти и разоблачить голых королей и их свиту *(факт: звезды в некоторых репозиториях накручивают)*.  
-- [X] Shotstars рассчитывает параметры: агрессивный маркетинг, тренд, фейковые звезды, пик популярности и его дата.  
+- [X] Shotstars рассчитывает параметры: агрессивный маркетинг, прогнозируемый рост, фейковые звезды, пик популярности и его дата.  
 - [X] Shotstars рассчитает прогресс или регресс за последний месяц *(медиану — тенденцию в процентном изменении и среднее — рассчитанное по факту в разах).*  
-- [X] Shotstars вычислит имена месяцев, в которых было всех больше и всех меньше получено звезд *(мода / анти-мода)*, а также выведет всю историю звезд по квартилям, аналогичный расчет и по годам.  
+- [X] Shotstars вычислит имена месяцев, в которых было всех больше и всех меньше получено звезд *(мода / анти-мода)*, а также раскрасит всю историю звезд по квартилям, аналогичный расчет и по годам.  
 - [X] Shotstars выведет самый протяженный период времени без прибавления звезд *(черная полоса)*.  
 - [X] Shotstars проверяет репозитории на предмет прибавления и убавления звезд со статистикой за выбранный период времени.  
 - [X] Shotstars сообщает реальную дату создания репозитория *(факт: разработчики могут заявлять/подделывать/изменять дату создания своих проектов и коммитов, но Shotstars им не обмануть, утилита отобразит реальные цифры)*.  
