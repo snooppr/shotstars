@@ -1,5 +1,5 @@
 # 💫 𝕊𝕙𝕠𝕥𝕤𝕥𝕒𝕣𝕤
-︻デt══━一🔥 · ·· *A unique and over fab tool to track stars on Github*.  
+Software slogan: *„toda la ira del vudú“*.  
 
 > [!IMPORTANT]  
 > 𝕊𝕙𝕠𝕥𝕤𝕥𝕒𝕣𝕤 𝕔𝕒𝕟 𝕕𝕠 𝕥𝕙𝕚𝕟𝕘𝕤 𝕥𝕙𝕒𝕥 𝔾𝕚𝕥𝕙𝕦𝕓 𝕕𝕠𝕖𝕤𝕟'𝕥 𝕕𝕠 𝕓𝕪 𝕕𝕖𝕗𝕒𝕦𝕝𝕥.
@@ -43,7 +43,7 @@ $ shotstars_cli
 ```
 
 **Ready-made "Shotstars" builds are provided for OS GNU/Linux & Windows & Termux (Python is not required)**  
-⬇️[Download Shotstars](https://github.com/snooppr/shotstars/releases "download a ready-made assembly for Windows; GNU/Linux or Termux")  
+[Download⬇️Shotstars](https://github.com/snooppr/shotstars/releases "download a ready-made assembly for Windows; GNU/Linux or Termux")  
 
  ---
 
@@ -89,7 +89,7 @@ run a second scan of the same repository.
 
 ## ⛔️ Github restrictions  
 There are scanning restrictions from Github 【**6K stars/hour** from one IP address】.  
-In Shotstars with a Github token [limits are gone](https://github.com/snooppr/shotstars/issues/3) and you can scan repositories up to **500K stars/hour**.  
+In Shotstars with a Github token [limits are gone](https://github.com/snooppr/shotstars/issues/3) and you can scan repositories up to 【**500K stars/hour**】.  
 Steps to get a token *(**free**)*:  
 1) register for an account on Github (if you don’t already have one);  
 2) open your profile -> settings -> developer settings -> personal acces tokens -> generate new token;  
@@ -129,7 +129,7 @@ Shotstars позволяет следить со стороны за любым 
 - [X] Shotstars отрабатывает задачи с реактивной скоростью и задаром *(open source, кроссплатформенность, донаты приветствуются)*.  
 
 Существуют ограничения на сканирование со стороны Github 【**6K звезд/час** с одного IP адреса】.  
-В Shotstars с Github-токеном [ограничения уходят](https://github.com/snooppr/shotstars/issues/3) и можно сканировать репозитории до **500K звезд/час**.  
+В Shotstars с Github-токеном [ограничения уходят](https://github.com/snooppr/shotstars/issues/3) и можно сканировать репозитории до 【**500K звезд/час**】.  
 Шаги для получения токена *(**бесплатный**)*:  
 1) зарегистрируйте аккаунт на Github (если у вас его еще нет);  
 2) откройте профиль -> settings -> developer settings -> personal acces tokens -> generate new token;  
@@ -155,32 +155,32 @@ Github-токен принадлежит пользователю, хранит�
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Win.png" />  
 
 
-*2 Shotstars HTML-report*  
+*2. Shotstars HTML-report*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html-report.png" />  
 
 
-*3 Shotstars for Android/Termux*  
+*3. Shotstars for Android/Termux*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux.png" />  
 
 
-*4 Shotstars Limit Github/API (If you don't use the free token)*  
+*4. Shotstars Limit Github/API (If you don't use the free token)*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Limit.png" />  
 
 
-*5 Shotstars Scan History*  
+*5. Shotstars Scan History*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/scan_history.png" />  
 
 
-*6 Shotstars Discovers Hidden Developer Activity*  
+*6. Shotstars Discovers Hidden Developer Activity*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update.png" />  
 Shotstars is awesome, it sees everything. Github says the repository hasn't had any commits in a month, but there has been some subtle activity, like PR updates, etc. (by the way, commit rewriting and date manipulation is also easily detected).  
 
 
-*7 Shotstars finds users that overlap across Github projects, including those with hidden/private profiles*  
+*7. Shotstars finds users that overlap across Github projects, including those with hidden/private profiles*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/cross.png" />  
 
 
-*8 Shotstars generates HTML-CLI timelines of a repository's star history, both new and gone.*  
+*8. Shotstars generates HTML-CLI timelines of a repository's star history, both new and gone.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  
 
 
@@ -221,7 +221,7 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 
 + **"Aggressive-marketing"** — The metric accepts the following values: "—"; "Low"; "Medium"; "High"; "Hard"; "Hard+". "—" means that the repository consistently receives or does not receive stars, without jumps, usually such repositories do not care about their popularity, are rarely/not mentioned in the media. "Low"; "Medium"; "High" — these repositories are repeatedly mentioned in the media, the movement of stars is uneven, they can attract hundreds of stars per day, the popularity of the repositories is high. "Hard" — frequent and frantic, uneven movement of stars, i.e. unnatural, the promotion of fake stars. "Hard+" — usually this is multiple promotion of fake stars in large quantities, i.e. more than once. The characteristic is calculated when the repository is at least two months old.  
 
-+ **"Fake-stars"** — The metric takes the following values: "Yes"; "Yes, multiple attempts to promote fake stars"; "—". In the first case, this could be a one-time, but large promotion of fake stars or regular promotion of stars little by little. In the second case, these are obvious and multiple promotions of fake stars. "—" means that Shotstars did not detect any fake stars. The characteristic is calculated when the repository is at least two months old.  
++ **"Fake-stars"** — The metric takes the following values: "Yes"; "Yes, multiple attempts to promote fake stars"; "—". In the first case, this could be a one-time, but large promotion of fake stars or regular promotion of stars little by little. In the second case, these are obvious and multiple promotions of fake stars. "—" means that Shotstars did not detect fake stars. The characteristic is calculated when the repository is at least two months old.  
 
 + **"New stars"** — New stars for the repository from the penultimate scan to the last scan. The characteristic is calculated based on the frequency of repository scans. For the graph, the actual parsing is calculated, i.e. the stars received for the entire history of the repository.  
 
