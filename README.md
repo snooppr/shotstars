@@ -9,7 +9,7 @@ Software slogan: *„toda la ira del vudú“*.
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/CLI.png" />  
 
 Shotstars allows you to monitor any public repository from a distance.
-For example, can a web user tell how many stars an interesting Github repository has gained or lost in a month? *(IT hosting doesn't provide information on star decrement, even to the owner of their own projects)*. Shotstars takes care of calculating and visualizing not only this, but much, much more. In addition to statistics, the tool can identify repositories with **𐔥ᥲkᥱ ᥉tᥲr᥉**.
+For example, can a web user tell how many stars an interesting Github repository has gained or lost in a month? *(IT hosting doesn't provide information on star decrement, even to the owner of their own projects)*. Shotstars takes care of calculating and visualizing not only this, but much, much more. In addition to statistics, the tool can identify repositories with **𝐹𝒶𝓀𝑒 𝒮𝓉𝒶𝓇𝓈**.
 
 **Claimed functions:**  
 - [X] Shotstars will help find and expose naked kings and their retinue *(fact: stars in some repositories are inflated).*  
