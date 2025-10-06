@@ -37,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.10"
+__version__ = "v4.10a"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -693,6 +693,8 @@ def check_token():
         config.set('Shotstars', 'token', 'None')
         with open(os.path.join(os.path.dirname(path), "config.ini"), 'w') as config_file:
             config.write(config_file)
+    if not Windows:
+        os.chmod(os.path.join(os.path.dirname(path), "config.ini"), 0o600)
 
 
 def win_exit():
