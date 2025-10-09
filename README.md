@@ -184,10 +184,6 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  
 
 
-*9. Clear cache*  
-<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/clear.png" />  
-
-
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs.png" />  
 <p>Comparison of two repositories based on stellar history. It is clear that the peak of popularity of the first repository has long passed, the development has gone into decline (forks). The second repository is a legend and is steadily gaining popularity.</p>  
 
@@ -198,6 +194,10 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs3.png" />  
 <p>Starry day of week. From the graph it is clear that stars come intensively at the beginning and end of the working week for this repository. Oh, and outside the US, people start their workweek according to <a href="https://github.com/orgs/community/discussions/42104">international norms</a> — on Monday, not Sunday.</p>  
+
+
+*9. Clear cache*  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/clear.png" />  
 
  ---
 
