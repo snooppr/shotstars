@@ -184,6 +184,10 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graph.png" />  
 
 
+*9. Clear cache*  
+<img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/clear.png" />  
+
+
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/graphs.png" />  
 <p>Comparison of two repositories based on stellar history. It is clear that the peak of popularity of the first repository has long passed, the development has gone into decline (forks). The second repository is a legend and is steadily gaining popularity.</p>  
 

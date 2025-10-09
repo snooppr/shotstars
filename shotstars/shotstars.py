@@ -37,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.10a"
+__version__ = "v4.11"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -100,7 +100,7 @@ def main_cli():
     global url_repo, repo, repo_api, path
     try:
         screen_banner()
-        console.print("Enter [bold green]url[/bold green] (Repository On GitHub) or '[bold green]history[/bold green]': ",
+        console.print("Enter [bold green]url[/bold green] (Repository On GitHub) or '[bold green]history / clear[/bold green]': ",
                       highlight=False, end="")
         url_repo = input("")
     except KeyboardInterrupt:
@@ -110,6 +110,7 @@ def main_cli():
             name_os = ""
         console.print(f"\n[bold red][italic]Interrupt, {name_os}please think about how open source projects exist.[/italic][/bold red]")
         win_exit()
+
     repo = url_repo.rsplit(sep='/', maxsplit=1)[-1]
     repo_api = '/'.join(url_repo.rsplit(sep='/', maxsplit=2)[-2:])
     path = path_repo()
@@ -122,7 +123,6 @@ def main_cli():
                                               "&includeCIDownloads=true&granularity=daily&viewType=line", 
                                           headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:' + \
                                                      f'{random.randint(119, 127)}.0) Gecko/20100101 Firefox/121.0'}, timeout=7)
-
                     r_east_ = re.search(r'totalDownloads\\":(\d+)', r_east.text)
                     if r_east_:
                         print('')
@@ -131,11 +131,13 @@ def main_cli():
                                                 border_style="bold blue"),
                                       justify="center")
                         print('')
-                except Exception as e:
+                except Exception:
                     format_message1 = '[!] Network connection failure (Internet Censorship?), unable to receive data. Exit.'
                     console.print(f"[bold red]{format_text(format_message1)}[/bold red]")
             shutil.rmtree(path, ignore_errors=True)
             win_exit()
+        if url_repo.lower() == "clear":
+            autoclean()
         if url_repo.lower() == "history" or url_repo.lower() == "his":
             shutil.rmtree(path, ignore_errors=True)
             url_repo, repo, repo_api = his(check_file=True, history=True)
@@ -173,6 +175,7 @@ def main_cli():
             console.print(f"\n[bold green]A new repository has been added to the tracking " + \
                           f"database: '[/bold green][cyan]{repo}[/cyan][bold green]'.\nOn subsequent/re-scanning of the " + \
                           f"repository, ShotStars will calculate the rest of the analytics.[/bold green]", highlight=False)
+
             his()
             check_token()
             parsing()
@@ -188,16 +191,18 @@ def screen_banner():
     if os.path.exists(path_):
         lst_dir = [d for d in os.scandir(path_) if d.is_dir()]
 
+        star = "star" if Windows else "⭐️"
         if len(lst_dir) > 3 and (not Windows or (Windows and int(platform.version().split('.')[2]) >= 19045)):
             with console.screen(style="dim cyan") as screen:
                 for count in range(5, 0, -1):
-                    text_screen = Align.center(Text.from_markup(f"SHOTSTARS OVER FAB TOOL TO TRACK STARS!\n\n{count}",
-                                                                justify="center"))
-                    if count > 2:
-                        text_screen = Align.center(Text.from_markup(f"support with a donation or a star\n\n{count}",
+                    if count > 3:
+                        text_screen = Align.center(Text.from_markup(f"SHOTSTARS IS THE BEST!\n\n{count}",
+                                                                    justify="center"))
+                    elif count > 1:
+                        text_screen = Align.center(Text.from_markup(f"support with a donation or a {star}\n\n{count}",
                                                                     justify="center"))
                     else:
-                        text_screen = Align.center(Text.from_markup(f"[blink]support with a donation or a star[/blink]\n\n{count}",
+                        text_screen = Align.center(Text.from_markup(f"[blink]support with a donation or a {star}[/blink]\n\n{count}",
                                                                     justify="center"))
 
                     screen.update(Panel(text_screen))
@@ -207,7 +212,42 @@ def screen_banner():
 
 
 def format_text(text):
+    """Отступы в инфо-сообщениях."""
     return textwrap.fill(text, width=os.get_terminal_size()[0], subsequent_indent=" " * 4)
+
+
+def autoclean():
+    """Удаление всех отчетов, кроме "config.ini", где хранится GitHub-token."""
+
+    console.print(f"\n[bold red]DEL ALL HISTORY ?[/bold red]\n     └──select an action " + r"\[y/n]: ", end="")
+    del_all = input().lower()
+
+    if del_all == "y":
+        print("")
+        lst_rm = []
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(os.path.dirname(path)):
+            for file in filenames:
+                if file == "config.ini":
+                    continue
+                file_rm = os.path.join(dirpath, file)
+                total_size += os.path.getsize(file_rm)
+                os.remove(file_rm)
+        for dir_rm in os.listdir(os.path.dirname(path)):
+            full_path_rm = os.path.join(os.path.dirname(path), dir_rm)
+            if "clear" not in full_path_rm and "config.ini" not in full_path_rm:
+                head, tail = os.path.split(full_path_rm)
+                sl = fr"{os.sep}".replace("\\", "\\\\")
+                full_path_rm_color = f"[magenta]{head}{sl}[/magenta][bold magenta]{tail}[/bold magenta]"
+                lst_rm.append(full_path_rm_color)
+            shutil.rmtree(full_path_rm, ignore_errors=True)
+        console.print("\n".join(f"del: {i}" for i in sorted(lst_rm, key=str.lower)))
+        console.print(f"[bold red]size of deleted data: {round(total_size/1024/1024)} MB[bold red]")
+    elif del_all != "y":
+        console.print("[bold red]cancel[/bold red]\n")
+
+    win_exit()
+
 
 def cross_user_detect(base_users):
     """
@@ -215,7 +255,7 @@ def cross_user_detect(base_users):
     находим минимум 2-х перекрестных user-ов, встречающихся более чем в одном файле.
     """
     cross_user = defaultdict(set)
-    base_dir = os.path.join(os.path.dirname(path))
+    base_dir = os.path.dirname(path)
 
     for dir_ in os.scandir(base_dir):
         if dir_.is_dir():
@@ -932,10 +972,10 @@ def parsing(diff=False):
             b_gr_image = "c%23" if b_gr_image == "c#" else b_gr_image
             b_gr_image = "c%2B%2B" if b_gr_image == "c++" else b_gr_image
             b_gr_image = "visual%20basic%20.net" if b_gr_image == "visual basic .net" else b_gr_image
-        except Exception as ee:
+        except Exception:
             b_gr_image = "stars"
         pages = (stars // 100) + 1
-    except ValueError as err:
+    except ValueError:
         console.print(f"\n[bold red]Check the entered[/bold red] [red]url[/red][bold red], " + \
                       f"it seems that such a repository does not exist:\n<[/bold red] [yellow]{url_repo}[/yellow] " + \
                       f"[bold red]>.[/bold red]", highlight=False)

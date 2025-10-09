@@ -1,6 +1,16 @@
 ## Shotstars
 
 *********
+**v4.11**
+*********
+
+— Forced change of permissions 600 on config.ini in UNIX-like OS, which slightly increases the
+security of token storage in the system.
+
+— Added "autoclean" function: delete accumulated reports, reset cache.
+=================================================================================================
+
+*********
 **v4.10**
 *********
 
