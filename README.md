@@ -151,32 +151,32 @@ Github-токен принадлежит пользователю, хранит�
 
 ## 🔻 Screenshot gallery  
 
-*1. Shotstars for Windows 7*  
+*1. Shotstars for Windows 7.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/shotstars%20Win.png" />  
 
 
-*2. Shotstars HTML-report*  
+*2. Shotstars HTML-report.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/html-report.png" />  
 
 
-*3. Shotstars for Android/Termux*  
+*3. Shotstars for Android/Termux.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Termux.png" />  
 
 
-*4. Shotstars Limit Github/API (If you don't use the free token)*  
+*4. Shotstars Limit Github/API (If you don't use the free token).*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/Limit.png" />  
 
 
-*5. Shotstars Scan History*  
+*5. Shotstars Scan History.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/scan_history.png" />  
 
 
-*6. Shotstars Discovers Hidden Developer Activity*  
+*6. Shotstars Discovers Hidden Developer Activity.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/hidden update.png" />  
 Shotstars is awesome, it sees everything. Github says the repository hasn't had any commits in a month, but there has been some subtle activity, like PR updates, etc. (by the way, commit rewriting and date manipulation is also easily detected).  
 
 
-*7. Shotstars finds users that overlap across Github projects, including those with hidden/private profiles*  
+*7. Shotstars finds users that overlap across Github projects, including those with hidden/private profiles.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/cross.png" />  
 
 
@@ -196,7 +196,7 @@ Shotstars is awesome, it sees everything. Github says the repository hasn't had 
 <p>Starry day of week. From the graph it is clear that stars come intensively at the beginning and end of the working week for this repository. Oh, and outside the US, people start their workweek according to <a href="https://github.com/orgs/community/discussions/42104">international norms</a> — on Monday, not Sunday.</p>  
 
 
-*9. Clear cache*  
+*9. Clear cache.*  
 <img src="https://raw.githubusercontent.com/snooppr/shotstars/main/images/clear.png" />  
 
  ---
