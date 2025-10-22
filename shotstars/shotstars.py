@@ -93,7 +93,7 @@ __)| )(_) |_ __) |_(_|| _)"""
 def main_cli():
     try:
         if Windows:
-            subprocess.call(['chcp', '65001'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
+            subprocess.call("chcp 65001", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
     except Exception:
         pass
 
