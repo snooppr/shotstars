@@ -37,7 +37,7 @@ local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.11"
+__version__ = "v4.12"
 
 
 if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
@@ -91,13 +91,8 @@ __)| )(_) |_ __) |_(_|| _)"""
 
 # Функции...
 def main_cli():
-    try:
-        if Windows:
-            subprocess.call("chcp 65001", stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, shell=True)
-    except Exception:
-        pass
-
     global url_repo, repo, repo_api, path
+
     try:
         screen_banner()
         console.print("Enter [bold green]url[/bold green] (Repository On GitHub) or '[bold green]history / clear[/bold green]': ",
