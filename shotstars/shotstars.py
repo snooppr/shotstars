@@ -345,7 +345,7 @@ def plt_histogram(data, color, title=None, special=None):
     else:
         x, y = map(list, zip(*data))
 
-    plt_cli.simple_bar(x, y, width = 79, title=title,  color=color)
+    plt_cli.simple_bar(x, y, width=100, title=title,  color=color)
     plt_cli.show()
 
     print("")

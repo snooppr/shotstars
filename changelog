@@ -1,6 +1,16 @@
 ## Shotstars
 
 *********
+**v4.12**
+*********
+
+— Fixed histogram breaks in cli
+(added a patch to a third-party library that is no longer being developed)
+
+— The free library "plotext" contains the fix and is now distributed with shotstars.
+=================================================================================================
+
+*********
 **v4.11**
 *********
 

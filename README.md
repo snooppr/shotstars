@@ -34,7 +34,7 @@ For example, can a web user tell how many stars an interesting Github repository
  ---
 
 ## ⌨️ Native Installation  
-![Static Badge](https://img.shields.io/badge/latest%20v4.11-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
+![Static Badge](https://img.shields.io/badge/latest%20v4.12-430094?link=https%3A%2F%2Fraw.githubusercontent.com%2Fsnooppr%2Fshotstars%2Frefs%2Fheads%2Fmain%2Fchangelog)  
 
 
 ```
