@@ -3,6 +3,7 @@
 
 import configparser
 import datetime
+import html
 import json
 import os
 import platform
@@ -804,6 +805,12 @@ def timeout():
 
 
 # Функции генерации HTML-кода.
+def escape_html(value):
+    """Экранирование данных из GitHub-API (описание/url репозитория) перед вставкой в HTML-отчет.
+    Описание репозитория задается его владельцем и является недоверенным вводом."""
+    return html.escape(str(value), quote=True)
+
+
 def html_mark(all_stars):
     with open(all_stars, "w", encoding="utf-8") as f_g_his:
         f_g_his.write("""<!DOCTYPE html>\n<html lang='en'>\n\n
@@ -1265,7 +1272,7 @@ def parsing(diff=False):
 # Сохранение/открытие HTML-отчета/печать CLI-таблиц с результатами, если такие имеются.
         file_image = f"file://{os.path.join(path.replace(repo, ''), 'stars.jpg')}".replace('\\', '/')
         with open(f"{path}/report.html", "w", encoding="utf-8") as file_html:
-            file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({repo}) HTML-report</title>\n" + \
+            file_html.write("<!DOCTYPE html>\n<html lang='en'>\n\n<head>\n" + f"<title>💫({escape_html(repo)}) HTML-report</title>\n" + \
                             "<meta charset='utf-8'>\n<style>\n" + \
                             f"body {{background-size: cover;\n" + \
 """background-repeat: no-repeat; background-attachment: fixed}
@@ -1283,7 +1290,7 @@ background: #595c61; opacity: 0.9; border-radius: 10px}
 transition: transform 0.15s}
 </style>
 </head>\n\n<body link="#6cccfb">\n""")
-            file_html.write(f"<h2 align='center' style='text-shadow: 0px 0px 13px #84d2ca' >{url_repo}</h2>\n" + \
+            file_html.write(f"<h2 align='center' style='text-shadow: 0px 0px 13px #84d2ca' >{escape_html(url_repo)}</h2>\n" + \
                             "<div class='textcols'>\n<div class='textcols-item'>\n" + \
                             f"<h4 style='color:#32CD32'>🌟 New stars (+{per_stars_up}%):</h4>\n")
 
@@ -1330,7 +1337,7 @@ transition: transform 0.15s}
                             f"⌛️ Date-update (including hidden update):: {push_}<br>\n" + \
                             f"📣 Aggressive-marketing:: {marketing}<br>\n" + \
                             f"🎃 Fake-stars:: {fuckstars}<br>\n" + \
-                            f"📖 Repository-description:: {title_repo}</small></small></span><br>\n" + \
+                            f"📖 Repository-description:: {escape_html(title_repo)}</small></small></span><br>\n" + \
                             "<br>\n<span class='donate' style='color: white; text-shadow: 0px 0px 20px #333333'>" + \
                             "<small><small>╭📅 Changes from last scan " + \
                             f"({dif_time()}) <br>├──{date}<br>└──{time.strftime('%Y-%m-%d_%H:%M', time.localtime())}" + \
