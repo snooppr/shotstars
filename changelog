@@ -1,6 +1,20 @@
 ## Shotstars
 
 *********
+**v4.13**
+*********
+
+— A security patch has been added that prevents possible execution of malicious code if such code
+was embedded in the repository description (PR_12/@gistrec).
+
+— Added a patch for GNU/Linux systems with Wayland, where the browser cannot be launched
+correctly from the compiled build version.
+
+— Fixed a crash when the project is launched in a terminal with an unavailable o
+ unreadable window size.
+=================================================================================================
+
+*********
 **v4.12**
 *********
 

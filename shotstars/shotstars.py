@@ -33,15 +33,16 @@ from rich.text import Text
 
 console = Console()
 config = configparser.ConfigParser()
+term_size = shutil.get_terminal_size(fallback=(80, 24))
 image = os.path.join(os.path.dirname(__file__), 'stars.jpg')
 local_tzone = time.tzname[time.localtime().tm_isdst]
 Android = True if hasattr(sys, 'getandroidapilevel') else False
 Windows = True if sys.platform == 'win32' else False
 Linux = True if Android is False and Windows is False else False
-__version__ = "v4.12"
+__version__ = "v4.13"
 
 
-if os.get_terminal_size().columns > 100 and os.get_terminal_size().lines > 34:
+if term_size.columns > 100 and term_size.lines > 34:
     banner = r"""
    SSSSSSSSSSSSSSS hhhhhhh                                       tttt          
  SS:::::::::::::::Sh:::::h                                    ttt:::t          
@@ -76,7 +77,7 @@ SSSSSSS     S:::::S  t::::::tttt:::::ta::::a    a:::::a r:::::r            s::::
 S::::::SSSSSS:::::S  tt::::::::::::::ta:::::aaaa::::::a r:::::r            s::::::::::::::s
 S:::::::::::::::SS     tt:::::::::::tt a::::::::::aa:::ar:::::r             s:::::::::::ss
  SSSSSSSSSSSSSSS         ttttttttttt    aaaaaaaaaa  aaaarrrrrrr              sssssssssss"""
-elif os.get_terminal_size().columns > 49:
+elif term_size.columns > 49:
     banner = r"""
  ____  _           _     ____  _
 / ___|| |__   ___ | |_  / ___|| |_ __ _ _ __ ___
@@ -178,6 +179,11 @@ def main_cli():
     except KeyboardInterrupt:
         console.print(f"\n[bold red][italic]Interrupt[/italic][/bold red]")
         os.kill(os.getpid(), signal.SIGBREAK if Windows else signal.SIGKILL)
+
+
+#Патч для wayland.
+if Linux and not os.environ.get('BROWSER') and shutil.which('xdg-open'):
+    os.environ['BROWSER'] = 'xdg-open'
 
 
 def screen_banner():
