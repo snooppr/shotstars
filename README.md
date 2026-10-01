@@ -42,6 +42,8 @@ $ pip install shotstars
 $ shotstars_cli
 ```
 
+[Important information❗](https://github.com/snooppr/shotstars/issues/13#issuecomment-5937664158)
+
 **Ready-made "Shotstars" builds are provided for OS GNU/Linux & Windows & Termux (Python is not required)**  
 [Download⬇️Shotstars](https://github.com/snooppr/shotstars/releases "download a ready-made assembly for Windows; GNU/Linux or Termux")  
 
